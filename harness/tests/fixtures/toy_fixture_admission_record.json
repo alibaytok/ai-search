@@ -1,0 +1,23 @@
+{
+  "_fixture_admission_marker": "harness-internal fixture-admission scaffold toy record; pre-measurement only",
+  "fixture_set_id": "toy-fixture-set-001",
+  "fixture_classes": [
+    "golden-intents",
+    "hard-negatives",
+    "boundary-violations"
+  ],
+  "content_hashes": {
+    "golden-intents": "ffd30b37485c227df61bb26f7fd7ab5e24a8c0dbc8e3bfbbd5362c268c6bc95e",
+    "hard-negatives": "fcdd7fe28c7efd9d8b7193a1b4a491b3f1b7347d4fb235ea17031352745a7e5c",
+    "boundary-violations": "55dda21c74f36900484da7081e84c2a5377598cba6f05d685d4795a63110ddfa"
+  },
+  "synthetic_only": true,
+  "real_benchmark_data": false,
+  "admission_authority_decided": false,
+  "selection_made": false,
+  "purpose_note": "Scaffold-internal toy fixture admission record per ai-search/43-44-stage0-readiness-and-adapter-admission.md. Pre-measurement observation only; admission authority remains OQ-057 OPEN.",
+  "no_production_data": true,
+  "no_user_data": true,
+  "not_benchmark_evidence": true,
+  "not_validation_input": true
+}

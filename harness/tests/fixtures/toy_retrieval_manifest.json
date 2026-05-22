@@ -1,0 +1,16 @@
+{
+  "_manifest_marker": "harness-internal test manifest; not a real retrieval configuration manifest",
+  "_purpose": "Scaffold unit test fixture for harness/manifest_loader.py per WO-24 / DC-027",
+  "manifest_id": "toy-scaffold-manifest",
+  "adapter_kind": "mock_scaffold_internal",
+  "configuration_id": "toy-scaffold-config",
+  "planes_declared": [
+    "official_route_results",
+    "candidate_route_results",
+    "normalized_material_support_results",
+    "source_quality_constraint_observations",
+    "trace_outcome_signal_observations"
+  ],
+  "selection_made": false,
+  "selection_note": "Toy manifest does not propose any configuration; selection authority remains with Codex under the Indexing Excellence Gate."
+}

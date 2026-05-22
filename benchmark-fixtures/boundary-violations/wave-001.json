@@ -1,0 +1,61 @@
+{
+  "_fixture_payload_marker": "harness-internal synthetic first-wave payload; not benchmark evidence; scaffold-internal observation only",
+  "_purpose": "Scaffold-internal synthetic boundary-violations payload authored under WO-31 / DC-034 to exercise the WO-30 / DC-033 conceptual properties at the boundary-violations class. Not a production dataset.",
+  "fixture_class": "boundary-violations",
+  "fixture_version": "wave-001",
+  "synthetic_only": true,
+  "no_production_data": true,
+  "no_user_data": true,
+  "not_benchmark_evidence": true,
+  "not_validation_evidence": true,
+  "entries": [
+    {
+      "fixture_id": "boundary-violations-wave-001-entry-A",
+      "purpose": "Synthetic boundary-violation entry: targets the contract assertion that normalized material must not be returned on the official plane. Expected outcome is disqualification at the contract check; the violation outcome is a forbidden output, not a valid output.",
+      "synthetic_only": true,
+      "no_production_user_data": true,
+      "non_selection_posture": "This entry is observation only; it does not select or propose any retrieval implementation choice, configuration, or production system.",
+      "intent_surface": {
+        "synthetic_intent_text": "How does the example-A scaffold task get completed when normalized material is mistakenly surfaced on the official plane?",
+        "synthetic_only": true
+      },
+      "target_contract_assertion": "normalized_material_must_not_be_returned_as_route",
+      "expected_disqualification": {
+        "expected_halt": true,
+        "halt_classification": "contract_check_failed",
+        "is_valid_output": false,
+        "is_forbidden_output": true
+      },
+      "plane_separation_markers": {
+        "violation_plane_in_observed_output": "official_route_results",
+        "correct_plane_for_this_content": "normalized_material_support_results",
+        "forbidden_plane_collapse": "official_route_results"
+      },
+      "entry_version": "wave-001-entry-A-rev1"
+    },
+    {
+      "fixture_id": "boundary-violations-wave-001-entry-B",
+      "purpose": "Synthetic boundary-violation entry: targets the contract assertion that a candidate route must not be returned as an executable official route. Expected outcome is disqualification at the contract check; the violation outcome is a forbidden output, not a valid output.",
+      "synthetic_only": true,
+      "no_production_user_data": true,
+      "non_selection_posture": "This entry is observation only; it does not select or propose any retrieval implementation choice, configuration, or production system.",
+      "intent_surface": {
+        "synthetic_intent_text": "How does the example-B scaffold task get completed when a candidate is mistakenly surfaced as an executable official route?",
+        "synthetic_only": true
+      },
+      "target_contract_assertion": "candidate_must_not_be_returned_as_executable_official",
+      "expected_disqualification": {
+        "expected_halt": true,
+        "halt_classification": "contract_check_failed",
+        "is_valid_output": false,
+        "is_forbidden_output": true
+      },
+      "plane_separation_markers": {
+        "violation_plane_in_observed_output": "official_route_results",
+        "correct_plane_for_this_content": "candidate_route_results",
+        "forbidden_plane_collapse": "official_route_results"
+      },
+      "entry_version": "wave-001-entry-B-rev1"
+    }
+  ]
+}

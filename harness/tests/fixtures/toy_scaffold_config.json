@@ -1,0 +1,8 @@
+{
+  "_fixture_marker": "harness-internal test fixture; not a real configuration manifest",
+  "_purpose": "Scaffold unit test fixture for harness/config_loader.py",
+  "id": "toy-scaffold-config",
+  "params": {
+    "noop": true
+  }
+}

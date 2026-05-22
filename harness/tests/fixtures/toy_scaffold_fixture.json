@@ -1,0 +1,8 @@
+{
+  "_fixture_marker": "harness-internal test fixture; not a real benchmark dataset",
+  "_purpose": "Scaffold unit test fixture for harness/fixture_loader.py",
+  "sample_record": {
+    "id": "toy-1",
+    "field": "value"
+  }
+}

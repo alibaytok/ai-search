@@ -1,0 +1,22 @@
+{
+  "_candidate_adapter_marker": "harness-internal candidate-adapter scaffold toy record; pre-measurement only",
+  "candidate_adapter_id": "toy-candidate-adapter-001",
+  "adapter_kind": "toy_scaffold_adapter",
+  "configuration_id": "toy-scaffold-config",
+  "planes_declared": [
+    "official_route_results",
+    "candidate_route_results",
+    "normalized_material_support_results",
+    "source_quality_constraint_observations"
+  ],
+  "selection_made": false,
+  "production_registration": false,
+  "real_adapter": false,
+  "dependencies_declared": [],
+  "purpose_note": "Scaffold-internal toy candidate adapter admission record per ai-search/43-44-stage0-readiness-and-adapter-admission.md. Pre-measurement observation only.",
+  "synthetic_only": true,
+  "no_production_data": true,
+  "no_user_data": true,
+  "not_benchmark_evidence": true,
+  "not_validation_input": true
+}

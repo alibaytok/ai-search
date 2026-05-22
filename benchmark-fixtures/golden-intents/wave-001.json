@@ -1,0 +1,66 @@
+{
+  "_fixture_payload_marker": "harness-internal synthetic first-wave payload; not benchmark evidence; scaffold-internal observation only",
+  "_purpose": "Scaffold-internal synthetic golden-intents payload authored under WO-31 / DC-034 to exercise the WO-30 / DC-033 conceptual properties at the golden-intents class. Not a production dataset.",
+  "fixture_class": "golden-intents",
+  "fixture_version": "wave-001",
+  "synthetic_only": true,
+  "no_production_data": true,
+  "no_user_data": true,
+  "not_benchmark_evidence": true,
+  "not_validation_evidence": true,
+  "entries": [
+    {
+      "fixture_id": "golden-intents-wave-001-entry-A",
+      "purpose": "Synthetic golden-intent entry: a known-official-route case. Exercises the expected official-or-miss outcome boundary on the official plane only. No production data; no user data; no architecture or vendor claim.",
+      "synthetic_only": true,
+      "no_production_user_data": true,
+      "non_selection_posture": "This entry is observation only; it does not select or propose any retrieval implementation choice, configuration, or production system.",
+      "intent_surface": {
+        "synthetic_intent_text": "How does the example-A scaffold task get completed using the documented official path?",
+        "synthetic_only": true
+      },
+      "expected_outcome_class": "official_route_expected",
+      "plane_separation_markers": {
+        "expected_plane": "official_route_results",
+        "forbidden_planes": [
+          "candidate_route_results",
+          "normalized_material_support_results",
+          "source_quality_constraint_observations",
+          "trace_outcome_signal_observations"
+        ],
+        "collapsed_planes": []
+      },
+      "expected_official_route_reference": {
+        "synthetic_route_identifier": "synthetic-route-id-A",
+        "is_validation_evidence": false,
+        "is_promotion_trigger": false
+      },
+      "entry_version": "wave-001-entry-A-rev1"
+    },
+    {
+      "fixture_id": "golden-intents-wave-001-entry-B",
+      "purpose": "Synthetic golden-intent entry: a known-miss case (no official route exists for this intent). Exercises the expected official-or-miss outcome boundary with an explicit miss classification. Not used as validation input.",
+      "synthetic_only": true,
+      "no_production_user_data": true,
+      "non_selection_posture": "This entry is observation only; it does not select or propose any retrieval implementation choice, configuration, or production system.",
+      "intent_surface": {
+        "synthetic_intent_text": "How does the example-B scaffold task get completed when no official path exists yet?",
+        "synthetic_only": true
+      },
+      "expected_outcome_class": "miss_expected",
+      "miss_classification": "no_official_route_exists",
+      "plane_separation_markers": {
+        "expected_plane": "official_route_results",
+        "expected_plane_must_be_empty_for_this_entry": true,
+        "forbidden_planes": [
+          "candidate_route_results",
+          "normalized_material_support_results",
+          "source_quality_constraint_observations",
+          "trace_outcome_signal_observations"
+        ],
+        "collapsed_planes": []
+      },
+      "entry_version": "wave-001-entry-B-rev1"
+    }
+  ]
+}

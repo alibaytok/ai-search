@@ -1,0 +1,67 @@
+{
+  "_fixture_payload_marker": "harness-internal synthetic first-wave payload; not benchmark evidence; scaffold-internal observation only",
+  "_purpose": "Scaffold-internal synthetic hard-negatives payload authored under WO-31 / DC-034 to exercise the WO-30 / DC-033 conceptual properties at the hard-negatives class. Not a production dataset.",
+  "fixture_class": "hard-negatives",
+  "fixture_version": "wave-001",
+  "synthetic_only": true,
+  "no_production_data": true,
+  "no_user_data": true,
+  "not_benchmark_evidence": true,
+  "not_validation_evidence": true,
+  "entries": [
+    {
+      "fixture_id": "hard-negatives-wave-001-entry-A",
+      "purpose": "Synthetic hard-negative entry: a near-match candidate exists for the intent but is not an official route. Exercises the contract assertion that near-match content must not be returned on the official plane.",
+      "synthetic_only": true,
+      "no_production_user_data": true,
+      "non_selection_posture": "This entry is observation only; it does not select or propose any retrieval implementation choice, configuration, or production system.",
+      "intent_surface": {
+        "synthetic_intent_text": "How does the example-A scaffold task get completed using the near-match candidate that is not yet an official path?",
+        "synthetic_only": true
+      },
+      "near_match_classification": "candidate_only",
+      "near_match_reason_class": "lifecycle_state_not_official",
+      "plane_separation_markers": {
+        "allowed_planes": [
+          "candidate_route_results",
+          "normalized_material_support_results"
+        ],
+        "forbidden_planes": [
+          "official_route_results",
+          "source_quality_constraint_observations",
+          "trace_outcome_signal_observations"
+        ],
+        "forbidden_plane_collapse": "official_route_results"
+      },
+      "must_not_authorize_official_return": true,
+      "entry_version": "wave-001-entry-A-rev1"
+    },
+    {
+      "fixture_id": "hard-negatives-wave-001-entry-B",
+      "purpose": "Synthetic hard-negative entry: near-match content is present but the source has not passed the qualification gate. Exercises the contract assertion that source-quality-absent content must not become an official route.",
+      "synthetic_only": true,
+      "no_production_user_data": true,
+      "non_selection_posture": "This entry is observation only; it does not select or propose any retrieval implementation choice, configuration, or production system.",
+      "intent_surface": {
+        "synthetic_intent_text": "How does the example-B scaffold task get completed using content whose source has not been qualified?",
+        "synthetic_only": true
+      },
+      "near_match_classification": "candidate_only",
+      "near_match_reason_class": "source_qualification_absent",
+      "plane_separation_markers": {
+        "allowed_planes": [
+          "candidate_route_results",
+          "source_quality_constraint_observations"
+        ],
+        "forbidden_planes": [
+          "official_route_results",
+          "normalized_material_support_results",
+          "trace_outcome_signal_observations"
+        ],
+        "forbidden_plane_collapse": "official_route_results"
+      },
+      "must_not_authorize_official_return": true,
+      "entry_version": "wave-001-entry-B-rev1"
+    }
+  ]
+}
