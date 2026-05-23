@@ -15580,3 +15580,323 @@ FRAME-A scope. Two contract hardening fixes were applied:
 Codex added regression coverage for both points. Targeted suite is
 59/59 OK. Full suite is 1287/1287 OK. Real-benchmark-ready remains
 NO. RK-058 remains OPEN pending FRAME-B / FRAME-C / FRAME-D.
+
+## Work Order L0-WORKSHOP-FRAME-B - Level 0B Workshop SignalEvidence Layer
+
+### Scope
+
+Add Stage B of the Level 0B Intent Core: a deterministic
+SignalEvidence extractor that consumes an already-loaded FRAME-A
+NormalizedPromptView dict and emits a fixed-shape twenty-two-key
+signal evidence ledger. Per-family-hit records carry a citation
+span into FRAME-A's trimmed_text, language alias tag, edit-budget
+tag, and a bounded `contributes_to` list naming the future CIF
+field names the family will inform.
+
+This is scaffold-only. No CIF synthesis. No ShapeTouchPlan. No
+WorkshopPromptRecord. No route object. No route selection. No
+source qualification. No corpus admission. No real indexing /
+retrieval / ranking / scoring / similarity / distance / embedding
+/ vector / ANN / reranker / provider / LLM / external API. No
+architecture / vendor / library / index-family selection.
+Real-benchmark-ready remains NO. RK-058 acknowledged and remains
+OPEN; closure requires FRAME-C plus a follow-up Codex-authorized
+packet.
+
+### Allowed Files
+
+- `harness/level0_workshop_signal_evidence.py` (new)
+- `harness/tests/test_level0_workshop_signal_evidence.py` (new)
+- `ai-search/70-level0-workshop-signal-evidence.md` (new)
+- `ai-search/00-open-questions.md` (append DC-072 + Status / Work
+  Order chronology refresh)
+- `ai-search/00-claude-task-ledger.md` (append this entry)
+
+### Status
+
+Approved with notes after Codex review-time hardening.
+
+### Mandatory Priority-Miss Check (project-local convention)
+
+Per `ai-search/00-claude-scope-prompt-template.md`, the
+Mandatory Priority-Miss Check was applied at the top of this
+packet:
+
+- Higher-priority prerequisite missed? No - FRAME-A is approved
+  with notes; FRAME-B is the next correct stage.
+- Downstream surface skipping upstream cause? No - FRAME-B is
+  the upstream signal layer.
+- Safer sequencing? No - A then B then C is the agreed split.
+- Conflict with prior invariants / OQs / RK / real-benchmark-ready
+  NO? No. RK-058 stays OPEN; all 11 OQs stay OPEN; RK-039 single;
+  no route creation / scoring / retrieval / LLM / provider /
+  architecture-class selection.
+- Concerns to flag first? Four minor design decisions stated
+  before code: bounded Damerau-Levenshtein returning a Boolean
+  with parameter named `edit_budget` (not `max_dist`); multi-token
+  canonical-term matching is positional not bag-of-words;
+  per-token re-fold in FRAME-B rather than importing FRAME-A
+  constants; FRAME-A constants redeclared locally to keep modules
+  import-isolated.
+- Result: proceed.
+
+### Pre-Implementation Review Note
+
+Per packet requirement, Claude produced the six-question review
+note before any file edit:
+
+- Q1 (authorizes implementation): Yes. Scaffold implementation.
+  Does NOT authorize retrieval / scoring / route creation / source
+  qualification / corpus admission / benchmark execution /
+  architecture-class selection / RK-058 closure.
+- Q2 (source-content risk): No. The module reads only an
+  already-loaded dict; no URL / file / hash / PDF / subprocess.
+- Q3 (prompt-copying risk): No. `input_prompt_observed` mirrors
+  `raw_text` verbatim, same level as FRAME-A. No other prompt-body
+  output.
+- Q4 (OQ closure / RK-039 / RK-058 risk): No. DC-072 states
+  explicitly: no OQ closed; RK-039 single; RK-058 acknowledged
+  but NOT closed.
+- Q5 (files): Created (3): module, test file, boundary doc
+  `70-*`. Appended (2): open-questions DC-072 + Status / chronology;
+  ledger entry.
+- Q6 (forbidden work): no prior WO module / test modification (no
+  FRAME-A change, no mapper change, no trace / review change); no
+  benchmark-fixtures mutation; no controller-checklist change; no
+  CIF / ShapeTouchPlan / adapter code; no route / scoring /
+  retrieval / embedding / vector / ANN / reranker / LLM /
+  provider call; no architecture-class selection; no
+  ranking_performed / scoring_performed / confidence / score /
+  distance / best_match / threshold / similarity field name in
+  module source or output.
+
+No scope drift detected.
+
+### Section L Scope Check
+
+Shared state before implementation: WO-L0-WORKSHOP-FRAME-A
+approved with notes after Codex review-time hardening; FRAME-A
+commit `594c9f3`; FRAME-A targeted suite 59/59 OK; baseline full
+suite 1287/1287 OK; project root contains exactly `ai-search/`,
+`harness/`, and `benchmark-fixtures/`; `benchmark-fixtures/` SHA
+inventory unchanged. The seven gating booleans remain literal
+False on every emitted path of every prior workshop module. OQ-003,
+OQ-015, OQ-031, OQ-035, OQ-048, OQ-049, OQ-056, OQ-057, OQ-070,
+OQ-075, OQ-076 remain OPEN. RK-039 single. RK-058 OPEN and
+acknowledged.
+
+### Codex Instructions Recorded (WO-L0-WORKSHOP-FRAME-B Packet)
+
+Verbatim WO-L0-WORKSHOP-FRAME-B packet boundary instructions
+Claude was bound to:
+
+- Build Stage B of the Level 0B Intent Core: a deterministic
+  SignalEvidence layer that consumes an already-loaded FRAME-A
+  NormalizedPromptView dict and emits an inspectable signal
+  evidence ledger.
+- Purpose: the first real prompt-text-to-intent evidence layer.
+  Must not classify directly to a route. Must extract bounded,
+  typed, inspectable signals from FRAME-A normalized prompt
+  views.
+- Pipeline position: PromptText -> FRAME-A NormalizedPromptView
+  -> FRAME-B SignalEvidenceLedger -> FRAME-C CanonicalIntentFrame
+  + ShapeTouchPlan.
+- Public surface:
+  `extract_workshop_signal_evidence(normalized_view, event_log)
+  -> dict`.
+- Input: already-loaded clean-pass dict from FRAME-A. The module
+  must not call FRAME-A. Tests may call FRAME-A only as fixture
+  builder.
+- Signal family model: bounded ASCII-only families as module
+  constants with `family_id`, `family_kind`, `canonical_terms`,
+  `language_aliases`, `edit_distance_budget`, `exclusion_terms`,
+  `contributes_to`. Allowed `family_kind` values: action, object,
+  domain, constraint, output_shape, repo_meta_near_miss,
+  out_of_scope, negation.
+- Minimum families: 30 enumerated ids covering all eight family
+  kinds.
+- Typo tolerance: deterministic predicate-based; no numeric value
+  in output; bounded Damerau-Levenshtein or equivalent; budget
+  tags only `none`, `short_token_1`, `long_token_2`; budget tag
+  in output, never numeric distance.
+- Signal evidence record: eleven fixed fields per packet listing.
+- Required output shape: 22 fixed keys per packet listing; seven
+  gating booleans all literal False.
+- Required events: started, family_observed (per signal),
+  recorded, passed, halt-before-raise with bounded reason names.
+
+### Implementation Summary
+
+`harness/level0_workshop_signal_evidence.py` exposes
+`extract_workshop_signal_evidence(normalized_view, event_log) ->
+dict` and returns a clean-pass dict with exactly twenty-two keys
+in `ALLOWED_OUTPUT_KEYS`. The module performs the following
+passes:
+
+1. Type check: `normalized_view` must be a dict; else
+   `NonDictNormalizedView`.
+2. Required-key presence; unknown-key rejection over the eighteen
+   FRAME-A required keys.
+3. `normalized_prompt_view_kind` literal check against
+   `"level0_workshop_normalized_prompt_view"`.
+4. Seven FRAME-A gating booleans literal False; else
+   `FrameAGatingBooleanFlipped`.
+5. Per-field shape checks (string fields; list fields; per-token
+   string; per-span two-element-list-of-ints in bounds matching
+   the corresponding token).
+6. Token count and span-list length match tokens length.
+7. Module-authored input metadata forbidden-language scan; user-
+   authored prompt text, folded text, tokens, and spans remain
+   evidence.
+8. Per-token edge-punctuation strip on top of the documented
+   Turkish-dotless-i-then-NFKD-then-ASCII-ignore fold (the
+   FRAME-B per-token fold is consistent with FRAME-A's hardened
+   whole-text fold).
+9. Signal extraction over every family x term x window with
+   bounded Damerau-Levenshtein predicate gated by a
+   canonical-length-aware integer limit (`none` -> 0;
+   `short_token_1` -> 1 only if canonical length >= 4 else 0;
+   `long_token_2` -> 2 only if canonical length >= 6, 1 if
+   canonical length in [4, 6), 0 otherwise).
+10. Defensive route-status-field absence check on the result dict
+    and every signal record (eleven forbidden field names).
+11. Module-authored output string forbidden-language scan; raw
+    prompt mirror and observed spans remain evidence.
+
+Halt events are recorded via `event_log.halt(reason=..., ...)`
+before raising ten named exceptions (`NonDictNormalizedView`,
+`MissingNormalizedViewKey`, `UnknownNormalizedViewKey`,
+`InvalidNormalizedPromptViewKind`, `FrameAGatingBooleanFlipped`,
+`NormalizedViewFieldShapeMismatch`, `TokenCountMismatch`,
+`InvalidTokenSpanShape`, `SignalEvidenceRouteStatusFieldPresent`,
+`ForbiddenLanguageInLevel0WorkshopSignalEvidence`).
+
+The thirty bounded `SIGNAL_FAMILIES` cover the minimum required
+family ids exactly: action.create / configure / set_up / improve
+/ review / explain / deploy; object.workflow / skill / agent /
+instruction / hook / plugin / cookbook_entry / repository /
+algorithm; domain.ci / deployment / code_review / security /
+documentation; constraint.event_triggered / on_push /
+on_pull_request; output_shape.recipe / configuration_file /
+prompt_collection_request; repo_meta_near_miss.repo_navigation;
+out_of_scope.general_world; negation.not_requested. Each
+`LexicalFamily` namedtuple is declared as a module constant with
+seven fields. Turkish aliases are stored ASCII-folded in module
+source (e.g. `olustur`, `yapilandir`, `iyilestir`, `is akisi`);
+no non-ASCII character literal appears anywhere in the module
+source.
+
+The module invokes NO prior-WO public function (verified by
+static-scan test). FRAME-A's
+`build_level0_workshop_normalized_prompt_view` appears only in
+the test file as a fixture builder.
+
+DC-072 row appended to the Decisions Tracker in
+`ai-search/00-open-questions.md`. Status line and Work Order
+chronology line at the top of `ai-search/00-open-questions.md`
+updated to record WO-L0-WORKSHOP-FRAME-B.
+
+### Changed Files (WO-L0-WORKSHOP-FRAME-B)
+
+- `harness/level0_workshop_signal_evidence.py` (new file)
+- `harness/tests/test_level0_workshop_signal_evidence.py` (new
+  file; 97 tests across 16 TestCase classes)
+- `ai-search/70-level0-workshop-signal-evidence.md` (new file)
+- `ai-search/00-open-questions.md` (appended DC-072 row;
+  refreshed Status line and Work Order chronology line)
+- `ai-search/00-claude-task-ledger.md` (appended this entry)
+
+No `ai-search/00-controller-checklist.md` modification. No prior
+WO boundary doc / module / test modification, including FRAME-A
+and its tests, the existing
+`harness/level0_workshop_user_intent_mapper.py` and its test,
+the WO-L0-WORKSHOP-TRACE-01 / WO-L0-WORKSHOP-REVIEW-01 modules
+and tests, and every WO-50 through WO-62 module and test. No
+existing L0 planning doc modification. No `benchmark-fixtures/`
+mutation.
+
+### Evidence (WO-L0-WORKSHOP-FRAME-B)
+
+- Mandatory Priority-Miss Check: applied; no higher-priority
+  missed scope found.
+- Section L scope quiz: emitted before edits; objective, allowed
+  files, forbidden files, halt conditions, authorization state,
+  and next safe step recorded; no scope drift detected.
+- Pre-implementation review note: emitted before edits; six
+  required questions answered.
+- Targeted test result:
+  `python -B -m unittest harness.tests.test_level0_workshop_signal_evidence`
+  reports 97/97 OK.
+- Full suite result:
+  `python -B -m unittest discover -s harness/tests` reports
+  1384/1384 OK after Codex review-time hardening (1287 prior
+  baseline plus 97 FRAME-B tests; no regression).
+- ASCII check: each of the three new files contains zero non-ASCII
+  bytes; `ai-search/00-open-questions.md` and
+  `ai-search/00-claude-task-ledger.md` contain zero non-ASCII
+  bytes after the appends.
+- `__pycache__` absence: no `__pycache__` directories under the
+  project root after the run.
+- Project root check: root contains exactly `ai-search/`,
+  `harness/`, and `benchmark-fixtures/`.
+- `benchmark-fixtures/` unchanged: 10-file inventory unchanged.
+- FRAME-A module / test unchanged: not in git status; not
+  modified.
+- Current mapper module / test unchanged: not in git status; not
+  modified.
+- Workshop trace / review modules / tests unchanged: not in git
+  status; not modified.
+- No prior WO module or test file modified.
+- No route object created; no route selection; no source
+  qualification; no corpus admission.
+- OQ closure: none. All eleven targeted OQs remain OPEN.
+- RK-039 duplication: none. The RK-039 row appears exactly once.
+- RK-058 acknowledged: RK-058 row appears exactly once and
+  remains OPEN; this packet did NOT close it.
+- Real-benchmark-ready remains NO.
+- Structural gaps noticed (non-binding): (1) The thirty
+  `SIGNAL_FAMILIES` cover the bounded minimum; coverage gaps for
+  specific phrasings (e.g. domain-specific verbs not in the
+  current `action.*` set) will be addressed in a future
+  Codex-authorized family-expansion packet. (2) The Damerau-
+  Levenshtein integer limit is computed locally and never
+  emitted; if future review wants visibility into which canonical
+  term variant fired, this can be added as another categorical
+  tag without leaking a numeric value. (3) The edge-punctuation
+  strip set is fixed to `.,!?;:"'()[]{}`; a wider set may be
+  needed for non-Latin scripts; future packets can extend
+  deterministically. (4) The U+0131 pre-fold rule is one
+  character; a future Codex-authorized packet may broaden the
+  Turkish transliteration table if needed. (5) FRAME-B emits one
+  `level0_workshop_signal_family_observed` event per signal; on
+  long prompts this can produce many events. The event log is
+  internal scaffold telemetry, not a production contract.
+
+### Non-Claim Constraints (WO-L0-WORKSHOP-FRAME-B)
+
+WO-L0-WORKSHOP-FRAME-B does not claim any signal, span, family,
+alias tag, edit-budget tag, count, or boolean is sufficient,
+necessary, superior, best, complete, production-ready,
+recommended, selected, or benchmark-ready. The module does not
+claim universal intent understanding. The bounded thirty
+`SIGNAL_FAMILIES`, the bounded eight `FAMILY_KINDS`, the bounded
+three `BUDGET_TAGS`, the bounded three `LANGUAGE_TAGS`, the
+bounded eleven-field signal record shape, the bounded twenty-two
+`ALLOWED_OUTPUT_KEYS`, the documented U+0131 pre-fold (consistent
+with FRAME-A's hardened fold), the canonical-length-aware
+edit-budget table, and the edge-punctuation-strip rule for
+matching are bounded by WO-L0-WORKSHOP-FRAME-B and are NOT
+claimed exhaustive.
+
+All DC-020 through DC-071 boundary invariants carry forward.
+WO-L0-WORKSHOP-FRAME-B does not amend or broaden DC-003 through
+DC-071. Real-benchmark-ready remains NO. RK-058 is acknowledged
+and remains OPEN.
+
+### Codex Review Result (WO-L0-WORKSHOP-FRAME-B)
+
+APPROVED WITH NOTES after Codex review-time hardening.
+
+Codex verified FRAME-B locally and changed only the allowed five-file scope. Review-time hardening fixed one contract-safety gap inherited from the initial submission: forbidden-language scans were applied to the entire already-loaded FRAME-A view and the entire result, including user-authored prompt text and per-signal observed spans. That would reject valid user prompts that merely contain project-forbidden claim words as evidence. The module now scans only module-authored input metadata and module-authored ledger strings; raw prompt text, folded prompt text, tokens, token spans, `input_prompt_observed`, and signal `observed_span` values remain evidence, not project claims.
+
+Codex added two regression tests proving user-authored forbidden phrase / claim phrase text is preserved as evidence while the same phrase classes in module-authored metadata still halt. Targeted suite is 97/97 OK. Full suite is 1384/1384 OK. Real-benchmark-ready remains NO. RK-058 remains OPEN pending FRAME-C / FRAME-D and a follow-up closure packet.
