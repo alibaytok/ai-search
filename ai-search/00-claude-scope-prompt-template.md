@@ -3,7 +3,7 @@
 Document type: Project-local prompt template
 Owner: Codex (controller)
 Author of entries: Claude (builder/documentation agent)
-Status: Durable. Mandatory for every new scope prompt in this project.
+Status: Durable. Mandatory when explicitly triggered with `@pmc`.
 Authority: This template does NOT modify canonical authority. Canonical
 authority remains with `ai-search/00-controller-checklist.md`,
 `ai-search/00-open-questions.md`, the active Work Order packet, and
@@ -26,13 +26,19 @@ sequencing gaps before scope work begins.
 This template does NOT guarantee that any new chat absolutely
 remembers it. It is a project-local convention, not a machine-
 enforced hook. Reviewers and prompt authors are responsible for
-prepending the block; the convention exists so the responsibility
-is visible and durable across sessions.
+using the `@pmc` trigger on prompts that start or change scope; the
+convention exists so the responsibility is visible and durable
+across sessions without forcing the check onto ordinary questions.
 
-## 2. Where this template applies
+## 2. Trigger and where this template applies
 
 The Mandatory Priority-Miss Check block in Section 4 below applies
-to every new scope prompt issued in this project, including:
+when the prompt contains the explicit trigger token:
+
+`@pmc`
+
+Use `@pmc` for prompts that start or materially change project
+scope, including:
 
 - implementation packets (Work Orders)
 - review packets (review-only deep analysis)
@@ -49,16 +55,24 @@ shared state and scope are explicit; the Mandatory Priority-Miss
 Check verifies that the scope itself is the correct upstream
 scope to address.
 
+Do NOT run the Mandatory Priority-Miss Check for ordinary questions
+unless `@pmc` is present. Examples that do not require the check by
+default: simple factual questions, status checks, command-output
+requests, syntax fixes, clarification questions, short explanations,
+or continuation of an already-active scope with no scope change.
+
 ## 3. How to use this template
 
-When drafting a new scope prompt for Claude in this project:
+When drafting a scope prompt for Claude in this project that should
+receive the check:
 
-1. Copy the entire Mandatory Priority-Miss Check block from
-   Section 4 below into the top of the new prompt, verbatim.
-2. Append the new scope's body beneath the block.
-3. Do NOT remove or rephrase the block to make it shorter. The
+1. Put `@pmc` at the top of the prompt.
+2. Copy the entire Mandatory Priority-Miss Check block from
+   Section 4 below beneath the trigger, verbatim.
+3. Append the new scope's body beneath the block.
+4. Do NOT remove or rephrase the block to make it shorter. The
    block is the contract.
-4. The receiving Claude must answer the six numbered check items
+5. The receiving Claude must answer the six numbered check items
    FIRST, then proceed to the requested scope. If concerns exist,
    Claude states them as blocker or risk notes before answering.
    If none exist, Claude must state the explicit literal:
@@ -66,9 +80,8 @@ When drafting a new scope prompt for Claude in this project:
 
 ## 4. Mandatory Priority-Miss Check block (verbatim)
 
-The following block is the canonical copy. It must be prepended to
-every new scope prompt in this project. Do not edit it inline in
-the prompt - copy verbatim.
+The following block is the canonical copy. It must be prepended when
+`@pmc` is used. Do not edit it inline in the prompt - copy verbatim.
 
 ```
 Mandatory Priority-Miss Check - Required Before Scope Response

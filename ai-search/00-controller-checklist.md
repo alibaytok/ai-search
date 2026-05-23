@@ -207,7 +207,7 @@ Added by Codex direct update to prevent AI-user scope drift, false agreement, an
 - [ ] Claude and the user may challenge each other. Challenge handling must distinguish empathy from agreement and must revise positions only when new evidence or corrected reasoning supports revision.
 - [ ] Shared understanding gates execution but does not itself authorize new scope. Any new code, dataset, benchmark execution, metric policy, production artifact contract, or architecture selection still requires explicit Codex authorization.
 - [ ] If scope, authority, or shared understanding cannot be made explicit, Claude must stop and request clarification rather than proceed by implication.
-- [ ] Mandatory Priority-Miss Check precedes Section L: every new scope prompt in this project must begin with the verbatim block in `ai-search/00-claude-scope-prompt-template.md`, and the receiving Claude must answer its six numbered items before responding to the scope; the check verifies that the requested scope is the correct upstream scope rather than a downstream surface masking an unresolved upstream cause.
+- [ ] Mandatory Priority-Miss Check precedes Section L only when explicitly triggered: prompts that contain `@pmc` must include the verbatim block in `ai-search/00-claude-scope-prompt-template.md`, and the receiving Claude must answer its six numbered items before responding to the scope; ordinary questions, status checks, command-output requests, syntax fixes, clarification questions, short explanations, and same-scope continuations do not require the check unless `@pmc` is present.
 
 ## M. Deferred External Diagnostic Pattern Notes
 
