@@ -4,7 +4,7 @@ Document type: Baseline / Task Ledger
 Owner: Codex (controller)
 Author of entries: Claude (builder/documentation agent)
 Purpose: Authoritative record of every Work Order assigned to Claude, its scope, its allowed files, its submission, Codex's review result, and Codex's feedback.
-Status: WO-L0-WORKSHOP-TRACE-01 approved with notes after Codex review-time hardening (combined Level 0B workshop derived-material visible-trace scaffold; boundary doc corrected to fourteen per-prompt summary fields and runtime-input wording; 86/86 targeted and 1132/1132 full suite OK; no route created; real-benchmark-ready remains NO). WO-L0-WORKSHOP-01 approved with notes after Codex verification (documentation-only Awesome-Copilot workshop seed; workflow slots corrected to verified repo capacity; full suite 1046/1046 OK; no harness changes; real-benchmark-ready remains NO). WO-L0-FASTPLAN-01 approved after Codex verification (documentation-only Level 0B indexing-logic fast-plan checklist; full suite 1046/1046 OK; no harness changes; real-benchmark-ready remains NO). WO-L0-E2E-01 approved with notes after Codex review-time hardening (consolidated Level 0B manual seed end-to-end visible trace; 43 tests across 11 TestCase classes after Codex hardening; full suite 1046/1046 OK; candidate fragment totals remain zero by construction; real-benchmark-ready remains NO). WO-L0-MATERIAL-01 approved after Codex verification (scaffold-only Level 0B manual seed source record materialization; 53 tests across 9 TestCase classes; generates 65 WO-55-shaped source_reference_records and 65 WO-56-shaped source_records from metadata only; omits `qualified` from source_records to satisfy WO-56; full suite 1003/1003 OK; real-benchmark-ready remains NO). WO-L0-TRACE-01 approved after Codex verification (scaffold-only Level 0B manual seed visible trace execution; 64 tests across 16 TestCase classes; delegates to WO-L0-RUN-01 seed shape validation and WO-59 visible report; full suite 950/950 OK; real-benchmark-ready remains NO). WO-L0-RUN-01 approved with notes after Codex review-time hardening (scaffold-only Level 0B manual seed visible report runner; 71 tests across 12 TestCase classes after Codex hardening; exact-field input surfaces reject route/admission/qualification-shaped extra fields; full suite 886/886 OK; real-benchmark-ready remains NO). WO-L0-ITEMS-01 approved with notes after Codex review-time hardening (planning docs only; 65 item slots and 23 synthetic prompts; Constraints v1 authority framing corrected). WO-META-01 and WO-62 remain approved with notes after Codex review-time hardening.
+Status: WO-L0-WORKSHOP-REVIEW-01 approved with notes after Codex review-time hardening (final compact Level 0B workshop trace review layer; Codex added nested collection length validation so claimed counts must match payload lengths; 77/77 targeted and 1209/1209 full suite OK; no route created; real-benchmark-ready remains NO). WO-L0-WORKSHOP-TRACE-01 approved with notes after Codex review-time hardening (combined Level 0B workshop derived-material visible-trace scaffold; boundary doc corrected to fourteen per-prompt summary fields and runtime-input wording; 86/86 targeted and 1132/1132 full suite OK; no route created; real-benchmark-ready remains NO). WO-L0-WORKSHOP-01 approved with notes after Codex verification (documentation-only Awesome-Copilot workshop seed; workflow slots corrected to verified repo capacity; full suite 1046/1046 OK; no harness changes; real-benchmark-ready remains NO). WO-L0-FASTPLAN-01 approved after Codex verification (documentation-only Level 0B indexing-logic fast-plan checklist; full suite 1046/1046 OK; no harness changes; real-benchmark-ready remains NO). WO-L0-E2E-01 approved with notes after Codex review-time hardening (consolidated Level 0B manual seed end-to-end visible trace; 43 tests across 11 TestCase classes after Codex hardening; full suite 1046/1046 OK; candidate fragment totals remain zero by construction; real-benchmark-ready remains NO). WO-L0-MATERIAL-01 approved after Codex verification (scaffold-only Level 0B manual seed source record materialization; 53 tests across 9 TestCase classes; generates 65 WO-55-shaped source_reference_records and 65 WO-56-shaped source_records from metadata only; omits `qualified` from source_records to satisfy WO-56; full suite 1003/1003 OK; real-benchmark-ready remains NO). WO-L0-TRACE-01 approved after Codex verification (scaffold-only Level 0B manual seed visible trace execution; 64 tests across 16 TestCase classes; delegates to WO-L0-RUN-01 seed shape validation and WO-59 visible report; full suite 950/950 OK; real-benchmark-ready remains NO). WO-L0-RUN-01 approved with notes after Codex review-time hardening (scaffold-only Level 0B manual seed visible report runner; 71 tests across 12 TestCase classes after Codex hardening; exact-field input surfaces reject route/admission/qualification-shaped extra fields; full suite 886/886 OK; real-benchmark-ready remains NO). WO-L0-ITEMS-01 approved with notes after Codex review-time hardening (planning docs only; 65 item slots and 23 synthetic prompts; Constraints v1 authority framing corrected). WO-META-01 and WO-62 remain approved with notes after Codex review-time hardening.
 
 ---
 
@@ -14772,3 +14772,321 @@ planning artifact at runtime. Targeted suite remains 86/86 OK;
 full suite remains 1132/1132 OK. The module creates no route,
 performs no real indexing or retrieval, and leaves
 real-benchmark-ready as NO.
+
+## Work Order L0-WORKSHOP-REVIEW-01 - Level 0B Workshop Trace Review Scaffold
+
+### Scope
+
+Add one scaffold-only Level 0B review-layer module that consumes
+the already-loaded output dict from the upstream
+WO-L0-WORKSHOP-TRACE-01 scaffold and emits a fixed-shape review
+observation: shape checks, expected counts, per-category counts,
+candidate / workflow / rejection surface presence flags, per-prompt
+ambiguity / no-selection / rejection invariants, and an explicit
+bounded list of next-gap notes. This is the final compact review
+layer for the Level 0B Awesome-Copilot workshop path; passing the
+review means only that the scaffold trace surface is internally
+coherent for the workshop seed; it does NOT mean sufficient,
+necessary, best, complete, production-ready, recommended, selected,
+benchmark-ready, or route-ready.
+
+This is scaffold-only. No real indexing. No real retrieval. No
+ranking. No source qualification. No corpus admission. No route
+promotion. No architecture / vendor / library / index family / ANN
+backend / reranker / retrieval family / production system
+selection. Real-benchmark-ready remains NO.
+
+### Allowed Files
+
+- `harness/level0_workshop_trace_review.py` (new)
+- `harness/tests/test_level0_workshop_trace_review.py` (new)
+- `ai-search/68-level0-workshop-trace-review.md` (new)
+- `ai-search/00-open-questions.md` (append DC-070 + Status / Work
+  Order chronology refresh)
+- `ai-search/00-claude-task-ledger.md` (append this entry)
+
+### Status
+
+Implemented; pending Codex review.
+
+### Pre-Implementation Review Note
+
+Per packet requirement, Claude produced the six-question review
+note before any file edit:
+
+- Q1 (authorizes implementation): Yes. WO-L0-WORKSHOP-REVIEW-01 is
+  a scaffold-implementation WO. It creates one new module, one new
+  test file, and one new boundary document, plus tracker / ledger
+  appends. It does NOT authorize real indexing, retrieval, ranking,
+  source qualification, corpus admission, route selection,
+  benchmark execution, or any architecture-class selection.
+  Passing this review means only the scaffold trace surface is
+  internally coherent.
+- Q2 (source-content risk): No. The review module operates entirely
+  on already-loaded dict input from the upstream report. No URL
+  fetch, no file IO, no hash, no source body copy, no PDF
+  extraction, no subprocess. The module never inspects external
+  content - only structural fields and counts.
+- Q3 (prompt-copying risk): No. The module never copies
+  `prompt_text` into its output. Output fields are bounded counts
+  and bounded literal observation flags. Tests build a synthetic
+  input via the upstream module which itself uses synthetic prompt
+  strings.
+- Q4 (OQ closure / RK-039 risk): No. DC-070 states explicitly:
+  no OQ closed; OQ-003, OQ-015, OQ-031, OQ-035, OQ-048, OQ-049,
+  OQ-056, OQ-057, OQ-070, OQ-075, OQ-076 remain OPEN; RK-039
+  active and not duplicated.
+- Q5 (files): Created (3): module, test file, boundary doc
+  `68-*`. Appended (2): `00-open-questions.md` DC-070 row plus
+  Status / chronology refresh; ledger entry.
+- Q6 (forbidden work): no prior WO module / test modification
+  (including the upstream `level0_workshop_derived_trace`); no
+  `benchmark-fixtures/` mutation; no `00-controller-checklist.md`
+  modification; no planning doc modification; no real indexing /
+  retrieval / ranking / scoring; no source qualification; no
+  corpus admission; no route selection; no architecture-class
+  selection; no OQ closure; no RK-039 duplication; no IDE /
+  Copilot / Waza / VS Code / LLM integration; review module
+  imports no prior-WO public function.
+
+No scope drift detected.
+
+### Section L Scope Check
+
+Shared state before implementation: WO-L0-WORKSHOP-TRACE-01
+approved with notes after Codex review-time hardening; baseline
+test suite 1132/1132 OK after WO-L0-WORKSHOP-TRACE-01; project
+root contains exactly `ai-search/`, `harness/`, and
+`benchmark-fixtures/`; `benchmark-fixtures/` SHA inventory
+unchanged. The four standard authorization / readiness /
+selection booleans remain literal False; the two workshop
+booleans (`source_qualification_authorized`,
+`corpus_admission_authorized`) also literal False. OQ-003,
+OQ-015, OQ-031, OQ-035, OQ-048, OQ-049, OQ-056, OQ-057, OQ-070,
+OQ-075, OQ-076 remain OPEN. RK-039 remains active and is not
+duplicated. No prior `harness/` module or test file is modified.
+`ai-search/00-controller-checklist.md` is not modified.
+`benchmark-fixtures/` is not mutated. No prior WO boundary doc is
+modified. No existing L0 planning doc is modified.
+`ai-search/00-level0-source-candidate-inventory.md` is not
+modified.
+
+### Codex Instructions Recorded (WO-L0-WORKSHOP-REVIEW-01 Packet)
+
+Verbatim WO-L0-WORKSHOP-REVIEW-01 packet boundary instructions
+Claude was bound to:
+
+- Create the final compact review layer for the Level 0B
+  Awesome-Copilot workshop path.
+- Consume the already-loaded output dict from the upstream
+  workshop derived-trace scaffold.
+- Emit a bounded review report: pass / fail observations,
+  per-category counts, candidate / rejection surface checks,
+  ambiguity / no-selection checks, and explicit next-gap notes.
+- This is NOT real indexing, retrieval, ranking, source
+  qualification, corpus admission, route selection, benchmark
+  execution, or architecture selection.
+- Public surface:
+  `run_level0_workshop_trace_review(workshop_trace_report,
+  event_log) -> dict`.
+- Validation: non-dict input halts; missing or unknown top-level
+  key halts; `workshop_trace_kind` mismatch halts; expected count
+  mismatches halt (item 70, prompt 26, derived 70, route 51,
+  workflow 13, rejected 6, per-prompt-summary length 26); any
+  authorization / readiness / selection boolean True halts; any
+  route-status field present or True in any nested record halts;
+  any `candidate_only` not literal True halts; any `qualified` /
+  `corpus_admitted` / `route_object_created` /
+  `source_material_extracted` not literal False where present
+  halts; any `G. ambiguous` prompt without
+  `ambiguity_observed: True` halts; any `H. no-route` prompt with
+  non-zero attached counts or wrong reason halts; any
+  `I. near-miss/rejection` prompt with non-zero route / workflow
+  candidates or empty rejected attachment or wrong reason halts;
+  any forbidden language in input or output halts.
+- Required output shape: 24 keys including `workshop_review_kind`,
+  `input_trace_kind`, `review_passed`, `review_halt_required`,
+  five observed-count fields, three per-category-count fields,
+  three surface-observed flags, seven gating booleans all literal
+  False, `next_gap_notes` bounded four-entry list, and
+  `review_note`.
+- Static scan: no `open(`, `pathlib`, `urllib`, `http.client`,
+  `socket`, `subprocess`, `os.system`, `shutil`, `hashlib`,
+  `.hexdigest`, `.sha256`, `def query`, `def search`,
+  `def retrieve`, `def rank`, `score`, `scoring`, `copilot`,
+  `waza`, `vscode`, `openai`, `anthropic`, `claude_api`, `llm`
+  tokens; review module does not import or invoke prior WO public
+  functions.
+
+### Implementation Summary
+
+`harness/level0_workshop_trace_review.py` exposes
+`run_level0_workshop_trace_review(workshop_trace_report,
+event_log) -> dict` and returns a clean-pass dict with exactly
+twenty-four keys in `ALLOWED_OUTPUT_KEYS`. The module performs the
+following passes:
+
+1. Type check: `workshop_trace_report` must be a dict.
+2. Required-key presence and unknown-key rejection over the
+   nineteen-key required input set.
+3. Input forbidden-language scan.
+4. `workshop_trace_kind` literal check against
+   `level0_workshop_derived_trace`.
+5. Six top-level count checks plus five nested collection length
+   checks.
+6. Authorization-boolean check (six input booleans all literal
+   False).
+7. Nested route-status-field check across the five record
+   collections (`derived_material_records`,
+   `candidate_route_fragment_records`,
+   `candidate_workflow_fragment_records`,
+   `rejected_material_records`, `per_prompt_trace_summary`) for
+   any of the eleven forbidden route-status fields.
+8. Nested `candidate_only: True` and forbidden-flip check across
+   the five collections (forbidden flip keys: `qualified`,
+   `corpus_admitted`, `route_object_created`,
+   `source_material_extracted`).
+9. Per-prompt invariant checks: `G. ambiguous` carries
+   `ambiguity_observed: True`; `H. no-route` carries zero attached
+   counts and `no_selection_reason == "prompt_out_of_repo_scope"`;
+   `I. near-miss/rejection` carries zero route / workflow
+   candidate counts, non-zero rejected attachment count, and
+   `no_selection_reason == "repo_meta_section_near_miss"`.
+10. Per-category count check (`G` 3, `H` 2, `I` 2).
+11. Output forbidden-language scan.
+
+Halt events are recorded via `event_log.halt(reason=..., ...)`
+before raising thirteen named exceptions
+(`NonDictWorkshopTraceReport`, `MissingWorkshopTraceReportKey`,
+`UnknownWorkshopTraceReportKey`, `InvalidWorkshopTraceKind`,
+`WorkshopTraceCountMismatch`,
+`WorkshopTraceAuthorizationBooleanFlipped`,
+`WorkshopTraceRouteStatusFieldPresent`,
+`WorkshopTraceCandidateOnlyNotTrue`,
+`WorkshopTraceForbiddenFlipPresent`,
+`WorkshopTraceAmbiguousMissingMarker`,
+`WorkshopTraceNoRouteInvariantViolated`,
+`WorkshopTraceNearMissInvariantViolated`,
+`ForbiddenLanguageInLevel0WorkshopTraceReview`).
+
+The module invokes NO prior-WO public function. The upstream
+workshop derived-trace public function appears at the test layer
+only to build a clean synthetic input fixture; verified by
+static-scan test on the module source.
+
+DC-070 row appended to the Decisions Tracker in
+`ai-search/00-open-questions.md`. Status line and Work Order
+chronology line at the top of `ai-search/00-open-questions.md`
+updated to record WO-L0-WORKSHOP-REVIEW-01.
+
+### Changed Files (WO-L0-WORKSHOP-REVIEW-01)
+
+- `harness/level0_workshop_trace_review.py` (new file)
+- `harness/tests/test_level0_workshop_trace_review.py` (new file;
+  77 tests across 9 TestCase classes after Codex hardening)
+- `ai-search/68-level0-workshop-trace-review.md` (new file)
+- `ai-search/00-open-questions.md` (appended DC-070 row; refreshed
+  Status line and Work Order chronology line)
+- `ai-search/00-claude-task-ledger.md` (appended this entry)
+
+No `ai-search/00-controller-checklist.md` modification. No prior WO
+boundary doc / module / test modification (including the upstream
+`harness/level0_workshop_derived_trace.py` and its test file). No
+existing L0 planning doc modification. No `benchmark-fixtures/`
+mutation.
+
+### Evidence (WO-L0-WORKSHOP-REVIEW-01)
+
+- Section L scope quiz: emitted before edits; objective, allowed
+  files, forbidden files, halt conditions, authorization state,
+  and next safe step recorded; no scope drift detected.
+- Pre-implementation review note: emitted before edits; six
+  required questions answered.
+- Targeted test result:
+  `python -B -m unittest harness.tests.test_level0_workshop_trace_review`
+  reports 77/77 OK.
+- Full suite result:
+  `python -B -m unittest discover -s harness/tests` reports
+  1209/1209 OK after WO-L0-WORKSHOP-REVIEW-01 (1132 prior baseline
+  plus 77 new tests; no regression).
+- ASCII check: each of the three new files contains zero non-ASCII
+  bytes; `ai-search/00-open-questions.md` and
+  `ai-search/00-claude-task-ledger.md` contain zero non-ASCII bytes
+  after the appends.
+- `__pycache__` absence: no `__pycache__` directories under the
+  project root after the run.
+- Project root check: root contains exactly `ai-search/`,
+  `harness/`, and `benchmark-fixtures/` (plus standard `.git/` and
+  `.pytest_cache/` working directories).
+- `benchmark-fixtures/` unchanged: 10-file SHA-256 inventory
+  unchanged; no file added, modified, or removed.
+- `harness/` modified only by adding the new module and the new
+  test file; no prior `harness/` module or test file modified
+  (including the upstream `level0_workshop_derived_trace.py` and
+  its test file).
+- `ai-search/00-controller-checklist.md` unchanged: not touched.
+- OQ closure: none. OQ-003, OQ-015, OQ-031, OQ-035, OQ-048,
+  OQ-049, OQ-056, OQ-057, OQ-070, OQ-075, OQ-076 remain OPEN
+  (verified by row-by-row Status check).
+- RK-039 duplication: none. The RK-039 row appears exactly once
+  in the Rejected Assumptions Tracker.
+- Real-benchmark-ready remains NO.
+- Structural gaps noticed (non-binding): (1) The review module
+  hard-codes the expected counts for the workshop variant (item
+  70, prompt 26, route 51, workflow 13, rejected 6, ambiguous 3,
+  no-route 2, near-miss 2). If a future Codex packet alters the
+  workshop seed distribution, the review module's count
+  constants will need a coordinated update; the constants are
+  centralized at the top of the module to make this easy.
+  (2) The review module's per-prompt invariant set is bounded
+  to three categories (ambiguous, no-route, near-miss/rejection);
+  other category invariants (clear single-intent attaching at
+  least one candidate, workflow-intent attaching a workflow
+  candidate, etc.) are validated upstream in WO-L0-WORKSHOP-TRACE-01
+  tests, not re-checked here. This avoids duplicate enforcement
+  but means the review layer is narrower than a full invariant
+  audit; a deliberate scope choice. (3) The `next_gap_notes` list
+  is a bounded four-entry literal; future Codex packets that
+  implement semantic content extraction or real indexing or
+  cross-vendor seed execution should remove the corresponding
+  entry and refresh the boundary doc. (4) The module-source
+  scrubbing required rewording two docstring lines that
+  originally referenced the upstream function name explicitly;
+  the resulting prose says "upstream workshop derived-trace
+  scaffold" instead. The semantic is preserved.
+
+### Codex Review Result (WO-L0-WORKSHOP-REVIEW-01)
+
+APPROVED WITH NOTES after Codex review-time hardening.
+
+Codex found one concrete review-layer gap: the module validated the
+claimed top-level count fields but did not validate that the backing
+nested record collections had matching lengths. Codex added
+`_check_collection_length(...)`, enforced it for
+`derived_material_records`, `candidate_route_fragment_records`,
+`candidate_workflow_fragment_records`, `rejected_material_records`,
+and `per_prompt_trace_summary`, added four regression tests, and
+updated the boundary document accordingly. Targeted suite is 77/77
+OK; full suite is 1209/1209 OK. No route was created, no corpus was
+admitted, no source was qualified, and real-benchmark-ready remains
+NO.
+
+### Non-Claim Constraints (WO-L0-WORKSHOP-REVIEW-01)
+
+WO-L0-WORKSHOP-REVIEW-01 does not claim any observed count,
+observed surface flag, per-category count, per-prompt invariant
+check, next-gap-note literal, or computed observation is
+sufficient, necessary, superior, best, complete, production-ready,
+recommended, or selected. Passing this review means only that the
+scaffold trace surface is internally coherent for the Level 0B
+workshop seed. The bounded nineteen required-input-key set, the
+bounded six input gating booleans, the bounded seven output gating
+booleans, the bounded eleven route-status field list, the bounded
+four forbidden flip keys, the bounded three per-prompt invariant
+rules, the bounded four `next_gap_notes` literals, and the
+twenty-four `ALLOWED_OUTPUT_KEYS` are bounded by
+WO-L0-WORKSHOP-REVIEW-01 and are NOT claimed exhaustive.
+
+All DC-020 through DC-069 boundary invariants carry forward.
+WO-L0-WORKSHOP-REVIEW-01 does not amend or broaden DC-003 through
+DC-069. Real-benchmark-ready remains NO.
