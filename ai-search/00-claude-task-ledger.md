@@ -14807,7 +14807,7 @@ selection. Real-benchmark-ready remains NO.
 
 ### Status
 
-Implemented; pending Codex review.
+Approved with notes after Codex review-time hardening.
 
 ### Pre-Implementation Review Note
 
@@ -15255,3 +15255,328 @@ harness change, benchmark-fixtures mutation, OQ closure, RK-039
 duplication, route creation, source qualification, corpus
 admission, benchmark execution, or real-benchmark-ready change was
 introduced.
+
+## Work Order L0-WORKSHOP-FRAME-A - Level 0B Workshop Normalized Prompt View
+
+### Scope
+
+Add the first stage of the Level 0B Intent Core: a deterministic
+NormalizedPromptView + InputGuard module that accepts one free-text
+user prompt and emits a fixed-shape eighteen-key view dict with
+raw / trimmed / casefolded / ascii-folded views plus a token list
+and per-token spans into the trimmed text. The module is the
+upstream foundation for the future Evidence-Traced Intent Frame
+Parser. This is Stage A of three (FRAME-B = SignalEvidence;
+FRAME-C = CanonicalIntentFrame + ShapeTouchPlan +
+WorkshopPromptRecordAdapter).
+
+This is scaffold-only. No signal extraction. No frame synthesis.
+No shape-touch plan. No route or workflow candidate. No real
+indexing. No real retrieval. No ranking. No source qualification.
+No corpus admission. No architecture / vendor / library / index
+family / ANN backend / reranker / retrieval family / production
+system selection. No provider / LLM / external API / embedding /
+vector call. Real-benchmark-ready remains NO. RK-058 acknowledged
+and remains OPEN; this packet does NOT close it.
+
+### Allowed Files
+
+- `harness/level0_workshop_normalized_prompt_view.py` (new)
+- `harness/tests/test_level0_workshop_normalized_prompt_view.py` (new)
+- `ai-search/69-level0-workshop-normalized-prompt-view.md` (new)
+- `ai-search/00-open-questions.md` (append DC-071 + Status / Work
+  Order chronology refresh)
+- `ai-search/00-claude-task-ledger.md` (append this entry)
+
+### Status
+
+Approved with notes after Codex review-time hardening.
+
+### Mandatory Priority-Miss Check (project-local convention)
+
+Per `ai-search/00-claude-scope-prompt-template.md`, the
+Mandatory Priority-Miss Check was applied at the top of this
+packet:
+
+- Higher-priority prerequisite missed? No - this packet IS the
+  upstream foundation (Stage A of the FRAME-A / B / C sequencing).
+- Downstream surface skipping upstream cause? No - this builds the
+  actual upstream layer.
+- Safer sequencing? No - A then B then C is already the agreed
+  split.
+- Conflict with prior invariants / OQs / RK / real-benchmark-ready
+  NO? One thing to verify: the packet references RK-058. Verified
+  in `00-open-questions.md` at line 170 (status OPEN); no
+  conflict.
+- Concerns to flag first? RK-058 verification (verified above);
+  no other concerns.
+- Result: no higher-priority missed scope found.
+
+### Pre-Implementation Review Note
+
+Per packet requirement, Claude produced the six-question review
+note before any file edit:
+
+- Q1 (authorizes implementation): Yes. WO-L0-WORKSHOP-FRAME-A is
+  a scaffold-implementation WO. It creates one new module, one
+  new test file, and one new boundary document, plus tracker /
+  ledger appends. It does NOT authorize signal extraction, frame
+  synthesis, shape-touch mapping, route creation, retrieval,
+  ranking, scoring, or any architecture-class selection.
+- Q2 (source-content risk): No. The module operates only on a
+  single in-memory string input; no URL fetch, file IO, hash,
+  PDF, or subprocess.
+- Q3 (prompt-copying risk): No. The module preserves the raw
+  input verbatim in the `raw_text` field; this is normalization
+  plumbing, not prompt corpus building. Tests use synthetic
+  strings authored locally for the test fixture.
+- Q4 (OQ closure / RK-039 / RK-058 risk): No. DC-071 states
+  explicitly: no OQ closed; all eleven targeted OQs remain OPEN;
+  RK-039 unchanged and single; RK-058 acknowledged but NOT closed
+  (full closure requires FRAME-B + FRAME-C plus signal-evidence
+  tests).
+- Q5 (files): Created (3): module, test file, boundary doc
+  `69-*`. Appended (2): `00-open-questions.md` DC-071 row plus
+  Status / chronology refresh; ledger entry.
+- Q6 (forbidden work): no prior WO module / test modification
+  (including the existing
+  `level0_workshop_user_intent_mapper.py`); no
+  `benchmark-fixtures/` mutation; no
+  `00-controller-checklist.md` modification; no signal-extraction
+  code; no frame-synthesis code; no shape-touch code; no route
+  creation; no source qualification; no corpus admission; no
+  real indexing / retrieval / ranking / scoring / embedding /
+  vector / ANN / reranker; no provider / LLM / external API
+  call; no architecture-class selection; no OQ closure; no
+  RK-039 duplication; no universal-intent-understanding claim.
+
+No scope drift detected.
+
+### Section L Scope Check
+
+Shared state before implementation: WO-L0-WORKSHOP-REVIEW-01
+approved with notes after Codex review-time hardening; baseline
+test suite 1228/1228 OK; project root contains exactly
+`ai-search/`, `harness/`, and `benchmark-fixtures/`;
+`benchmark-fixtures/` SHA inventory unchanged. The four standard
+authorization / readiness / selection booleans plus the two
+workshop booleans plus the workshop `route_created` boolean
+remain literal False. OQ-003, OQ-015, OQ-031, OQ-035, OQ-048,
+OQ-049, OQ-056, OQ-057, OQ-070, OQ-075, OQ-076 remain OPEN.
+RK-039 remains active and is not duplicated. RK-058 remains
+active and is not duplicated. No prior `harness/` module or test
+file is modified. `ai-search/00-controller-checklist.md` is not
+modified. `benchmark-fixtures/` is not mutated. No prior WO
+boundary doc is modified. No existing L0 planning doc is
+modified. `ai-search/00-level0-source-candidate-inventory.md` is
+not modified.
+
+### Codex Instructions Recorded (WO-L0-WORKSHOP-FRAME-A Packet)
+
+Verbatim WO-L0-WORKSHOP-FRAME-A packet boundary instructions
+Claude was bound to:
+
+- Build the first stage of the Level 0B Intent Core: a
+  deterministic NormalizedPromptView + InputGuard for free-text
+  workshop prompts.
+- Upstream foundation for the future Evidence-Traced Intent Frame
+  Parser pipeline: PromptText -> InputGuard ->
+  NormalizedPromptView -> TokenStream with spans.
+- Does NOT build signal extraction, CanonicalIntentFrame
+  synthesis, ShapeTouchPlan, or route / workflow candidate
+  mapping. Those come later in FRAME-B and FRAME-C.
+- Allowed files exactly: the new module, the new test file, the
+  new boundary doc `69-*`, the open-questions DC-071 append and
+  Status / chronology refresh, and the ledger append.
+- Forbidden: do not modify existing mapper module / tests; do not
+  modify workshop trace / review modules / tests; do not modify
+  `benchmark-fixtures/`; do not modify
+  `00-controller-checklist.md`; do not create signal extraction,
+  CanonicalIntentFrame, ShapeTouchPlan, route objects; do not
+  select routes; do not qualify sources; do not admit corpus; do
+  not run real benchmark; do not implement real indexing /
+  retrieval / ranking / scoring / embeddings / vectors / ANN /
+  rerankers / provider calls / LLM calls / external API calls; do
+  not select architecture / vendor / library / index-family; do
+  not close OQs; do not duplicate RK-039; do not claim universal
+  intent understanding / production readiness / completeness /
+  benchmark readiness.
+- Public surface:
+  `build_level0_workshop_normalized_prompt_view(input_prompt,
+  event_log) -> dict`.
+- Halt-before-raise on non-string input, empty input, whitespace-
+  only input, input exceeding max length.
+- `MAX_PROMPT_LENGTH` must be a named constant.
+- Preserve original input string unchanged.
+- Emit deterministic normalized views: `raw_text`, `trimmed_text`,
+  `casefolded_text`, `ascii_folded_text`, `tokens`,
+  `token_spans`.
+- Python standard library only.
+- ASCII folding must be deterministic and documented.
+- Module source itself must be ASCII-only.
+- Turkish / non-ASCII input must be accepted, but source literals
+  must remain ASCII.
+- Token spans must refer to positions in `trimmed_text`.
+- Punctuation handling must be deterministic.
+- Do not emit score / rank / confidence fields.
+- Do not emit route / status fields.
+- Do not mutate input.
+
+### Implementation Summary
+
+`harness/level0_workshop_normalized_prompt_view.py` exposes
+`build_level0_workshop_normalized_prompt_view(input_prompt,
+event_log) -> dict` and returns a clean-pass dict with exactly
+eighteen keys in `ALLOWED_OUTPUT_KEYS`. The module performs the
+following passes:
+
+1. Type check: `input_prompt` must be a string; else
+   `NonStringInputPrompt`.
+2. Empty-string check: `len(input_prompt) > 0`; else
+   `EmptyInputPrompt`.
+3. Length check: `len(input_prompt) <= MAX_PROMPT_LENGTH` (2048);
+   else `InputPromptExceedsMaxLength`.
+4. Whitespace-only check: `input_prompt.strip()` must be
+   non-empty; else `WhitespaceOnlyInputPrompt`.
+5. Build casefolded text via `str.casefold()`.
+6. Build ASCII-folded text by first mapping Turkish dotless-i
+   (`U+0131`) to ASCII `i`, then applying deterministic
+   `unicodedata.normalize("NFKD", translated_casefolded_text)
+   .encode("ascii", "ignore").decode("ascii")`.
+7. Preserve user-authored prompt text as evidence input; do not
+   treat user words as project-authored claims.
+8. Tokenize the trimmed text on runs of whitespace (`\s+`); no
+   empty tokens; punctuation kept attached to the token it abuts.
+9. Build per-token `[start, end]` spans into `trimmed_text` such
+   that `trimmed_text[start:end] == token`.
+10. Defensive route-status-field absence check on the result
+    (eleven forbidden field names).
+11. Forbidden-language scan over module-authored result strings only.
+
+Halt events are recorded via `event_log.halt(reason=..., ...)`
+before raising five named exceptions (the halt-before-raise
+pattern). The module invokes NO prior-WO public function
+(verified by static-scan test).
+
+DC-071 row appended to the Decisions Tracker in
+`ai-search/00-open-questions.md`. Status line and Work Order
+chronology line at the top of `ai-search/00-open-questions.md`
+updated to record WO-L0-WORKSHOP-FRAME-A.
+
+### Changed Files (WO-L0-WORKSHOP-FRAME-A)
+
+- `harness/level0_workshop_normalized_prompt_view.py` (new file)
+- `harness/tests/test_level0_workshop_normalized_prompt_view.py`
+  (new file; 59 tests across 10 TestCase classes)
+- `ai-search/69-level0-workshop-normalized-prompt-view.md` (new file)
+- `ai-search/00-open-questions.md` (appended DC-071 row; refreshed
+  Status line and Work Order chronology line)
+- `ai-search/00-claude-task-ledger.md` (appended this entry)
+
+No `ai-search/00-controller-checklist.md` modification. No prior
+WO boundary doc / module / test modification, including the
+existing `harness/level0_workshop_user_intent_mapper.py` and its
+test file, and including the WO-L0-WORKSHOP-TRACE-01 and
+WO-L0-WORKSHOP-REVIEW-01 modules and tests. No existing L0
+planning doc modification. No `benchmark-fixtures/` mutation.
+
+### Evidence (WO-L0-WORKSHOP-FRAME-A)
+
+- Mandatory Priority-Miss Check: applied; no higher-priority
+  missed scope found (RK-058 verification recorded).
+- Section L scope quiz: emitted before edits; objective, allowed
+  files, forbidden files, halt conditions, authorization state,
+  and next safe step recorded; no scope drift detected.
+- Pre-implementation review note: emitted before edits; six
+  required questions answered.
+- Targeted test result:
+  `python -B -m unittest harness.tests.test_level0_workshop_normalized_prompt_view`
+  reports 59/59 OK.
+- Full suite result:
+  `python -B -m unittest discover -s harness/tests` reports
+  1287/1287 OK after WO-L0-WORKSHOP-FRAME-A (1228 prior baseline
+  plus 59 new tests; no regression).
+- ASCII check: each of the three new files contains zero
+  non-ASCII bytes; `ai-search/00-open-questions.md` and
+  `ai-search/00-claude-task-ledger.md` contain zero non-ASCII
+  bytes after the appends.
+- `__pycache__` absence: no `__pycache__` directories under the
+  project root after the run.
+- Project root check: root contains exactly `ai-search/`,
+  `harness/`, and `benchmark-fixtures/`.
+- `benchmark-fixtures/` unchanged: 10-file SHA-256 inventory
+  unchanged; no file added, modified, or removed.
+- `harness/` modified only by adding the new module and the new
+  test file; no prior `harness/` module or test file modified,
+  including the existing
+  `harness/level0_workshop_user_intent_mapper.py` and its test
+  and including the WO-L0-WORKSHOP-TRACE-01 and
+  WO-L0-WORKSHOP-REVIEW-01 modules and tests.
+- `ai-search/00-controller-checklist.md` unchanged: not touched.
+- OQ closure: none. OQ-003, OQ-015, OQ-031, OQ-035, OQ-048,
+  OQ-049, OQ-056, OQ-057, OQ-070, OQ-075, OQ-076 remain OPEN
+  (verified by row-by-row Status check).
+- RK-039 duplication: none. The RK-039 row appears exactly once
+  in the Rejected Assumptions Tracker.
+- RK-058 acknowledged: RK-058 row appears exactly once and
+  remains OPEN; this packet did NOT close it.
+- Real-benchmark-ready remains NO.
+- Structural gaps noticed (non-binding): (1) The `MAX_PROMPT_LENGTH`
+  constant is set to 2048 as a working scaffold value; a future
+  packet may raise or lower it after empirical observation of
+  Level 0B prompt lengths. (2) The Turkish-dotless-i plus NFKD-then-ASCII-ignore fold remains
+  lossy for characters with no ASCII base and no explicit mapping;
+  this is documented in the module docstring and boundary doc,
+  and is acceptable for the scaffold use case but is NOT claimed
+  sufficient for any real benchmark use. (3) The tokenizer keeps
+  punctuation attached to its neighboring token; this is a
+  deliberate choice for FRAME-A so that FRAME-B can decide which
+  punctuation classes (sentence-terminal vs. clause-internal) to
+  strip per signal family. A future FRAME-B packet may add a
+  punctuation-aware tokenization layer. (4) The static-scan test
+  list adds new embedding / vector / ANN / reranker tokens
+  beyond the prior workshop modules' lists; this is deliberate
+  given the Intent Core boundary but means the static-scan suite
+  is no longer identical across all workshop modules. (5) The
+  existing keyword-based `harness/level0_workshop_user_intent_mapper.py`
+  is unchanged and remains the v0 mapper; a future packet (after
+  FRAME-B and FRAME-C land) will wire it as a compatibility shim
+  per the migration plan.
+
+### Non-Claim Constraints (WO-L0-WORKSHOP-FRAME-A)
+
+WO-L0-WORKSHOP-FRAME-A does not claim any observed token, span,
+fold, count, or normalization step is sufficient, necessary,
+superior, best, complete, production-ready, recommended,
+selected, or benchmark-ready. The module does not claim universal
+intent understanding. The bounded eighteen `ALLOWED_OUTPUT_KEYS`,
+the bounded four-entry `NORMALIZATION_STEPS`, the
+`MAX_PROMPT_LENGTH` (2048), the deterministic
+Turkish-dotless-i plus NFKD-then-ASCII-ignore folding rule, and the whitespace-split
+tokenization with spans are bounded by WO-L0-WORKSHOP-FRAME-A and
+are NOT claimed exhaustive.
+
+All DC-020 through DC-070 boundary invariants carry forward.
+WO-L0-WORKSHOP-FRAME-A does not amend or broaden DC-003 through
+DC-070. Real-benchmark-ready remains NO. RK-058 is acknowledged
+and remains OPEN.
+
+### Codex Review Result (WO-L0-WORKSHOP-FRAME-A)
+
+APPROVED WITH NOTES after Codex review-time hardening.
+
+Codex verified FRAME-A locally and changed only the allowed five-file
+FRAME-A scope. Two contract hardening fixes were applied:
+
+1. User-authored prompt text containing project-forbidden claim words is
+   now preserved as evidence input and is not treated as a module-authored
+   project claim. The forbidden-language scan now covers only
+   module-authored result strings (`normalized_prompt_view_kind`,
+   `normalization_steps`, and `view_note`).
+2. Turkish dotless-i (`U+0131`) is explicitly mapped to ASCII `i`
+   before NFKD ASCII-ignore folding, so Turkish prompt shapes such as
+   `is akisi` survive normalization for FRAME-B signal extraction.
+
+Codex added regression coverage for both points. Targeted suite is
+59/59 OK. Full suite is 1287/1287 OK. Real-benchmark-ready remains
+NO. RK-058 remains OPEN pending FRAME-B / FRAME-C / FRAME-D.
