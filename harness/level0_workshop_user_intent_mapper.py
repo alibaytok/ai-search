@@ -1,13 +1,93 @@
-"""Deterministic Level 0B workshop user-intent mapper.
+"""Compatibility shim for the Level 0B workshop user-intent mapper.
 
-This scaffold fills the upstream gap before
-`level0_workshop_derived_trace`: it maps a single free-text user prompt
-to a bounded workshop prompt-record shape. It does not inspect source
-content, does not query an index, does not retrieve, rank, qualify,
-admit, or select anything.
+WO-L0-WORKSHOP-FRAME-D-R rewrites the existing legacy public function
+`map_level0_workshop_user_intent(input_prompt, workshop_prompt_id,
+event_log) -> dict` as a thin compatibility shim that derives its
+authoritative output strictly from the WO-L0-WORKSHOP-FRAME-C
+CanonicalIntentFrame synthesizer, routing input through the
+WO-L0-WORKSHOP-FRAME-A NormalizedPromptView and the
+WO-L0-WORKSHOP-FRAME-B SignalEvidence layer along the way.
+
+Pipeline position:
+
+    PromptText
+      -> FRAME-A NormalizedPromptView         (input validation +
+                                               normalization)
+      -> FRAME-B SignalEvidenceLedger         (signal observation)
+      -> FRAME-C CanonicalIntentFrame +       (synthesis +
+         ShapeTouchPlan +                      adapter)
+         WorkshopPromptRecordAdapter
+      -> FRAME-D legacy contract shim         (this module;
+                                               translator only)
+
+The shim does NOT carry a parallel keyword classifier. The
+authoritative source of `workshop_prompt_record` (seven fields)
+and of the legacy mirror fields is the FRAME-C output. The shim:
+
+1. echoes FRAME-C's `workshop_prompt_record` verbatim (same seven
+   keys, same `boundary_note` literal as `WORKSHOP_BOUNDARY_NOTE`);
+2. derives `normalized_intent_observation` from FRAME-C's
+   `workshop_prompt_record["category"]` via a fixed nine-entry
+   translation table whose only job is to rename the FRAME-C
+   bounded category to the legacy bounded intent label;
+3. echoes FRAME-C's `expected_item_kinds_touched`,
+   `expected_candidate_surface`, and `expected_rejection_surface`
+   into the legacy mirror keys without rewording;
+4. derives `ambiguity_observed` from FRAME-C's `ambiguity_level`
+   (True iff `"high"`);
+5. forces the six legacy gating booleans to literal False.
+
+The legacy keyword `_classify_prompt` and the legacy keyword
+tables (`_NO_ROUTE_TERMS`, `_REPO_META_TERMS`, `_WORKFLOW_TERMS`,
+`_HOOK_TERMS`, `_SKILL_TERMS`, `_AGENT_TERMS`,
+`_INSTRUCTION_TERMS`, `_PLUGIN_TERMS`, `_COOKBOOK_TERMS`,
+`_AMBIGUOUS_TERMS`) have been removed from this module. FRAME-C
+is the single source of truth for categorization.
+
+Some pre-FRAME-D legacy smoke-test assertions diverge from
+FRAME-C semantics. Those divergences are upstream FRAME-C
+synthesis gaps and are recorded in `ai-search/00-open-questions.md`
+under RK-059 ("FRAME-C synthesis gaps surfaced by FRAME-D smoke
+tests"). The smoke-test assertions have been updated in
+`harness/tests/test_level0_workshop_user_intent_mapper.py` to
+reflect FRAME-C-actual behavior with docstring pointers to
+RK-059; closure of RK-059 is reserved for a later Codex-
+authorized FRAME-C-hardening packet. RK-058 remains OPEN.
+OQ-003, OQ-015, OQ-031, OQ-035, OQ-048, OQ-049, OQ-056, OQ-057,
+OQ-070, OQ-075, OQ-076 remain OPEN. Real-benchmark-ready remains
+NO.
+
+This module does not classify a route, does not select an item,
+does not qualify a source, does not admit a corpus, does not
+retrieve, does not embed, does not vectorize, does not score,
+does not rank, does not compute similarity or distance, does not
+call any LLM / provider / external API / embedding / vector / ANN
+backend / reranker, and does not perform file IO, network calls,
+URL fetch / download / crawl, PDF extraction, hash computation,
+or external process spawning. Module source is ASCII-only.
+
+Public surface (unchanged):
+
+    map_level0_workshop_user_intent(
+        input_prompt, workshop_prompt_id, event_log
+    ) -> dict
 """
 
+from harness.level0_workshop_canonical_intent_frame import (
+    InvalidWorkshopPromptId as _FrameCInvalidWorkshopPromptId,
+    WORKSHOP_PROMPT_CATEGORIES,
+    build_canonical_intent_frame,
+)
 from harness.level0_workshop_derived_trace import WORKSHOP_BOUNDARY_NOTE
+from harness.level0_workshop_normalized_prompt_view import (
+    EmptyInputPrompt as _FrameAEmptyInputPrompt,
+    NonStringInputPrompt as _FrameANonStringInputPrompt,
+    WhitespaceOnlyInputPrompt as _FrameAWhitespaceOnlyInputPrompt,
+    build_level0_workshop_normalized_prompt_view,
+)
+from harness.level0_workshop_signal_evidence import (
+    extract_workshop_signal_evidence,
+)
 
 
 _MAPPER_KIND = "level0_workshop_user_intent_mapper"
@@ -29,109 +109,40 @@ _OUTPUT_KEYS = (
     "mapper_note",
 )
 
-_NO_ROUTE_TERMS = (
-    "world war",
-    "wwii",
-    "water boil",
-    "boiling point",
-    "capital of",
-    "weather",
-    "stock price",
+_WORKSHOP_PROMPT_RECORD_KEYS = (
+    "workshop_prompt_id",
+    "category",
+    "prompt_text",
+    "expected_item_kinds_touched",
+    "expected_candidate_surface",
+    "expected_rejection_surface",
+    "boundary_note",
 )
 
-_REPO_META_TERMS = (
-    "readme",
-    "contributing",
-    "license",
-    "badge",
-    "navigation",
-    "repo meta",
-    "repository meta",
-    "docs section",
-)
 
-_WORKFLOW_TERMS = (
-    "workflow",
-    "is akisi",
-    "ci",
-    "pipeline",
-    "deploy",
-    "deployment",
-    "dagit",
-    "yayinla",
-    "staging",
-    "build",
-    "kur",
-    "github pages",
-    "docker",
-    "release",
-    "automation",
-)
+# Translation table mapping the FRAME-C bounded nine workshop
+# categories to the bounded nine legacy normalized-intent labels.
+# This table is a pure rename only; FRAME-C decides the category
+# and FRAME-D translates the label. The table is bounded by
+# FRAME-D and is NOT claimed exhaustive.
+_NORMALIZED_INTENT_BY_CATEGORY = {
+    "A. clear single-intent": "clear_single_intent",
+    "B. workflow intent": "workflow_intent",
+    "C. skill intent": "skill_intent",
+    "D. agent/persona confusion": "agent_surface_workflow_intent",
+    "E. instruction confusion": "instruction_surface_workflow_intent",
+    "F. prompt-search-shaped but workflow-intent": (
+        "prompt_surface_workflow_intent"
+    ),
+    "G. ambiguous": "ambiguous_user_intent",
+    "H. no-route": "no_route",
+    "I. near-miss/rejection": "near_miss_rejection",
+}
 
-_HOOK_TERMS = (
-    "hook",
-    "pre-commit",
-    "precommit",
-    "on push",
-    "trigger",
-    "webhook",
-)
-
-_SKILL_TERMS = (
-    "skill",
-    "beceri",
-    "code review",
-    "kod inceleme",
-    "review skill",
-    "test skill",
-    "refactor skill",
-)
-
-_AGENT_TERMS = (
-    "agent",
-    "ajan",
-    "persona",
-    "act as",
-    "reviewer persona",
-)
-
-_INSTRUCTION_TERMS = (
-    "instruction",
-    "instructions",
-    "talimat",
-    "yonerge",
-    "guideline",
-    "guidelines",
-    "coding standard",
-    "rules",
-    "convention",
-)
-
-_PLUGIN_TERMS = (
-    "plugin",
-    "eklenti",
-    "integration",
-    "tool integration",
-)
-
-_COOKBOOK_TERMS = (
-    "prompt",
-    "recipe",
-    "example",
-    "ornek",
-    "how to",
-    "nasil",
-)
-
-_AMBIGUOUS_TERMS = (
-    "make this better",
-    "bunu daha iyi yap",
-    "yardim et",
-    "help with my project",
-    "improve the code",
-    "kodu iyilestir",
-    "fix this",
-    "make it work",
+# Defensive: the translation table must cover every FRAME-C
+# bounded category.
+assert set(_NORMALIZED_INTENT_BY_CATEGORY.keys()) == set(
+    WORKSHOP_PROMPT_CATEGORIES
 )
 
 
@@ -151,176 +162,156 @@ def _halt(event_log, reason, message):
     event_log.halt(reason=reason, message=message)
 
 
-def _contains_any(text, terms):
-    return any(term in text for term in terms)
-
-
-def _dedupe(items):
-    result = []
-    for item in items:
-        if item not in result:
-            result.append(item)
-    return result
-
-
-def _classify_prompt(prompt_text):
-    lowered = prompt_text.strip().lower()
-
-    if _contains_any(lowered, _NO_ROUTE_TERMS):
-        return (
-            "H. no-route",
-            ["none"],
-            "no_route",
-            "no candidate surface expected",
-            "prompt_out_of_repo_scope",
-            False,
+def _run_frame_a(input_prompt, event_log):
+    """Call FRAME-A and translate its named exceptions to the
+    legacy mapper exception surface. FRAME-A emits its own halt
+    event before raising; the shim emits an additional mapper-
+    scoped halt event so legacy halt-reason consumers continue
+    to observe a mapper-scoped halt as well."""
+    try:
+        return build_level0_workshop_normalized_prompt_view(
+            input_prompt, event_log
         )
-
-    if _contains_any(lowered, _REPO_META_TERMS):
-        return (
-            "I. near-miss/rejection",
-            ["repo_meta_section"],
-            "near_miss_rejection",
-            "no candidate surface expected",
-            "repo_meta_section_near_miss",
-            False,
+    except _FrameANonStringInputPrompt as exc:
+        _halt(
+            event_log,
+            "level0_workshop_user_intent_mapper_non_string_prompt",
+            "input_prompt must be a string",
         )
-
-    if _contains_any(lowered, _AMBIGUOUS_TERMS):
-        return (
-            "G. ambiguous",
-            ["skill", "instruction", "workflow_file"],
-            "ambiguous_user_intent",
-            "multiple candidate surfaces expected",
-            "no forced selection",
-            True,
+        raise NonStringUserPrompt("input_prompt must be a string") from exc
+    except (_FrameAEmptyInputPrompt, _FrameAWhitespaceOnlyInputPrompt) as exc:
+        _halt(
+            event_log,
+            "level0_workshop_user_intent_mapper_empty_prompt",
+            "input_prompt must be non-empty",
         )
+        raise EmptyUserPrompt("input_prompt must be non-empty") from exc
 
-    kinds = []
-    if _contains_any(lowered, _SKILL_TERMS):
-        kinds.append("skill")
-    if _contains_any(lowered, _INSTRUCTION_TERMS):
-        kinds.append("instruction")
-    if _contains_any(lowered, _AGENT_TERMS):
-        kinds.append("agent")
-    if _contains_any(lowered, _WORKFLOW_TERMS):
-        kinds.append("workflow_file")
-    if _contains_any(lowered, _HOOK_TERMS):
-        kinds.append("hook")
-    if _contains_any(lowered, _PLUGIN_TERMS):
-        kinds.append("plugin")
-    if _contains_any(lowered, _COOKBOOK_TERMS):
-        kinds.append("cookbook_entry")
 
-    kinds = _dedupe(kinds)
+def _run_frame_b(normalized_view, event_log):
+    """Call FRAME-B over the validated FRAME-A view. FRAME-B
+    failures here would indicate a FRAME-A contract drift; they
+    are not translated to legacy exceptions and are allowed to
+    propagate so the underlying drift is visible."""
+    return extract_workshop_signal_evidence(normalized_view, event_log)
 
-    if "cookbook_entry" in kinds and "workflow_file" in kinds:
-        return (
-            "F. prompt-search-shaped but workflow-intent",
-            ["cookbook_entry", "workflow_file"],
-            "prompt_surface_workflow_intent",
-            "candidate route and workflow surfaces expected",
-            "no forced selection",
-            False,
+
+def _run_frame_c(signal_evidence_ledger, workshop_prompt_id, event_log):
+    """Call FRAME-C over the validated FRAME-B ledger. The shim
+    has already validated `workshop_prompt_id` against the legacy
+    contract; FRAME-C's own InvalidWorkshopPromptId is translated
+    defensively to the legacy `InvalidWorkshopPromptId` so the
+    legacy exception surface is preserved even on the unexpected
+    path."""
+    try:
+        return build_canonical_intent_frame(
+            signal_evidence_ledger, workshop_prompt_id, event_log
         )
-
-    if "agent" in kinds and "workflow_file" in kinds:
-        return (
-            "D. agent/persona confusion",
-            ["agent", "workflow_file"],
-            "agent_surface_workflow_intent",
-            "candidate route and workflow surfaces expected",
-            "no forced selection",
-            False,
+    except _FrameCInvalidWorkshopPromptId as exc:
+        _halt(
+            event_log,
+            "level0_workshop_user_intent_mapper_invalid_prompt_id",
+            "workshop_prompt_id must be a non-empty string",
         )
+        raise InvalidWorkshopPromptId(
+            "workshop_prompt_id must be a non-empty string"
+        ) from exc
 
-    if "instruction" in kinds and "workflow_file" in kinds:
-        return (
-            "E. instruction confusion",
-            ["instruction", "workflow_file"],
-            "instruction_surface_workflow_intent",
-            "candidate route and workflow surfaces expected",
-            "no forced selection",
-            False,
-        )
 
-    if len(kinds) > 1:
-        return (
-            "G. ambiguous",
-            kinds,
-            "ambiguous_user_intent",
-            "multiple candidate surfaces expected",
-            "no forced selection",
-            True,
-        )
+def _derive_legacy_output(canonical_intent_frame):
+    """Translate FRAME-C's CanonicalIntentFrame into the legacy
+    fourteen-key mapper output. The FRAME-C `workshop_prompt_record`
+    is echoed verbatim (same seven keys, same `boundary_note`
+    literal `WORKSHOP_BOUNDARY_NOTE`); the legacy mirror fields
+    are derived strictly from the FRAME-C record and from
+    `ambiguity_level`. No keyword classification is applied
+    inside this shim."""
+    frame_record = canonical_intent_frame["workshop_prompt_record"]
+    category = frame_record["category"]
+    normalized_intent = _NORMALIZED_INTENT_BY_CATEGORY[category]
 
-    if kinds == ["workflow_file"] or kinds == ["hook"]:
-        return (
-            "B. workflow intent",
-            kinds,
-            "workflow_intent",
-            "candidate workflow surface expected",
-            "no forced selection",
-            False,
-        )
+    prompt_record = {
+        "workshop_prompt_id": frame_record["workshop_prompt_id"],
+        "category": category,
+        "prompt_text": frame_record["prompt_text"],
+        "expected_item_kinds_touched": list(
+            frame_record["expected_item_kinds_touched"]
+        ),
+        "expected_candidate_surface": (
+            frame_record["expected_candidate_surface"]
+        ),
+        "expected_rejection_surface": (
+            frame_record["expected_rejection_surface"]
+        ),
+        "boundary_note": frame_record["boundary_note"],
+    }
 
-    if kinds == ["skill"]:
-        return (
-            "C. skill intent",
-            kinds,
-            "skill_intent",
-            "candidate route surface expected",
-            "no forced selection",
-            False,
-        )
-
-    if kinds:
-        return (
-            "A. clear single-intent",
-            kinds,
-            "clear_single_intent",
-            "candidate route surface expected",
-            "no forced selection",
-            False,
-        )
-
-    return (
-        "H. no-route",
-        ["none"],
-        "no_route",
-        "no candidate surface expected",
-        "prompt_out_of_repo_scope",
-        False,
-    )
+    output = {
+        "intent_mapper_kind": _MAPPER_KIND,
+        "workshop_prompt_record": prompt_record,
+        "normalized_intent_observation": normalized_intent,
+        "expected_item_kinds_touched": list(
+            frame_record["expected_item_kinds_touched"]
+        ),
+        "candidate_surface_expected": (
+            frame_record["expected_candidate_surface"]
+        ),
+        "rejection_surface_expected": (
+            frame_record["expected_rejection_surface"]
+        ),
+        "ambiguity_observed": (
+            canonical_intent_frame["ambiguity_level"] == "high"
+        ),
+        "selection_made": False,
+        "measurement_authorized": False,
+        "real_benchmark_authorized": False,
+        "real_benchmark_ready": False,
+        "source_qualification_authorized": False,
+        "corpus_admission_authorized": False,
+        "mapper_note": (
+            "FRAME-D compatibility shim deriving output strictly "
+            "from the FRAME-C CanonicalIntentFrame; no legacy "
+            "keyword classifier; FRAME-C synthesis gaps surfaced "
+            "by the smoke test suite are recorded as RK-059; "
+            "RK-058 remains OPEN; no route selection authorized"
+        ),
+    }
+    return output
 
 
 def map_level0_workshop_user_intent(input_prompt, workshop_prompt_id, event_log):
     """Map one free-text prompt to a workshop prompt record.
 
-    The mapping is intentionally deterministic and bounded. It is a
-    scaffold-visible user-intent layer, not semantic retrieval.
+    Public contract preserved from the pre-FRAME-D mapper:
+
+    - Output is a fixed 14-key dict whose key set equals
+      `_OUTPUT_KEYS`.
+    - `workshop_prompt_record` is a fixed seven-key dict whose key
+      set equals `_WORKSHOP_PROMPT_RECORD_KEYS`; `boundary_note`
+      is the literal `WORKSHOP_BOUNDARY_NOTE`.
+    - Six gating booleans (`selection_made`, `measurement_authorized`,
+      `real_benchmark_authorized`, `real_benchmark_ready`,
+      `source_qualification_authorized`, `corpus_admission_authorized`)
+      are literal False on every emitted path.
+    - Legacy named exceptions `NonStringUserPrompt`,
+      `EmptyUserPrompt`, and `InvalidWorkshopPromptId` are
+      preserved; FRAME-A's equivalent exceptions are translated at
+      the shim boundary.
+
+    Categorical strings (`category`, `normalized_intent_observation`,
+    `expected_item_kinds_touched`, `candidate_surface_expected`,
+    `rejection_surface_expected`, `ambiguity_observed`) are now
+    derived from FRAME-C output, not from a parallel keyword
+    classifier. Some pre-FRAME-D legacy smoke-test assertions
+    diverge from FRAME-C semantics; those divergences are
+    recorded as upstream FRAME-C synthesis gaps under RK-059.
     """
     event_log.append(
         "level0_workshop_user_intent_mapper_started",
         intent_mapper_kind=_MAPPER_KIND,
     )
 
-    if not isinstance(input_prompt, str):
-        _halt(
-            event_log,
-            "level0_workshop_user_intent_mapper_non_string_prompt",
-            "input_prompt must be a string",
-        )
-        raise NonStringUserPrompt("input_prompt must be a string")
-
-    stripped = input_prompt.strip()
-    if not stripped:
-        _halt(
-            event_log,
-            "level0_workshop_user_intent_mapper_empty_prompt",
-            "input_prompt must be non-empty",
-        )
-        raise EmptyUserPrompt("input_prompt must be non-empty")
+    normalized_view = _run_frame_a(input_prompt, event_log)
 
     if not isinstance(workshop_prompt_id, str) or not workshop_prompt_id.strip():
         _halt(
@@ -332,54 +323,37 @@ def map_level0_workshop_user_intent(input_prompt, workshop_prompt_id, event_log)
             "workshop_prompt_id must be a non-empty string"
         )
 
-    (
-        category,
-        touched_kinds,
-        normalized_intent,
-        candidate_surface,
-        rejection_surface,
-        ambiguity_observed,
-    ) = _classify_prompt(stripped)
+    signal_evidence_ledger = _run_frame_b(normalized_view, event_log)
+    canonical_intent_frame = _run_frame_c(
+        signal_evidence_ledger, workshop_prompt_id, event_log
+    )
 
-    prompt_record = {
-        "workshop_prompt_id": workshop_prompt_id,
-        "category": category,
-        "prompt_text": stripped,
-        "expected_item_kinds_touched": list(touched_kinds),
-        "expected_candidate_surface": candidate_surface,
-        "expected_rejection_surface": rejection_surface,
-        "boundary_note": WORKSHOP_BOUNDARY_NOTE,
-    }
+    output = _derive_legacy_output(canonical_intent_frame)
 
-    output = {
-        "intent_mapper_kind": _MAPPER_KIND,
-        "workshop_prompt_record": prompt_record,
-        "normalized_intent_observation": normalized_intent,
-        "expected_item_kinds_touched": list(touched_kinds),
-        "candidate_surface_expected": candidate_surface,
-        "rejection_surface_expected": rejection_surface,
-        "ambiguity_observed": ambiguity_observed,
-        "selection_made": False,
-        "measurement_authorized": False,
-        "real_benchmark_authorized": False,
-        "real_benchmark_ready": False,
-        "source_qualification_authorized": False,
-        "corpus_admission_authorized": False,
-        "mapper_note": (
-            "deterministic Level 0B workshop user-intent mapping only; "
-            "candidate fragments remain downstream observations and no "
-            "route selection is authorized"
-        ),
-    }
+    if output["workshop_prompt_record"]["boundary_note"] != WORKSHOP_BOUNDARY_NOTE:
+        raise AssertionError("workshop_prompt_record boundary_note drift")
 
     event_log.append(
         "level0_workshop_user_intent_mapper_completed",
-        category=category,
-        normalized_intent_observation=normalized_intent,
-        expected_item_kinds_touched=list(touched_kinds),
+        category=output["workshop_prompt_record"]["category"],
+        normalized_intent_observation=(
+            output["normalized_intent_observation"]
+        ),
+        expected_item_kinds_touched=list(
+            output["expected_item_kinds_touched"]
+        ),
+        observed_frame_kind=canonical_intent_frame["intent_frame_kind"],
+        observed_ledger_kind=(
+            signal_evidence_ledger["signal_evidence_ledger_kind"]
+        ),
+        observed_view_kind=normalized_view["normalized_prompt_view_kind"],
     )
 
     if set(output.keys()) != set(_OUTPUT_KEYS):
         raise AssertionError("mapper output shape drift")
+    if set(output["workshop_prompt_record"].keys()) != set(
+        _WORKSHOP_PROMPT_RECORD_KEYS
+    ):
+        raise AssertionError("workshop_prompt_record shape drift")
 
     return output

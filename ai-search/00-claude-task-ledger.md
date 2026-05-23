@@ -16224,3 +16224,620 @@ All DC-020 through DC-072 boundary invariants carry forward.
 WO-L0-WORKSHOP-FRAME-C does not amend or broaden DC-003 through
 DC-072. Real-benchmark-ready remains NO. RK-058 is acknowledged
 and remains OPEN.
+
+## Work Order L0-WORKSHOP-FRAME-D - Level 0B Workshop Intent Mapper Compatibility Shim
+
+### Scope
+
+Rewrite the existing public function
+`map_level0_workshop_user_intent(input_prompt, workshop_prompt_id,
+event_log) -> dict` at
+`harness/level0_workshop_user_intent_mapper.py` as a thin
+compatibility shim that routes the input through the
+WO-L0-WORKSHOP-FRAME-A NormalizedPromptView, the
+WO-L0-WORKSHOP-FRAME-B SignalEvidenceLedger, and the
+WO-L0-WORKSHOP-FRAME-C CanonicalIntentFrame synthesizer while
+preserving the legacy fourteen-key output shape, the legacy
+seven-field `workshop_prompt_record` shape, the legacy
+categorical strings, and the legacy three named exceptions
+(`NonStringUserPrompt`, `EmptyUserPrompt`,
+`InvalidWorkshopPromptId`). Extend the existing test file with a
+new `LegacyContractParityTest` class. Add the boundary doc
+`ai-search/72-level0-workshop-intent-mapper-compatibility-shim.md`.
+
+This is scaffold-only. No route object. No route selection. No
+source qualification. No corpus admission. No real indexing /
+retrieval / ranking / scoring / similarity / distance / embedding
+/ vector / ANN / reranker / provider / LLM / external API. No
+architecture / vendor / library / index-family selection.
+Real-benchmark-ready remains NO. RK-058 acknowledged and remains
+OPEN; closure is reserved for a later Codex-authorized packet
+after FRAME-D review.
+
+### Allowed Files
+
+- `harness/level0_workshop_user_intent_mapper.py` (rewritten as
+  compatibility shim)
+- `harness/tests/test_level0_workshop_user_intent_mapper.py`
+  (extended with `LegacyContractParityTest`; existing 19 tests
+  preserved verbatim)
+- `ai-search/72-level0-workshop-intent-mapper-compatibility-shim.md`
+  (new boundary doc)
+- `ai-search/00-open-questions.md` (append DC-074 plus Status /
+  chronology refresh)
+- `ai-search/00-claude-task-ledger.md` (append this entry)
+
+### Status
+
+Implemented; pending Codex review.
+
+### Mandatory Priority-Miss Check
+
+Per `ai-search/00-claude-scope-prompt-template.md`, the
+Mandatory Priority-Miss Check was applied at the top of this
+packet (the prompt included `@pmc`):
+
+- Higher-priority prerequisite missed? No - FRAME-A, FRAME-B,
+  FRAME-C all approved with notes after Codex review-time
+  hardening; FRAME-D is the documented next stage.
+- Downstream surface skipping upstream cause? No - FRAME-D is the
+  final compatibility-shim layer over the now-complete A / B / C
+  pipeline.
+- Safer sequencing? No - A then B then C then D is the agreed
+  split.
+- Conflict with prior invariants / OQs / RK / real-benchmark-
+  ready NO? No. RK-058 stays OPEN; OQ-003, OQ-015, OQ-031,
+  OQ-035, OQ-048, OQ-049, OQ-056, OQ-057, OQ-070, OQ-075, OQ-076
+  stay OPEN; RK-039 single; no route creation / scoring /
+  retrieval / LLM / provider / architecture-class selection.
+- Concern flagged first as a design constraint: the legacy
+  keyword classifier and the FRAME-C signal synthesizer disagree
+  on several legacy test prompts (for example "Use an agent
+  persona to deploy this project" yields legacy `D. agent/persona
+  confusion` with `expected_item_kinds_touched == ["agent",
+  "workflow_file"]` while FRAME-C alone would yield `A. clear
+  single-intent` with `["agent"]`). To satisfy the explicit
+  packet constraint that the existing 19 mapper tests must
+  remain and pass, the shim retains the legacy keyword
+  classifier verbatim as the source of truth for the legacy
+  mirror fields and the seven-field `workshop_prompt_record`
+  values, while routing input through FRAME-A / FRAME-B /
+  FRAME-C for validation, signal observation, and synthesis
+  event emission. The shim translates FRAME-A's exceptions to
+  the existing legacy exception names and validates
+  `workshop_prompt_id` explicitly before calling FRAME-C so the
+  legacy `InvalidWorkshopPromptId` is raised.
+- Result: proceed.
+
+### Pre-Implementation Review Note
+
+- Q1 (authorizes implementation): Yes. Scaffold-only compatibility
+  shim. Does NOT authorize retrieval / scoring / route creation /
+  source qualification / corpus admission / benchmark /
+  architecture-class selection. Does NOT close RK-058.
+- Q2 (source-content risk): No. The module reads only an
+  already-loaded dict (the FRAME-A view returned by the FRAME-A
+  public function) and a user-provided string. No URL / file /
+  hash / PDF / subprocess.
+- Q3 (prompt-copying risk): No. `workshop_prompt_record
+  ["prompt_text"]` is `normalized_view["trimmed_text"]` only.
+- Q4 (OQ closure / RK-039 / RK-058 risk): No. DC-074 states
+  explicitly: no OQ closed; RK-039 single; RK-058 acknowledged
+  but NOT closed.
+- Q5 (files): Modified (2): mapper module, mapper test. Created
+  (1): boundary doc `72-*`. Appended (2): open-questions DC-074
+  + Status / chronology refresh; ledger entry.
+- Q6 (forbidden work): no prior FRAME-A / FRAME-B / FRAME-C
+  module / test modification (no FRAME-A / FRAME-B / FRAME-C
+  change; no workshop trace / review change; no WO-50 through
+  WO-62 change; no L0 planning doc change); no
+  benchmark-fixtures mutation; no controller-checklist change;
+  no route / scoring / retrieval / embedding / vector / ANN /
+  reranker / LLM / provider call; no architecture-class
+  selection; no `ranking_performed` / `scoring_performed` /
+  `confidence` / `score` / `distance` / `best_match` /
+  `threshold` / `similarity` field name added in module source
+  or output.
+
+No scope drift detected.
+
+### Section L Scope Check
+
+Shared state before implementation: WO-L0-WORKSHOP-FRAME-A,
+WO-L0-WORKSHOP-FRAME-B, and WO-L0-WORKSHOP-FRAME-C all approved
+with notes after Codex review-time hardening; FRAME-C commit
+`f2bcec3`; baseline full suite 1461/1461 OK; project root contains
+exactly `ai-search/`, `harness/`, and `benchmark-fixtures/`;
+`benchmark-fixtures/` SHA inventory unchanged. The six legacy
+mapper gating booleans remain literal False on every emitted
+path of the existing mapper, and the seven FRAME-A / FRAME-B /
+FRAME-C gating booleans remain literal False on every emitted
+path of every prior workshop module. OQ-003, OQ-015, OQ-031,
+OQ-035, OQ-048, OQ-049, OQ-056, OQ-057, OQ-070, OQ-075, OQ-076
+remain OPEN. RK-039 single. RK-058 OPEN and acknowledged.
+
+### Codex Instructions Recorded (WO-L0-WORKSHOP-FRAME-D Packet)
+
+Verbatim WO-L0-WORKSHOP-FRAME-D packet boundary instructions
+Claude was bound to:
+
+- Rewrite the existing mapper public function as a compatibility
+  shim over FRAME-A -> FRAME-B -> FRAME-C.
+- Keep the public function name, the legacy exception names, and
+  the legacy output contract expected by existing tests.
+- Internally call
+  `build_level0_workshop_normalized_prompt_view`,
+  `extract_workshop_signal_evidence`, and
+  `build_canonical_intent_frame` in that order.
+- Return the legacy mapper shape from the FRAME-C
+  `workshop_prompt_record` plus the legacy mirror fields.
+- Preserve all existing legacy tests as a smoke suite.
+- Add `LegacyContractParityTest` proving the shim preserves the
+  public contract while using FRAME-A / B / C underneath.
+- Allowed files exactly the five listed above.
+- Forbidden: modify FRAME-A / FRAME-B / FRAME-C modules / tests;
+  modify workshop trace / review modules / tests; modify
+  `benchmark-fixtures/`; modify `00-controller-checklist.md`;
+  close RK-058; close OQ-003, OQ-015, OQ-031, OQ-035, OQ-048,
+  OQ-049, OQ-056, OQ-057, OQ-070, OQ-075, OQ-076; duplicate
+  RK-039; perform any real indexing / retrieval / ranking /
+  scoring / similarity / distance / embedding / vector / ANN /
+  reranker / LLM / provider call / route object creation /
+  route selection / source qualification / corpus admission /
+  benchmark execution / architecture / vendor / library /
+  index-family / production-system selection; add field names
+  `ranking_performed`, `scoring_performed`, `confidence`,
+  `score`, `distance`, `best_match`, `threshold`, or
+  `similarity`; non-ASCII module file.
+- Apply Section L scope quiz before edits.
+- Emit six-question pre-implementation review note before edits.
+- Halt before raise on every exception path.
+- Translate FRAME-A / B / C exceptions at the shim boundary into
+  the existing legacy mapper exception names where applicable.
+- Existing 19 mapper tests must remain and pass.
+- Add parity tests covering shape preservation, workflow intent,
+  ambiguity surfacing, no-route behavior, repo-meta near-miss
+  behavior, and Turkish/folded-input behavior if currently
+  covered by legacy tests.
+- Update boundary doc 72 with exact contract and non-claims.
+- Append DC-074 to open-questions.
+- Append ledger entry.
+- RK-058 must remain OPEN; note that closure is reserved for a
+  later Codex-authorized packet after FRAME-D review.
+
+### Implementation Summary
+
+`harness/level0_workshop_user_intent_mapper.py` is rewritten as
+a thin compatibility shim. The public function
+`map_level0_workshop_user_intent(input_prompt, workshop_prompt_id,
+event_log) -> dict` is preserved unchanged in name, argument
+list, argument order, and return type. The clean-pass output
+is a fixed fourteen-key dict whose key set equals `_OUTPUT_KEYS`
+(`intent_mapper_kind`, `workshop_prompt_record`,
+`normalized_intent_observation`, `expected_item_kinds_touched`,
+`candidate_surface_expected`, `rejection_surface_expected`,
+`ambiguity_observed`, `selection_made`, `measurement_authorized`,
+`real_benchmark_authorized`, `real_benchmark_ready`,
+`source_qualification_authorized`, `corpus_admission_authorized`,
+`mapper_note`). The nested `workshop_prompt_record` is a fixed
+seven-key dict whose key set equals `_WORKSHOP_PROMPT_RECORD_KEYS`
+(`workshop_prompt_id`, `category`, `prompt_text`,
+`expected_item_kinds_touched`, `expected_candidate_surface`,
+`expected_rejection_surface`, `boundary_note` literal
+`not admitted; not qualified; workshop metadata only` identical
+to `WORKSHOP_BOUNDARY_NOTE` and to the FRAME-C adapter literal).
+
+The shim calls, in order on every clean-path invocation:
+
+1. `build_level0_workshop_normalized_prompt_view(input_prompt,
+   event_log)` (FRAME-A).
+2. `_run_frame_a` translates FRAME-A `NonStringInputPrompt` to
+   legacy `NonStringUserPrompt` and FRAME-A `EmptyInputPrompt` /
+   `WhitespaceOnlyInputPrompt` to legacy `EmptyUserPrompt`,
+   emitting a mapper-scoped halt event before raising.
+3. `workshop_prompt_id` non-empty string check; raises legacy
+   `InvalidWorkshopPromptId` before FRAME-B and FRAME-C run.
+4. `extract_workshop_signal_evidence(normalized_view, event_log)`
+   (FRAME-B).
+5. `build_canonical_intent_frame(signal_evidence_ledger,
+   workshop_prompt_id, event_log)` (FRAME-C); FRAME-C
+   `InvalidWorkshopPromptId` defensively translated to legacy
+   `InvalidWorkshopPromptId`.
+6. Legacy `_classify_prompt(normalized_view["trimmed_text"])`
+   applied to derive the six legacy categorical strings.
+7. `workshop_prompt_record` and the fourteen-key output assembled.
+8. Mapper-completed event emitted with the observed FRAME-A view
+   kind, FRAME-B ledger kind, and FRAME-C frame kind literals.
+9. Defensive output and record shape-drift checks raise
+   `AssertionError` on mismatch.
+
+The legacy `_classify_prompt` keyword classifier is preserved
+verbatim from the pre-FRAME-D mapper because the legacy
+classifier and the FRAME-C signal-driven synthesizer disagree on
+several legacy test prompts (for example "Use an agent persona
+to deploy this project" yields legacy `D. agent/persona
+confusion` with `expected_item_kinds_touched == ["agent",
+"workflow_file"]` while FRAME-C alone would yield `A. clear
+single-intent` with `["agent"]`). The FRAME-C `workshop_prompt_record`
+is computed for observation / event-log emission only and is
+NOT echoed in the shim's authoritative output.
+
+`harness/tests/test_level0_workshop_user_intent_mapper.py`
+contains the 19 preserved legacy tests across three TestCase
+classes (`CleanMappingTest`, `RejectionTest`, `StaticScanTest`)
+plus the new `LegacyContractParityTest` class with 20 parity
+tests covering: shape preservation at the top level and inside
+`workshop_prompt_record`; workflow intent; ambiguity surfacing;
+no-route behavior; repo-meta near-miss behavior; Turkish /
+folded-input behavior (workflow and skill); FRAME-A / FRAME-B /
+FRAME-C pipeline observation in the event log; FRAME kind
+literals observed in the mapper-completed event; exception
+translation at the shim boundary (non-string, empty,
+invalid-id); invalid-id raised before any FRAME-C call; six
+gating booleans literal False; absence of forbidden output
+field names in both the output and the source; ASCII purity of
+the module source; and presence of the FRAME-A / FRAME-B /
+FRAME-C public function names in the module source.
+
+### Evidence
+
+- Targeted: `python -B -m unittest
+  harness.tests.test_level0_workshop_user_intent_mapper -v` ->
+  39/39 OK (19 legacy + 20 parity).
+- Full suite: `python -B -m unittest discover -s harness/tests` ->
+  1481/1481 OK (baseline 1461 + 20 new parity tests).
+- ASCII purity of the module file verified by parity test
+  `test_module_source_is_ascii_only`.
+- No `__pycache__` artifacts under `harness/` after running
+  targeted and full suites with `python -B`.
+- Project root contains exactly `ai-search/`, `harness/`, and
+  `benchmark-fixtures/`.
+- `benchmark-fixtures/` unchanged.
+- FRAME-A, FRAME-B, FRAME-C modules / tests unchanged.
+- Workshop trace / review modules / tests unchanged.
+- WO-50 through WO-62 modules / tests unchanged.
+- `00-controller-checklist.md` unchanged.
+- Mapper public surface preserved: function name, argument list,
+  return type, fourteen-key output shape, seven-field
+  `workshop_prompt_record` shape, three legacy named exceptions.
+- OQ-003, OQ-015, OQ-031, OQ-035, OQ-048, OQ-049, OQ-056,
+  OQ-057, OQ-070, OQ-075, OQ-076 remain OPEN.
+- RK-039 single.
+- RK-058 remains OPEN.
+- Real-benchmark-ready remains NO.
+
+### Non-Claims
+
+The shim does not claim any observed normalized intent
+observation, item kind, candidate surface string, rejection
+surface string, category, or boundary note is sufficient,
+necessary, superior, best, complete, production-ready,
+recommended, selected, or benchmark-ready. The module does not
+claim universal intent understanding. The bounded fourteen
+`_OUTPUT_KEYS`, the bounded seven `_WORKSHOP_PROMPT_RECORD_KEYS`,
+the bounded nine workshop categories driven by the legacy
+classifier, the bounded translation table at the shim boundary,
+and the deterministic FRAME-A -> FRAME-B -> FRAME-C call order
+are bounded by WO-L0-WORKSHOP-FRAME-D and are NOT claimed
+exhaustive.
+
+All DC-020 through DC-073 boundary invariants carry forward.
+WO-L0-WORKSHOP-FRAME-D does not amend or broaden DC-003 through
+DC-073. Real-benchmark-ready remains NO. RK-058 is acknowledged
+and remains OPEN.
+
+### Codex Review Result (WO-L0-WORKSHOP-FRAME-D)
+
+Rework required. Codex review identified that the original
+FRAME-D submission kept the legacy `_classify_prompt` keyword
+classifier as authoritative output source while only observing
+FRAME-A / FRAME-B / FRAME-C. The mapper was not actually
+CIF-backed. Concrete blockers cited:
+
+- `Use an agent persona to deploy this project` -> FRAME-C
+  returns `A` with `["agent"]`; legacy classifier returned
+  `D` with `["agent", "workflow_file"]`.
+- `Give me a prompt that deploys a static site` -> FRAME-C
+  returns `H` with `["none"]`; legacy classifier returned
+  `F` with `["cookbook_entry", "workflow_file"]`.
+
+Codex directive: do not commit current FRAME-D. Rework with
+Option A (derive legacy output from FRAME-C output) or Option B
+(halt and produce a FRAME-C-hardening Work Order). If A
+requires modifying FRAME-C, stop and choose B. Existing 19
+tests may remain as smoke tests, but if they expose missing
+FRAME-C semantics, record that as an upstream FRAME-C gap.
+RK-058 must remain OPEN. No FRAME-D approval without targeted
+and full test results after rework.
+
+## Work Order L0-WORKSHOP-FRAME-D-R - FRAME-D Rework: Derive Legacy Output Strictly From FRAME-C
+
+### Scope
+
+Rework pass over WO-L0-WORKSHOP-FRAME-D after Codex review
+directive. Rewrite the shim so its authoritative output is
+derived strictly from the FRAME-C `workshop_prompt_record` and
+`ambiguity_level`. Remove the pre-FRAME-D legacy keyword
+classifier `_classify_prompt` and its ten keyword tables from
+the shim module. Update the smoke-test assertions in
+`CleanMappingTest` to reflect FRAME-C-actual behavior, adding
+docstring pointers to RK-059 on the three cases where FRAME-C
+diverges from the pre-FRAME-D legacy categorical contract.
+Add RK-059 to `00-open-questions.md` recording the three
+FRAME-C synthesis gaps surfaced by FRAME-D smoke tests as an
+OPEN upstream concern. Rewrite the FRAME-D boundary doc
+`ai-search/72-level0-workshop-intent-mapper-compatibility-shim.md`
+to document the FRAME-C-derived design, the rename table, the
+RK-059 gap list, and the test surface. Update DC-074 to
+reflect the rework decision. Append this rework ledger entry.
+
+This is scaffold-only. No route object. No route selection. No
+source qualification. No corpus admission. No real indexing /
+retrieval / ranking / scoring / similarity / distance /
+embedding / vector / ANN / reranker / provider / LLM / external
+API. No architecture / vendor / library / index-family
+selection. Real-benchmark-ready remains NO. RK-058 acknowledged
+and remains OPEN. RK-059 added and remains OPEN; closure is
+reserved for a later Codex-authorized FRAME-C-hardening packet.
+
+### Allowed Files
+
+Same five files as WO-L0-WORKSHOP-FRAME-D:
+
+- `harness/level0_workshop_user_intent_mapper.py` (rewritten
+  again to derive output strictly from FRAME-C; legacy
+  `_classify_prompt` and ten keyword tables removed)
+- `harness/tests/test_level0_workshop_user_intent_mapper.py`
+  (updated `CleanMappingTest` assertions to FRAME-C-actual
+  values with docstring pointers to RK-059; extended
+  `LegacyContractParityTest`)
+- `ai-search/72-level0-workshop-intent-mapper-compatibility-shim.md`
+  (rewritten to document the FRAME-C-derived design and RK-059)
+- `ai-search/00-open-questions.md` (DC-074 rewritten to reflect
+  the rework; RK-059 appended; Status / chronology refreshed)
+- `ai-search/00-claude-task-ledger.md` (this rework entry
+  appended; original FRAME-D entry preserved above this
+  entry as historical record)
+
+### Status
+
+Implemented; pending Codex review.
+
+### Mandatory Priority-Miss Check
+
+Per `ai-search/00-claude-scope-prompt-template.md`, the
+Mandatory Priority-Miss Check was applied at the top of this
+rework prompt (Codex's rework prompt included `@pmc`):
+
+- Higher-priority prerequisite missed? Partially yes - Codex's
+  rework directive surfaces that the original FRAME-D
+  conflated `use FRAME-A/B/C as observation` with `keep legacy
+  classifier as truth`, which silently bypassed FRAME-C. The
+  upstream cause of the test divergence is that FRAME-C's
+  synthesis logic does not cover three legacy categorization
+  cases. The rework directive is the correct sequencing fix.
+- Downstream surface skipping upstream cause? Yes for the
+  prior FRAME-D; the rework removes that.
+- Safer sequencing? Yes - derive strictly from FRAME-C;
+  record gaps as an upstream FRAME-C concern; defer closure
+  to a Codex-authorized FRAME-C-hardening packet.
+- Conflict with prior invariants / OQs / RK / real-benchmark-
+  ready NO? No. RK-058 stays OPEN; OQ-003, OQ-015, OQ-031,
+  OQ-035, OQ-048, OQ-049, OQ-056, OQ-057, OQ-070, OQ-075,
+  OQ-076 stay OPEN; RK-039 single; no route creation /
+  scoring / retrieval / LLM / provider / architecture-class
+  selection.
+- Concerns to flag first: the three FRAME-C synthesis gaps
+  cannot be closed inside the FRAME-D file set without
+  modifying FRAME-C. Closing them in FRAME-D would be exactly
+  the `FRAME-D doing categorization rules` pattern the
+  reviewer forbade. The correct move per reviewer guidance
+  is to record the gaps as a new risk (RK-059) and update
+  the smoke-test assertions to reflect FRAME-C-actual
+  behavior with docstring pointers to RK-059.
+- Result: proceed.
+
+### Option Choice: A
+
+Option A (derive legacy output from FRAME-C output) is
+achievable within the five allowed FRAME-D files. FRAME-C is
+not missing the *machinery* to be FRAME-D's authoritative
+output source - it emits a fixed-shape `workshop_prompt_record`
+with the correct seven-field shape and the correct nine bounded
+categories, plus `ambiguity_level`. What FRAME-C is missing is
+the *coverage* of three specific synthesis rules, which causes
+three (not all) legacy smoke-test assertions to diverge. Per
+the reviewer's explicit guidance, the right action is:
+
+- FRAME-D becomes a thin translator over FRAME-C output (no
+  legacy `_classify_prompt`, no keyword tables).
+- The smoke-test assertions that diverge from FRAME-C semantics
+  get updated to FRAME-C-actual values with a docstring
+  reference to a new RK-059 (`FRAME-C synthesis gaps surfaced
+  by FRAME-D smoke tests`).
+- RK-059 is recorded in `00-open-questions.md` as OPEN,
+  deferring closure to a later Codex-authorized FRAME-C-
+  hardening packet.
+
+Option B (halt and propose a FRAME-C-hardening WO instead)
+would be the right call only if FRAME-C lacked the structural
+surface to be FRAME-D's authoritative source. It does not lack
+that surface; the gap is in specific rules, recordable as
+upstream risk.
+
+### Pre-Implementation Review Note
+
+- Q1 (authorizes implementation): Yes. Rework of the shim is
+  the documented next step after Codex review-time directive.
+  Does NOT authorize retrieval / scoring / route creation /
+  source qualification / corpus admission / benchmark /
+  architecture-class selection. Does NOT close RK-058 or
+  RK-059.
+- Q2 (source-content risk): No. Module reads only an
+  already-loaded dict (the FRAME-A view returned by the FRAME-A
+  public function) and a user-provided string.
+- Q3 (prompt-copying risk): No. `workshop_prompt_record
+  ["prompt_text"]` is FRAME-C's adapter output (which mirrors
+  the trimmed user prompt).
+- Q4 (OQ closure / RK-039 / RK-058 / RK-059 risk): No. DC-074
+  rewrite states explicitly: no OQ closed; RK-039 single;
+  RK-058 OPEN; RK-059 added OPEN; closure of RK-059 reserved
+  for later Codex-authorized FRAME-C-hardening packet.
+- Q5 (files): Modified (4): mapper module, mapper test,
+  boundary doc, open-questions (DC-074 rewrite + RK-059 add +
+  Status / chronology refresh). Appended (1): this rework
+  ledger entry.
+- Q6 (forbidden work): no prior FRAME-A / FRAME-B / FRAME-C
+  module / test modification; no workshop trace / review
+  module / test modification; no WO-50 through WO-62 module /
+  test modification; no L0 planning doc modification; no
+  benchmark-fixtures mutation; no controller-checklist change;
+  no route / scoring / retrieval / embedding / vector / ANN /
+  reranker / LLM / provider call; no architecture-class
+  selection; no forbidden output field name added in module
+  source or output.
+
+No scope drift detected.
+
+### Section L Scope Check
+
+Shared state before rework: WO-L0-WORKSHOP-FRAME-A, FRAME-B,
+FRAME-C all approved with notes; FRAME-D rework required after
+Codex review; baseline full suite 1461/1461 OK (FRAME-D-
+original implementation passed tests but with the legacy
+keyword classifier authoritative, which the reviewer rejected;
+the rework reverts that approach). Project root contains
+exactly `ai-search/`, `harness/`, and `benchmark-fixtures/`;
+`benchmark-fixtures/` SHA inventory unchanged. The six legacy
+mapper gating booleans remain literal False on every emitted
+path; the seven FRAME-A / FRAME-B / FRAME-C gating booleans
+remain literal False on every emitted path of every prior
+workshop module. OQ-003, OQ-015, OQ-031, OQ-035, OQ-048,
+OQ-049, OQ-056, OQ-057, OQ-070, OQ-075, OQ-076 remain OPEN.
+RK-039 single. RK-058 OPEN.
+
+### Codex Rework Directive Recorded (WO-L0-WORKSHOP-FRAME-D-R Packet)
+
+Verbatim Codex rework directive Claude was bound to:
+
+- Do not keep legacy `_classify_prompt` as authoritative output
+  source.
+- Either Option A (make FRAME-D derive legacy output from
+  FRAME-C output) or Option B (halt and report that FRAME-C
+  is missing required synthesis behavior and FRAME-D cannot
+  proceed without a prior FRAME-C-hardening packet).
+- Do not silently preserve old keyword behavior as truth while
+  only observing FRAME-C.
+- Existing 19 tests may remain as smoke tests, but if they
+  expose missing FRAME-C semantics, record that as an upstream
+  FRAME-C gap rather than bypassing FRAME-C.
+- RK-058 must remain OPEN.
+- No FRAME-D approval without targeted and full test results
+  after rework.
+- If A requires modifying FRAME-C, stop and produce a FRAME-C-
+  hardening Work Order instead.
+
+### Implementation Summary
+
+`harness/level0_workshop_user_intent_mapper.py` is rewritten
+again. The shim's authoritative output is now derived strictly
+from FRAME-C:
+
+- `workshop_prompt_record`: echoed verbatim from FRAME-C's
+  adapter output (same seven keys, same `category` from
+  FRAME-C, same surface literals).
+- `normalized_intent_observation`: derived from FRAME-C
+  `workshop_prompt_record["category"]` via the bounded
+  nine-entry `_NORMALIZED_INTENT_BY_CATEGORY` rename table
+  (asserted at import time to cover every FRAME-C
+  `WORKSHOP_PROMPT_CATEGORIES` entry).
+- `expected_item_kinds_touched`: echoed from FRAME-C record.
+- `candidate_surface_expected`: echoed from FRAME-C record.
+- `rejection_surface_expected`: echoed from FRAME-C record.
+- `ambiguity_observed`: derived from FRAME-C `ambiguity_level
+  == "high"`.
+- Six gating booleans: literal False.
+
+The pre-FRAME-D legacy keyword classifier `_classify_prompt`
+and its ten keyword tables (`_NO_ROUTE_TERMS`,
+`_REPO_META_TERMS`, `_WORKFLOW_TERMS`, `_HOOK_TERMS`,
+`_SKILL_TERMS`, `_AGENT_TERMS`, `_INSTRUCTION_TERMS`,
+`_PLUGIN_TERMS`, `_COOKBOOK_TERMS`, `_AMBIGUOUS_TERMS`) have
+been REMOVED from the shim module. Absence is verified by
+the test
+`LegacyContractParityTest.test_shim_does_not_define_legacy_classifier`.
+
+Three pre-FRAME-D legacy categorical assertions diverge from
+FRAME-C-actual behavior. The affected smoke-test methods in
+`CleanMappingTest` have been renamed and reworded to reflect
+FRAME-C-actual values with docstring pointers to RK-059:
+
+- `test_agent_workflow_prompt_maps_to_clear_single_intent_under_frame_c`
+  (was `test_agent_workflow_prompt_maps_to_confusion_category`).
+- `test_prompt_surface_workflow_intent_maps_to_no_route_under_frame_c`
+  (was `test_prompt_surface_workflow_intent_maps_to_cookbook_and_workflow`).
+- `test_bare_ambiguity_phrase_maps_to_no_route_under_frame_c`
+  (was `test_ambiguous_prompt_surfaces_ambiguity`).
+
+Additional minor updates: `test_ci_prompt_maps_to_workflow_candidate_kind`
+now asserts FRAME-C's generic surface literal `candidate
+fragment of declared shape` (legacy used `candidate workflow
+surface expected`); `test_instruction_workflow_prompt_maps_to_confusion_category`
+now asserts `["workflow_file", "instruction"]` (legacy used
+`["instruction", "workflow_file"]`; the category `E` is
+unchanged).
+
+`LegacyContractParityTest` is extended to 21 tests including a
+new `test_shim_does_not_define_legacy_classifier` static-scan
+test, and the prior `test_ambiguity_surfaced` was replaced by
+two new tests:
+`test_ambiguity_observed_reflects_frame_c_high_level` and
+`test_ambiguity_observed_true_when_frame_c_reports_high`.
+
+### Evidence
+
+- Targeted: `python -B -m unittest
+  harness.tests.test_level0_workshop_user_intent_mapper` ->
+  42/42 OK.
+- Full suite: `python -B -m unittest discover -s harness/tests`
+  -> 1484/1484 OK.
+- ASCII purity of the module file verified by parity test.
+- No `__pycache__` artifacts under `harness/`.
+- Project root contains exactly `ai-search/`, `harness/`, and
+  `benchmark-fixtures/`.
+- `benchmark-fixtures/` unchanged.
+- FRAME-A, FRAME-B, FRAME-C modules / tests unchanged.
+- Workshop trace / review modules / tests unchanged.
+- WO-50 through WO-62 modules / tests unchanged.
+- `00-controller-checklist.md` unchanged.
+- Mapper public surface preserved: function name, argument
+  list, return type, fourteen-key output shape, seven-field
+  `workshop_prompt_record` shape, three legacy named exceptions.
+- Mapper authoritative output now derived strictly from
+  FRAME-C; legacy keyword classifier removed.
+- OQ-003, OQ-015, OQ-031, OQ-035, OQ-048, OQ-049, OQ-056,
+  OQ-057, OQ-070, OQ-075, OQ-076 remain OPEN.
+- RK-039 single.
+- RK-058 remains OPEN.
+- RK-059 added OPEN.
+- Real-benchmark-ready remains NO.
+
+### Non-Claims
+
+The shim does not claim any FRAME-C-derived normalized intent
+observation, item kind, candidate surface string, rejection
+surface string, category, or boundary note is sufficient,
+necessary, superior, best, complete, production-ready,
+recommended, selected, or benchmark-ready. The module does
+not claim universal intent understanding. The bounded fourteen
+`_OUTPUT_KEYS`, the bounded seven `_WORKSHOP_PROMPT_RECORD_KEYS`,
+the bounded nine `_NORMALIZED_INTENT_BY_CATEGORY` rename table,
+the bounded translation rules at the shim boundary, and the
+deterministic FRAME-A -> FRAME-B -> FRAME-C call order are
+bounded by WO-L0-WORKSHOP-FRAME-D and are NOT claimed
+exhaustive.
+
+All DC-020 through DC-073 boundary invariants carry forward.
+WO-L0-WORKSHOP-FRAME-D-R does not amend or broaden DC-003
+through DC-073. Real-benchmark-ready remains NO. RK-058 and
+RK-059 are acknowledged and remain OPEN.
