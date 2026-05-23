@@ -15900,3 +15900,327 @@ APPROVED WITH NOTES after Codex review-time hardening.
 Codex verified FRAME-B locally and changed only the allowed five-file scope. Review-time hardening fixed one contract-safety gap inherited from the initial submission: forbidden-language scans were applied to the entire already-loaded FRAME-A view and the entire result, including user-authored prompt text and per-signal observed spans. That would reject valid user prompts that merely contain project-forbidden claim words as evidence. The module now scans only module-authored input metadata and module-authored ledger strings; raw prompt text, folded prompt text, tokens, token spans, `input_prompt_observed`, and signal `observed_span` values remain evidence, not project claims.
 
 Codex added two regression tests proving user-authored forbidden phrase / claim phrase text is preserved as evidence while the same phrase classes in module-authored metadata still halt. Targeted suite is 97/97 OK. Full suite is 1384/1384 OK. Real-benchmark-ready remains NO. RK-058 remains OPEN pending FRAME-C / FRAME-D and a follow-up closure packet.
+
+## Work Order L0-WORKSHOP-FRAME-C - Level 0B Workshop CanonicalIntentFrame + ShapeTouchPlan + WorkshopPromptRecordAdapter
+
+### Scope
+
+Add Stage C of the Level 0B Intent Core: a deterministic
+CanonicalIntentFrame + ShapeTouchPlan + WorkshopPromptRecordAdapter
+that consumes an already-loaded FRAME-B SignalEvidenceLedger dict
+and emits a fixed-shape twenty-six-key Canonical Intent Frame
+dict. The frame includes a shape-touch plan (embedded as
+`source_shape_affinity`) and a workshop_prompt_record adapter
+output shape-compatible with the existing workshop derived-trace
+per-record contract.
+
+This is scaffold-only. No CIF post-processing into a route. No
+route object. No route selection. No source qualification. No
+corpus admission. No real indexing / retrieval / ranking / scoring
+/ similarity / distance / embedding / vector / ANN / reranker /
+provider / LLM / external API. No architecture / vendor / library
+/ index-family selection. Real-benchmark-ready remains NO. RK-058
+acknowledged and remains OPEN; closure requires FRAME-D plus a
+follow-up Codex-authorized packet.
+
+### Allowed Files
+
+- `harness/level0_workshop_canonical_intent_frame.py` (new)
+- `harness/tests/test_level0_workshop_canonical_intent_frame.py` (new)
+- `ai-search/71-level0-workshop-canonical-intent-frame.md` (new)
+- `ai-search/00-open-questions.md` (append DC-073 + Status / Work
+  Order chronology refresh)
+- `ai-search/00-claude-task-ledger.md` (append this entry)
+
+### Status
+
+Implemented; pending Codex review.
+
+### Mandatory Priority-Miss Check
+
+Per `ai-search/00-claude-scope-prompt-template.md`, the
+Mandatory Priority-Miss Check was applied at the top of this
+packet:
+
+- Higher-priority prerequisite missed? No - FRAME-B is approved
+  with notes; FRAME-C is the next correct stage.
+- Downstream surface skipping upstream cause? No - FRAME-C is
+  the upstream frame-synthesis layer.
+- Safer sequencing? No - A then B then C then D is the agreed
+  split.
+- Conflict with prior invariants / OQs / RK / real-benchmark-ready
+  NO? No. RK-058 stays OPEN; all 11 OQs stay OPEN; RK-039 single;
+  no route creation / scoring / retrieval / LLM / provider /
+  architecture-class selection.
+- Concerns to flag first? Three minor design notes stated before
+  code: workshop category mapping must emit one of the bounded
+  nine workshop categories so the adapter output passes the
+  existing trace contract; `requested_output_shape` uses
+  `prompt_collection_request` (not `prompt`) to avoid item-kind
+  namespace collision; every non-empty CIF field cites at least
+  one contributing signal via `affinity_basis` lists on shape-
+  touch entries plus a verbatim `signal_evidence` echo.
+- Result: proceed.
+
+### Pre-Implementation Review Note
+
+- Q1 (authorizes implementation): Yes. Scaffold-implementation.
+  Does NOT authorize retrieval / scoring / route creation / source
+  qualification / corpus admission / benchmark / architecture-
+  class selection. Does NOT close RK-058.
+- Q2 (source-content risk): No. The module reads only an
+  already-loaded dict; no URL / file / hash / PDF / subprocess.
+- Q3 (prompt-copying risk): No. `input_prompt_observed` mirrors
+  the ledger's mirror of FRAME-A's `raw_text`, and
+  `workshop_prompt_record.prompt_text` is the same string.
+- Q4 (OQ closure / RK-039 / RK-058 risk): No. DC-073 states
+  explicitly: no OQ closed; RK-039 single; RK-058 acknowledged
+  but NOT closed.
+- Q5 (files): Created (3): module, test file, boundary doc
+  `71-*`. Appended (2): open-questions DC-073 + Status /
+  chronology; ledger entry.
+- Q6 (forbidden work): no prior WO module / test modification (no
+  FRAME-A change, no FRAME-B change, no mapper change, no trace /
+  review change); no benchmark-fixtures mutation; no controller-
+  checklist change; no route / scoring / retrieval / embedding /
+  vector / ANN / reranker / LLM / provider call; no architecture-
+  class selection; no `ranking_performed` / `scoring_performed` /
+  `confidence` / `score` / `distance` / `best_match` / `threshold`
+  / `similarity` field name in module source or output.
+
+No scope drift detected.
+
+### Section L Scope Check
+
+Shared state before implementation: WO-L0-WORKSHOP-FRAME-A and
+WO-L0-WORKSHOP-FRAME-B both approved with notes after Codex
+review-time hardening; FRAME-B commit `eaa3d1a`; FRAME-B targeted
+suite 97/97 OK after Codex hardening; baseline full suite
+1384/1384 OK; project root contains exactly `ai-search/`,
+`harness/`, and `benchmark-fixtures/`; `benchmark-fixtures/` SHA
+inventory unchanged. The seven gating booleans remain literal
+False on every emitted path of every prior workshop module.
+OQ-003, OQ-015, OQ-031, OQ-035, OQ-048, OQ-049, OQ-056, OQ-057,
+OQ-070, OQ-075, OQ-076 remain OPEN. RK-039 single. RK-058 OPEN
+and acknowledged.
+
+### Codex Instructions Recorded (WO-L0-WORKSHOP-FRAME-C Packet)
+
+Verbatim WO-L0-WORKSHOP-FRAME-C packet boundary instructions
+Claude was bound to:
+
+- Build Stage C of the Level 0B Intent Core: a deterministic
+  CanonicalIntentFrame + ShapeTouchPlan + WorkshopPromptRecordAdapter
+  module that consumes an already-loaded FRAME-B
+  SignalEvidenceLedger dict and emits three artifacts inside one
+  fixed-shape output dict.
+- Public surface:
+  `build_canonical_intent_frame(signal_evidence_ledger,
+  workshop_prompt_id, event_log) -> dict`.
+- Input: already-loaded FRAME-B ledger dict only. The module must
+  not call FRAME-B. Tests may call FRAME-A and FRAME-B only as
+  fixture builders.
+- Canonical frame bounded keys per packet listing including
+  `intent_frame_kind`, `input_prompt_observed`,
+  `source_signal_ledger_kind`, `workshop_prompt_id`,
+  `primary_action`, `secondary_actions`, `target_object`,
+  `domain`, `constraints`, `requested_output_shape`,
+  `source_shape_affinity`, `ambiguity_level`, `ambiguity_reasons`,
+  `no_route_reason`, `near_miss_reason`, `evidence_band`,
+  `signal_evidence`, `workshop_prompt_record`, seven gating
+  booleans literal False, `frame_note`.
+- Bounded enum rules per packet: evidence_band (4 values),
+  ambiguity_level (3 values), affinity_grade (3 values),
+  requested_output_shape uses `prompt_collection_request` not
+  `prompt`.
+- Shape affinity rules per packet: workflow_file / skill /
+  instruction / agent / hook / plugin / cookbook_entry /
+  repo_meta_section / none with multiple plausible kinds creating
+  ambiguity not selection.
+- Adapter rules per packet originally asked to emit
+  `workshop_prompt_record` with seven required fields plus
+  `ambiguity_observed` and `no_selection_reason`. Codex review
+  corrected this to exactly the seven existing trace-contract
+  prompt fields because the current derived-trace validator rejects
+  unknown prompt-record fields. no-route emits
+  `expected_item_kinds_touched: ["none"]`; repo-meta near-miss
+  emits `["repo_meta_section"]`; ambiguous emits multiple kinds
+  with `ambiguity_observed: True`; never mark route selected or
+  created.
+- Forbidden as per packet: no route object, no route selection,
+  no real indexing / retrieval / ranking / scoring / similarity /
+  distance / embedding / vector / ANN / reranker / LLM /
+  provider calls; no `ranking_performed`, `scoring_performed`,
+  `confidence`, `score`, `distance`, `best_match`, or `threshold`
+  field names.
+
+### Implementation Summary
+
+`harness/level0_workshop_canonical_intent_frame.py` exposes
+`build_canonical_intent_frame(signal_evidence_ledger,
+workshop_prompt_id, event_log) -> dict` and returns a clean-pass
+dict with exactly twenty-six keys in `ALLOWED_OUTPUT_KEYS`. The
+module performs the following passes:
+
+1. workshop_prompt_id non-empty string check; else
+   `InvalidWorkshopPromptId`.
+2. Non-dict ledger check; else `NonDictSignalEvidenceLedger`.
+3. Required-key presence; unknown-key rejection over the
+   twenty-two FRAME-B required keys.
+4. `signal_evidence_ledger_kind` literal check.
+5. Seven FRAME-B gating booleans literal False; else
+   `FrameBGatingBooleanFlipped`.
+6. signal_evidence is a list of dicts each with the bounded
+   eleven required fields; else `InvalidSignalEvidenceShape`.
+7. Module-authored input metadata forbidden-language scan. User-
+   authored prompt text and observed spans remain evidence.
+8. Synthesis: primary action mapping; secondary actions
+   dedup; target object mapping plus distinct target objects;
+   domain tags; constraints (including negation); requested
+   output shape.
+9. Shape touch plan via deterministic predicates over the
+   synthesized CIF: repo_meta_section and none rejection-only
+   entries precede candidate-kind entries; multiple candidate
+   kinds collapse each entry's `affinity_grade` to `ambiguous`.
+10. Ambiguity classification with bounded reason codes;
+    evidence-band classification.
+11. Workshop category selection via the deterministic
+    `_select_workshop_category` mapping CIF state to one of the
+    bounded nine workshop trace categories.
+12. Adapter `_build_workshop_prompt_record` emits exactly the
+    seven required trace-contract fields and no adapter extras.
+13. Defensive route-status-field absence check on the result and
+    every nested record / entry.
+14. Module-authored output metadata forbidden-language scan. User-
+    authored prompt text and observed spans remain evidence.
+
+Halt events are recorded via `event_log.halt(reason=..., ...)`
+before raising nine named exceptions
+(`NonDictSignalEvidenceLedger`, `MissingSignalEvidenceLedgerKey`,
+`UnknownSignalEvidenceLedgerKey`, `InvalidSignalEvidenceLedgerKind`,
+`FrameBGatingBooleanFlipped`, `InvalidSignalEvidenceShape`,
+`InvalidWorkshopPromptId`, `FrameCRouteStatusFieldPresent`,
+`ForbiddenLanguageInLevel0WorkshopCanonicalIntentFrame`).
+
+The module invokes NO prior-WO public function (verified by
+static-scan test). FRAME-A's view-builder and FRAME-B's extractor
+appear only in the test file as fixture builders.
+
+DC-073 row appended to the Decisions Tracker in
+`ai-search/00-open-questions.md`. Status line and Work Order
+chronology line at the top of `ai-search/00-open-questions.md`
+updated to record WO-L0-WORKSHOP-FRAME-C.
+
+### Changed Files (WO-L0-WORKSHOP-FRAME-C)
+
+- `harness/level0_workshop_canonical_intent_frame.py` (new file)
+- `harness/tests/test_level0_workshop_canonical_intent_frame.py`
+  (new file; 77 tests across 19 TestCase classes after Codex
+  review-time hardening)
+- `ai-search/71-level0-workshop-canonical-intent-frame.md` (new file)
+- `ai-search/00-open-questions.md` (appended DC-073 row;
+  refreshed Status line and Work Order chronology line)
+- `ai-search/00-claude-task-ledger.md` (appended this entry)
+
+No `ai-search/00-controller-checklist.md` modification. No prior
+WO boundary doc / module / test modification, including FRAME-A
+and FRAME-B and their tests, the existing
+`harness/level0_workshop_user_intent_mapper.py` and its test,
+the WO-L0-WORKSHOP-TRACE-01 / WO-L0-WORKSHOP-REVIEW-01 modules
+and tests, and every WO-50 through WO-62 module and test. No
+existing L0 planning doc modification. No `benchmark-fixtures/`
+mutation.
+
+### Evidence (WO-L0-WORKSHOP-FRAME-C)
+
+- Mandatory Priority-Miss Check: applied; no higher-priority
+  missed scope found (FRAME-B commit and approval verified).
+- Section L scope quiz: emitted before edits; objective, allowed
+  files, forbidden files, halt conditions, authorization state,
+  and next safe step recorded; no scope drift detected.
+- Pre-implementation review note: emitted before edits; six
+  required questions answered.
+- Targeted test result:
+  `python -B -m unittest harness.tests.test_level0_workshop_canonical_intent_frame`
+  reports 77/77 OK after Codex review-time hardening.
+- Full suite result:
+  `python -B -m unittest discover -s harness/tests` reports
+  1461/1461 OK after WO-L0-WORKSHOP-FRAME-C (1384 prior baseline
+  plus 77 FRAME-C tests; no regression).
+- ASCII check: each of the three new files contains zero
+  non-ASCII bytes; `ai-search/00-open-questions.md` and
+  `ai-search/00-claude-task-ledger.md` contain zero non-ASCII
+  bytes after the appends.
+- `__pycache__` absence: no `__pycache__` directories under the
+  project root after the run.
+- Project root check: root contains exactly `ai-search/`,
+  `harness/`, and `benchmark-fixtures/`.
+- `benchmark-fixtures/` unchanged: 10-file inventory unchanged.
+- FRAME-A and FRAME-B modules / tests unchanged: not in git
+  status; not modified.
+- Current mapper module / test unchanged: not in git status; not
+  modified.
+- Workshop trace / review modules / tests unchanged: not in git
+  status; not modified.
+- No prior WO module or test file modified.
+- No route object created; no route selection; no source
+  qualification; no corpus admission.
+- OQ closure: none. All eleven targeted OQs remain OPEN.
+- RK-039 duplication: none. The RK-039 row appears exactly once.
+- RK-058 acknowledged: RK-058 row appears exactly once and
+  remains OPEN; this packet did NOT close it.
+- Real-benchmark-ready remains NO.
+- Codex review-time hardening: (1) removed adapter-only extras
+  from `workshop_prompt_record` so the adapter emits the exact
+  seven-field prompt-record shape accepted by the existing
+  workshop derived-trace validator; (2) strengthened the adapter
+  compatibility test to pass the full adapter record through
+  `run_level0_workshop_derived_trace` at the test layer; (3)
+  limited forbidden-language scans to module-authored metadata and
+  ledger strings so user-authored prompt text and observed spans
+  remain preserved evidence rather than being mistaken for project
+  claims.
+- Structural gaps noticed (non-binding): (1) The workshop
+  category mapping is a deterministic if-ladder; future packets
+  may want to refactor into a small declarative table once
+  Codex sees the FRAME-C output against the workshop trace
+  contract on more inputs. (2) The shape-touch predicate set is
+  bounded; specific edge cases (e.g. a prompt with both
+  `output_shape.recipe` AND `domain.deployment` but no
+  `action.*` signal) currently land in `cookbook_entry` via the
+  output-shape route; future Codex review may want to add an
+  explicit predicate. (3) `secondary_actions` is presently
+  populated only when a prompt fires multiple distinct action
+  families; future packets may want to surface action-modifier
+  signals here as well. (4) The `evidence_band` classifier
+  treats repo-meta + candidate as `conflicting_signals`; this is
+  conservative and may surface more conflicts than strictly
+  necessary - acceptable for the scaffold layer. (5) The bounded
+  `_ACTION_TO_PRIMARY`,
+  `_OBJECT_TO_TARGET`, `_DOMAIN_TO_TAG`, `_CONSTRAINT_TO_TAG`,
+  and `_OUTPUT_SHAPE_TO_TAG` tables are tight; future family
+  additions in FRAME-B must be paired with mapping updates in
+  FRAME-C or the new family will fail to contribute to the CIF
+  (a known and intentional coupling).
+
+### Non-Claim Constraints (WO-L0-WORKSHOP-FRAME-C)
+
+WO-L0-WORKSHOP-FRAME-C does not claim any synthesized frame
+field, affinity entry, evidence-band classification,
+ambiguity-level classification, or workshop-prompt-record
+category is sufficient, necessary, superior, best, complete,
+production-ready, recommended, selected, or benchmark-ready. The
+module does not claim universal intent understanding. The
+bounded `EVIDENCE_BANDS` (4), `AMBIGUITY_LEVELS` (3),
+`AFFINITY_GRADES` (3), `REQUESTED_OUTPUT_SHAPES` (4 with
+`prompt_collection_request` in place of the namespace-colliding
+`prompt`), `WORKSHOP_ITEM_KINDS` (8), `WORKSHOP_PROMPT_CATEGORIES`
+(9), the bounded synthesis mapping tables, the bounded
+shape-touch rules, the bounded workshop-category selection
+rules, and the twenty-six `ALLOWED_OUTPUT_KEYS` are bounded by
+WO-L0-WORKSHOP-FRAME-C and are NOT claimed exhaustive.
+
+All DC-020 through DC-072 boundary invariants carry forward.
+WO-L0-WORKSHOP-FRAME-C does not amend or broaden DC-003 through
+DC-072. Real-benchmark-ready remains NO. RK-058 is acknowledged
+and remains OPEN.

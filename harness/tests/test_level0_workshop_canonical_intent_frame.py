@@ -1,0 +1,689 @@
+"""Tests for `harness.level0_workshop_canonical_intent_frame` (FRAME-C).
+
+Tests build synthetic FRAME-B SignalEvidenceLedger fixtures by
+invoking the FRAME-A view-builder and the FRAME-B extractor at
+the test layer only, then exercise the FRAME-C synthesizer
+against those fixtures and against deliberately mutated copies to
+cover each halt branch.
+
+The module under test does NOT invoke any prior-WO public function;
+FRAME-A and FRAME-B appear only as test-layer fixture builders.
+
+Adapter parity is verified by feeding the FRAME-C-produced
+`workshop_prompt_record` into a synthetic 26-prompt fixture that
+`run_level0_workshop_derived_trace` accepts on a clean pass at the
+test layer; the module under test does NOT invoke that validator.
+"""
+
+import copy
+import os
+import unittest
+
+from harness.event_log import EventLog
+from harness.level0_workshop_canonical_intent_frame import (
+    AFFINITY_GRADES,
+    ALLOWED_OUTPUT_KEYS,
+    AMBIGUITY_LEVELS,
+    EVIDENCE_BANDS,
+    EXPECTED_LEDGER_KIND,
+    FRAME_B_GATING_BOOLEANS,
+    FRAME_B_REQUIRED_KEYS,
+    FRAME_KIND,
+    ForbiddenLanguageInLevel0WorkshopCanonicalIntentFrame,
+    FrameBGatingBooleanFlipped,
+    InvalidSignalEvidenceLedgerKind,
+    InvalidSignalEvidenceShape,
+    InvalidWorkshopPromptId,
+    MissingSignalEvidenceLedgerKey,
+    NonDictSignalEvidenceLedger,
+    REQUESTED_OUTPUT_SHAPES,
+    UnknownSignalEvidenceLedgerKey,
+    WORKSHOP_BOUNDARY_NOTE_LITERAL,
+    WORKSHOP_ITEM_KINDS,
+    WORKSHOP_PROMPT_CATEGORIES,
+    build_canonical_intent_frame,
+)
+from harness.level0_workshop_normalized_prompt_view import (
+    build_level0_workshop_normalized_prompt_view,
+)
+from harness.level0_workshop_signal_evidence import (
+    extract_workshop_signal_evidence,
+)
+from harness.level0_workshop_derived_trace import (
+    run_level0_workshop_derived_trace,
+)
+from harness.tests.test_level0_workshop_derived_trace import (
+    _build_clean_item_records,
+    _build_clean_prompt_records,
+)
+
+
+_ROUTE_STATUS_FIELDS = (
+    "official", "is_route", "is_official_route", "selected_as_official",
+    "official_route_authorized", "route_authorized", "production_route",
+    "selected_route", "executable", "route_state", "plane",
+)
+
+
+_FORBIDDEN_OUTPUT_FIELD_NAMES = (
+    "ranking_performed",
+    "scoring_performed",
+    "confidence",
+    "score",
+    "distance",
+    "best_match",
+    "threshold",
+    "similarity",
+)
+
+
+def _ledger_for(prompt):
+    """Helper: produce a FRAME-B ledger by running the FRAME-A and
+    FRAME-B pipelines at the test layer only."""
+    view = build_level0_workshop_normalized_prompt_view(prompt, EventLog())
+    return extract_workshop_signal_evidence(view, EventLog())
+
+
+def _frame_for(prompt, workshop_prompt_id="W-PRM-001"):
+    """Helper: build a FRAME-C result for a prompt + id."""
+    ledger = _ledger_for(prompt)
+    return build_canonical_intent_frame(ledger, workshop_prompt_id, EventLog())
+
+
+class CleanPassTest(unittest.TestCase):
+
+    def setUp(self):
+        self.event_log = EventLog()
+        self.ledger = _ledger_for(
+            "Set up a CI workflow for a Python project."
+        )
+        self.result = build_canonical_intent_frame(
+            self.ledger, "W-PRM-001", self.event_log
+        )
+
+    def test_returns_dict(self):
+        self.assertIsInstance(self.result, dict)
+
+    def test_keys_match_allowed(self):
+        self.assertEqual(set(self.result.keys()), set(ALLOWED_OUTPUT_KEYS))
+        self.assertEqual(len(self.result), len(ALLOWED_OUTPUT_KEYS))
+
+    def test_frame_kind_literal(self):
+        self.assertEqual(self.result["intent_frame_kind"], FRAME_KIND)
+
+    def test_input_prompt_observed_mirrors_ledger(self):
+        self.assertEqual(
+            self.result["input_prompt_observed"],
+            self.ledger["input_prompt_observed"],
+        )
+
+    def test_source_signal_ledger_kind_carried_through(self):
+        self.assertEqual(
+            self.result["source_signal_ledger_kind"],
+            EXPECTED_LEDGER_KIND,
+        )
+
+    def test_workshop_prompt_id_preserved(self):
+        self.assertEqual(self.result["workshop_prompt_id"], "W-PRM-001")
+
+    def test_evidence_band_in_bounded_set(self):
+        self.assertIn(self.result["evidence_band"], EVIDENCE_BANDS)
+
+    def test_ambiguity_level_in_bounded_set(self):
+        self.assertIn(self.result["ambiguity_level"], AMBIGUITY_LEVELS)
+
+    def test_route_created_literal_false(self):
+        self.assertIs(self.result["route_created"], False)
+
+    def test_selection_made_literal_false(self):
+        self.assertIs(self.result["selection_made"], False)
+
+    def test_measurement_authorized_literal_false(self):
+        self.assertIs(self.result["measurement_authorized"], False)
+
+    def test_real_benchmark_authorized_literal_false(self):
+        self.assertIs(self.result["real_benchmark_authorized"], False)
+
+    def test_real_benchmark_ready_literal_false(self):
+        self.assertIs(self.result["real_benchmark_ready"], False)
+
+    def test_source_qualification_authorized_literal_false(self):
+        self.assertIs(self.result["source_qualification_authorized"], False)
+
+    def test_corpus_admission_authorized_literal_false(self):
+        self.assertIs(self.result["corpus_admission_authorized"], False)
+
+    def test_frame_note_non_empty(self):
+        self.assertIsInstance(self.result["frame_note"], str)
+        self.assertGreater(len(self.result["frame_note"]), 0)
+
+    def test_started_and_passed_events_emitted(self):
+        types = [e["type"] for e in self.event_log.events]
+        self.assertIn(
+            "level0_workshop_canonical_intent_frame_started", types
+        )
+        self.assertIn(
+            "level0_workshop_canonical_intent_frame_passed", types
+        )
+
+    def test_no_halt_event_on_clean_pass(self):
+        self.assertFalse(self.event_log.has_halt())
+
+    def test_no_route_status_field_in_result(self):
+        for field in _ROUTE_STATUS_FIELDS:
+            self.assertNotIn(field, self.result)
+
+    def test_no_forbidden_output_field_name_in_result(self):
+        for field in _FORBIDDEN_OUTPUT_FIELD_NAMES:
+            self.assertNotIn(field, self.result)
+
+
+class AffinityShapeTest(unittest.TestCase):
+
+    def test_every_affinity_entry_has_three_required_fields(self):
+        result = _frame_for("Set up a CI workflow.")
+        for entry in result["source_shape_affinity"]:
+            self.assertEqual(
+                set(entry.keys()),
+                {"item_kind", "affinity_basis", "affinity_grade"},
+            )
+
+    def test_every_affinity_item_kind_in_bounded_set_plus_none(self):
+        result = _frame_for("Set up a CI workflow.")
+        allowed = set(WORKSHOP_ITEM_KINDS) | {"none"}
+        for entry in result["source_shape_affinity"]:
+            self.assertIn(entry["item_kind"], allowed)
+
+    def test_every_affinity_grade_in_bounded_set(self):
+        result = _frame_for("Set up a CI workflow.")
+        for entry in result["source_shape_affinity"]:
+            self.assertIn(entry["affinity_grade"], AFFINITY_GRADES)
+
+    def test_every_affinity_basis_is_list_of_strings(self):
+        result = _frame_for("Set up a CI workflow.")
+        for entry in result["source_shape_affinity"]:
+            self.assertIsInstance(entry["affinity_basis"], list)
+            for sid in entry["affinity_basis"]:
+                self.assertIsInstance(sid, str)
+
+
+class WorkflowSignalsTest(unittest.TestCase):
+
+    def test_set_up_ci_workflow_yields_workflow_affinity(self):
+        result = _frame_for("Set up a CI workflow for a Python project.")
+        kinds = [e["item_kind"] for e in result["source_shape_affinity"]]
+        self.assertIn("workflow_file", kinds)
+
+    def test_set_up_ci_workflow_category_workflow_intent(self):
+        result = _frame_for("Set up a CI workflow for a Python project.")
+        # Category may be B (workflow intent) or D/E/F if other
+        # families collide; assert it is at least one of the
+        # workflow-shaped categories.
+        self.assertIn(
+            result["workshop_prompt_record"]["category"],
+            {
+                "B. workflow intent",
+                "D. agent/persona confusion",
+                "E. instruction confusion",
+                "F. prompt-search-shaped but workflow-intent",
+                "A. clear single-intent",
+                "G. ambiguous",
+            },
+        )
+
+    def test_converging_workflow_signals_yield_consistent_frame(self):
+        a = _frame_for("Set up CI for the repo.")
+        b = _frame_for("Set up continuous integration for the repo.")
+        # Both must include workflow_file in the affinity list.
+        kinds_a = [e["item_kind"] for e in a["source_shape_affinity"]]
+        kinds_b = [e["item_kind"] for e in b["source_shape_affinity"]]
+        self.assertIn("workflow_file", kinds_a)
+        self.assertIn("workflow_file", kinds_b)
+
+
+class SkillSignalsTest(unittest.TestCase):
+
+    def test_skill_capability_phrasing_yields_skill_affinity(self):
+        result = _frame_for("Create a skill for code review.")
+        kinds = [e["item_kind"] for e in result["source_shape_affinity"]]
+        self.assertIn("skill", kinds)
+
+
+class InstructionSignalsTest(unittest.TestCase):
+
+    def test_configure_instruction_phrasing_yields_instruction_affinity(self):
+        result = _frame_for("Configure the instruction set for the team.")
+        kinds = [e["item_kind"] for e in result["source_shape_affinity"]]
+        self.assertIn("instruction", kinds)
+
+
+class AgentSignalsTest(unittest.TestCase):
+
+    def test_persona_phrasing_yields_agent_affinity(self):
+        result = _frame_for("Define a persona for the assistant role.")
+        kinds = [e["item_kind"] for e in result["source_shape_affinity"]]
+        self.assertIn("agent", kinds)
+
+
+class RepoMetaNearMissTest(unittest.TestCase):
+
+    def test_readme_explain_yields_repo_meta_section_only(self):
+        result = _frame_for("Explain the readme of this repo.")
+        self.assertEqual(
+            result["workshop_prompt_record"]["expected_item_kinds_touched"],
+            ["repo_meta_section"],
+        )
+        self.assertEqual(
+            result["near_miss_reason"], "repo_meta_section_near_miss"
+        )
+
+    def test_repo_meta_category_is_near_miss_rejection(self):
+        result = _frame_for("Explain the readme of this repo.")
+        self.assertEqual(
+            result["workshop_prompt_record"]["category"],
+            "I. near-miss/rejection",
+        )
+
+
+class OutOfScopeTest(unittest.TestCase):
+
+    def test_weather_prompt_yields_no_route(self):
+        result = _frame_for("What is the weather today.")
+        self.assertEqual(
+            result["workshop_prompt_record"]["expected_item_kinds_touched"],
+            ["none"],
+        )
+        self.assertEqual(
+            result["no_route_reason"], "prompt_out_of_repo_scope"
+        )
+
+    def test_out_of_scope_category_is_no_route(self):
+        result = _frame_for("What is the weather today.")
+        self.assertEqual(
+            result["workshop_prompt_record"]["category"],
+            "H. no-route",
+        )
+
+
+class NoSignalLedgerTest(unittest.TestCase):
+
+    def test_no_signal_prompt_yields_no_route_frame(self):
+        # zzz qqq xxx yyy has no recognizable signals in FRAME-B's
+        # families.
+        result = _frame_for("zzz qqq xxx yyy.")
+        self.assertEqual(result["evidence_band"], "no_signal")
+        self.assertEqual(
+            result["workshop_prompt_record"]["expected_item_kinds_touched"],
+            ["none"],
+        )
+
+
+class ConflictingSignalsTest(unittest.TestCase):
+
+    def test_repo_meta_with_other_signal_yields_high_ambiguity_or_near_miss(self):
+        # "Set up the readme workflow" mixes repo-meta (readme) with
+        # workflow signals. The repo-meta path wins and the frame
+        # surfaces ambiguity reasons or a near-miss category.
+        result = _frame_for("Set up the readme workflow.")
+        # Either near-miss takes precedence or ambiguity is surfaced.
+        category = result["workshop_prompt_record"]["category"]
+        ambiguity = result["ambiguity_level"]
+        # repo_meta_near_miss must be in the affinity entries.
+        kinds = [e["item_kind"] for e in result["source_shape_affinity"]]
+        self.assertIn("repo_meta_section", kinds)
+        self.assertIn(category,
+                      {"I. near-miss/rejection", "G. ambiguous"})
+        self.assertIn(ambiguity, ("low", "high"))
+
+
+class EvidenceBandTest(unittest.TestCase):
+
+    def test_evidence_band_no_signal_for_unrecognized_prompt(self):
+        result = _frame_for("zzz qqq.")
+        self.assertEqual(result["evidence_band"], "no_signal")
+
+    def test_evidence_band_is_categorical_only(self):
+        result = _frame_for("Set up CI workflow.")
+        self.assertIsInstance(result["evidence_band"], str)
+        self.assertIn(result["evidence_band"], EVIDENCE_BANDS)
+
+
+class AdapterRecordShapeTest(unittest.TestCase):
+
+    def setUp(self):
+        self.result = _frame_for("Set up a CI workflow for a Python project.")
+        self.record = self.result["workshop_prompt_record"]
+
+    def test_record_has_required_fields(self):
+        required = {
+            "workshop_prompt_id", "category", "prompt_text",
+            "expected_item_kinds_touched", "expected_candidate_surface",
+            "expected_rejection_surface", "boundary_note",
+        }
+        self.assertEqual(set(self.record.keys()), required)
+
+    def test_record_category_in_bounded_workshop_set(self):
+        self.assertIn(self.record["category"], WORKSHOP_PROMPT_CATEGORIES)
+
+    def test_record_boundary_note_literal(self):
+        self.assertEqual(
+            self.record["boundary_note"], WORKSHOP_BOUNDARY_NOTE_LITERAL
+        )
+
+    def test_record_no_route_status_field(self):
+        for field in _ROUTE_STATUS_FIELDS:
+            self.assertNotIn(field, self.record)
+
+    def test_record_no_forbidden_output_field_name(self):
+        for field in _FORBIDDEN_OUTPUT_FIELD_NAMES:
+            self.assertNotIn(field, self.record)
+
+
+class AdapterTraceCompatibilityTest(unittest.TestCase):
+    """Verify the FRAME-C adapter output is shape-compatible with
+    the existing workshop derived-trace validator. The module under
+    test does NOT call that validator; only this test does."""
+
+    def test_record_satisfies_workshop_derived_trace_per_record_contract(self):
+        prompts = _build_clean_prompt_records()
+        frame = _frame_for(
+            "Set up a CI workflow for a Python project.",
+            workshop_prompt_id="W-PRM-002",
+        )
+        replacement = frame["workshop_prompt_record"]
+        self.assertEqual(replacement["category"], "B. workflow intent")
+        replaced = False
+        for index, record in enumerate(prompts):
+            if record["category"] == replacement["category"]:
+                replacement["workshop_prompt_id"] = record[
+                    "workshop_prompt_id"
+                ]
+                prompts[index] = replacement
+                replaced = True
+                break
+        self.assertTrue(replaced)
+        result = run_level0_workshop_derived_trace(
+            _build_clean_item_records(), prompts, EventLog()
+        )
+        self.assertEqual(result["prompt_count"], 26)
+
+
+class InputValidationHaltTest(unittest.TestCase):
+
+    def _mutate_ledger_and_expect(self, mutate, exception_cls):
+        ledger = _ledger_for("Set up a CI workflow for a Python project.")
+        mutate(ledger)
+        event_log = EventLog()
+        with self.assertRaises(exception_cls):
+            build_canonical_intent_frame(ledger, "W-PRM-001", event_log)
+        self.assertTrue(event_log.has_halt())
+
+    def test_non_dict_ledger_halts(self):
+        event_log = EventLog()
+        with self.assertRaises(NonDictSignalEvidenceLedger):
+            build_canonical_intent_frame("not a dict", "W-PRM-001", event_log)
+        self.assertTrue(event_log.has_halt())
+
+    def test_missing_ledger_key_halts(self):
+        def mutate(ledger):
+            del ledger["signal_evidence"]
+        self._mutate_ledger_and_expect(mutate, MissingSignalEvidenceLedgerKey)
+
+    def test_unknown_ledger_key_halts(self):
+        def mutate(ledger):
+            ledger["extra_unknown_key"] = "synthetic extra"
+        self._mutate_ledger_and_expect(mutate, UnknownSignalEvidenceLedgerKey)
+
+    def test_invalid_ledger_kind_halts(self):
+        def mutate(ledger):
+            ledger["signal_evidence_ledger_kind"] = "something_else"
+        self._mutate_ledger_and_expect(mutate, InvalidSignalEvidenceLedgerKind)
+
+    def test_selection_made_flip_halts(self):
+        def mutate(ledger):
+            ledger["selection_made"] = True
+        self._mutate_ledger_and_expect(mutate, FrameBGatingBooleanFlipped)
+
+    def test_route_created_flip_halts(self):
+        def mutate(ledger):
+            ledger["route_created"] = True
+        self._mutate_ledger_and_expect(mutate, FrameBGatingBooleanFlipped)
+
+    def test_non_list_signal_evidence_halts(self):
+        def mutate(ledger):
+            ledger["signal_evidence"] = "not a list"
+        self._mutate_ledger_and_expect(mutate, InvalidSignalEvidenceShape)
+
+    def test_non_dict_signal_record_halts(self):
+        def mutate(ledger):
+            if ledger["signal_evidence"]:
+                ledger["signal_evidence"][0] = "not a dict"
+            else:
+                ledger["signal_evidence"] = ["not a dict"]
+        self._mutate_ledger_and_expect(mutate, InvalidSignalEvidenceShape)
+
+    def test_malformed_signal_record_field_set_halts(self):
+        def mutate(ledger):
+            if ledger["signal_evidence"]:
+                del ledger["signal_evidence"][0]["signal_id"]
+            else:
+                # Construct a malformed record
+                ledger["signal_evidence"] = [{"only": "one_field"}]
+        self._mutate_ledger_and_expect(mutate, InvalidSignalEvidenceShape)
+
+    def test_empty_workshop_prompt_id_halts(self):
+        ledger = _ledger_for("Set up CI.")
+        event_log = EventLog()
+        with self.assertRaises(InvalidWorkshopPromptId):
+            build_canonical_intent_frame(ledger, "", event_log)
+        self.assertTrue(event_log.has_halt())
+
+    def test_non_string_workshop_prompt_id_halts(self):
+        ledger = _ledger_for("Set up CI.")
+        event_log = EventLog()
+        with self.assertRaises(InvalidWorkshopPromptId):
+            build_canonical_intent_frame(ledger, 42, event_log)
+        self.assertTrue(event_log.has_halt())
+
+
+class ForbiddenLanguageHaltTest(unittest.TestCase):
+
+    def test_forbidden_phrase_in_input_halts(self):
+        ledger = _ledger_for("Set up CI.")
+        ledger["ledger_note"] = "this is the best ledger"
+        event_log = EventLog()
+        with self.assertRaises(
+            ForbiddenLanguageInLevel0WorkshopCanonicalIntentFrame
+        ):
+            build_canonical_intent_frame(ledger, "W-PRM-001", event_log)
+        self.assertTrue(event_log.has_halt())
+
+    def test_forbidden_claim_phrase_in_input_halts(self):
+        ledger = _ledger_for("Set up CI.")
+        ledger["ledger_note"] = "this contains a validated route claim"
+        event_log = EventLog()
+        with self.assertRaises(
+            ForbiddenLanguageInLevel0WorkshopCanonicalIntentFrame
+        ):
+            build_canonical_intent_frame(ledger, "W-PRM-001", event_log)
+        self.assertTrue(event_log.has_halt())
+
+    def test_user_authored_forbidden_phrase_is_preserved_as_evidence(self):
+        ledger = _ledger_for("Set up the best CI workflow.")
+        result = build_canonical_intent_frame(
+            ledger, "W-PRM-001", EventLog()
+        )
+        self.assertEqual(
+            result["input_prompt_observed"],
+            "Set up the best CI workflow.",
+        )
+
+    def test_user_authored_claim_phrase_is_preserved_as_evidence(self):
+        ledger = _ledger_for("Set up validated route workflow.")
+        result = build_canonical_intent_frame(
+            ledger, "W-PRM-001", EventLog()
+        )
+        self.assertEqual(
+            result["workshop_prompt_record"]["prompt_text"],
+            "Set up validated route workflow.",
+        )
+
+
+class InputIsolationTest(unittest.TestCase):
+
+    def test_input_ledger_not_mutated(self):
+        ledger = _ledger_for("Set up a CI workflow for a Python project.")
+        before = copy.deepcopy(ledger)
+        build_canonical_intent_frame(ledger, "W-PRM-001", EventLog())
+        self.assertEqual(ledger, before)
+
+
+class RequestedOutputShapeEnumTest(unittest.TestCase):
+
+    def test_recipe_phrasing_yields_recipe_shape_or_none(self):
+        result = _frame_for("Give me a recipe to set up CI.")
+        self.assertIn(
+            result["requested_output_shape"],
+            list(REQUESTED_OUTPUT_SHAPES) + [None],
+        )
+
+    def test_no_shape_phrasing_yields_none_or_one_of_bounded(self):
+        result = _frame_for("zzz qqq.")
+        self.assertIn(
+            result["requested_output_shape"],
+            list(REQUESTED_OUTPUT_SHAPES) + [None],
+        )
+
+    def test_no_prompt_item_kind_value_used_for_shape(self):
+        # The bounded REQUESTED_OUTPUT_SHAPES must never include the
+        # bare value "prompt" (workshop item-kind namespace
+        # collision). The value used for prompt-collection-request
+        # is "prompt_collection_request".
+        self.assertNotIn("prompt", REQUESTED_OUTPUT_SHAPES)
+        self.assertIn("prompt_collection_request", REQUESTED_OUTPUT_SHAPES)
+
+
+class SignalEvidenceEchoTest(unittest.TestCase):
+
+    def test_signal_evidence_echoed_from_ledger(self):
+        ledger = _ledger_for("Set up a CI workflow for a Python project.")
+        result = build_canonical_intent_frame(
+            ledger, "W-PRM-001", EventLog()
+        )
+        # The echoed list IS the same as the ledger's signal_evidence
+        # (the synthesizer does not modify records). We compare by
+        # value to allow either identity or deep-equal.
+        self.assertEqual(
+            result["signal_evidence"], ledger["signal_evidence"]
+        )
+
+    def test_affinity_basis_references_existing_signal_ids(self):
+        ledger = _ledger_for(
+            "Set up a CI workflow for a Python project."
+        )
+        result = build_canonical_intent_frame(
+            ledger, "W-PRM-001", EventLog()
+        )
+        all_signal_ids = {sig["signal_id"]
+                          for sig in ledger["signal_evidence"]}
+        for entry in result["source_shape_affinity"]:
+            for sid in entry["affinity_basis"]:
+                self.assertIn(sid, all_signal_ids)
+
+
+class StaticScanTest(unittest.TestCase):
+
+    def setUp(self):
+        module_path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "level0_workshop_canonical_intent_frame.py",
+        )
+        with open(module_path, "r", encoding="ascii") as handle:
+            self.source = handle.read()
+        self.module_path = module_path
+
+    def test_no_file_io_calls(self):
+        for token in ("open(", "pathlib"):
+            self.assertNotIn(token, self.source)
+
+    def test_no_network_or_http_tokens(self):
+        for token in ("urllib", "http.client", "socket"):
+            self.assertNotIn(token, self.source)
+
+    def test_no_requests_library_token(self):
+        for token in ("import requests", "from requests", "requests."):
+            self.assertNotIn(token, self.source)
+
+    def test_no_subprocess_or_shell_tokens(self):
+        for token in ("subprocess", "os.system", "shutil"):
+            self.assertNotIn(token, self.source)
+
+    def test_no_hash_tokens(self):
+        for token in ("hashlib", ".hexdigest", ".sha256"):
+            self.assertNotIn(token, self.source)
+
+    def test_no_retrieval_verb_definitions(self):
+        for token in ("def query", "def search", "def retrieve",
+                      "def rank"):
+            self.assertNotIn(token, self.source)
+
+    def test_no_scoring_or_score_tokens(self):
+        for token in ("score", "scoring"):
+            self.assertNotIn(token, self.source)
+
+    def test_no_forbidden_output_field_name_substrings_in_source(self):
+        for token in ("ranking_performed", "scoring_performed",
+                      "confidence", "best_match", "threshold",
+                      "similarity"):
+            self.assertNotIn(token, self.source)
+
+    def test_no_embedding_vector_ann_reranker_tokens(self):
+        for token in (
+            "embedding(", "vectorize(", " ann_", "approximate_nearest",
+            "reranker(", "rerank_",
+        ):
+            self.assertNotIn(token, self.source)
+
+    def test_no_external_integration_tokens(self):
+        for token in (
+            "copilot", "waza", "vscode", "vs_code", "openai",
+            "anthropic", "claude_api", "llm",
+        ):
+            self.assertNotIn(token, self.source)
+
+    def test_no_prior_wo_public_function_invoked(self):
+        prior_public_functions = (
+            "run_scaffold_route_query_probe",
+            "run_scaffold_route_query_ambiguity_probe",
+            "run_scaffold_conflicting_evidence_guard",
+            "run_scaffold_source_intake_trace",
+            "run_scaffold_source_intake_register",
+            "run_scaffold_source_trace_admission_bridge",
+            "run_scaffold_source_intake_smoke_package",
+            "run_scaffold_route_invariant_diagnostic_reporter",
+            "run_scaffold_source_intake_visible_report",
+            "run_scaffold_external_source_acquisition_boundary",
+            "run_scaffold_url_acquisition_executor",
+            "run_scaffold_url_acquisition_register_readiness",
+            "run_level0_manual_seed_visible_report",
+            "run_level0_manual_seed_trace_execution",
+            "run_level0_manual_seed_materialization",
+            "run_level0_manual_seed_end_to_end_trace",
+            "run_level0_workshop_derived_trace",
+            "run_level0_workshop_trace_review",
+            "map_level0_workshop_user_intent",
+            "build_level0_workshop_normalized_prompt_view",
+            "extract_workshop_signal_evidence",
+        )
+        for name in prior_public_functions:
+            self.assertNotIn(name, self.source)
+
+    def test_module_file_is_ascii(self):
+        with open(self.module_path, "rb") as handle:
+            raw = handle.read()
+        non_ascii = sum(1 for b in raw if b > 127)
+        self.assertEqual(non_ascii, 0)
+
+
+if __name__ == "__main__":
+    unittest.main()
