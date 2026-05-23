@@ -15144,3 +15144,114 @@ input directly, record why signals fired or conflicted, preserve
 literal false authorization/readiness/selection booleans, create no
 route, admit no corpus, qualify no source, run no real benchmark, and
 leave real-benchmark-ready as NO.
+
+## Audit Note - Mandatory Priority-Miss Check Template Added
+
+### Scope
+
+Add one project-local prompt template that carries the verbatim
+Mandatory Priority-Miss Check block, and add one Section L gate
+entry in `ai-search/00-controller-checklist.md` that requires the
+block to precede Section L on every new scope prompt in this
+project.
+
+This is documentation-only. No `harness/` change. No test change.
+No `benchmark-fixtures/` mutation. No automation, scripts,
+generators, package files, CI, or new project structure. No
+machine-enforced prepend hook. No claim that the template
+guarantees new chats absolutely remember it.
+
+### Why
+
+Level 0B downstream trace work (WO-L0-WORKSHOP-TRACE-01,
+WO-L0-WORKSHOP-REVIEW-01) was implemented while the upstream
+prompt-text-to-intent layer was still missing. The packets were
+internally coherent but the chain was solving downstream surface
+while skipping the actual upstream cause. A project-local
+priority-miss check, prepended to every new scope prompt, surfaces
+such sequencing gaps before scope work begins.
+
+### Allowed Files
+
+- `ai-search/00-claude-scope-prompt-template.md` (new)
+- `ai-search/00-controller-checklist.md` (one Section L gate entry only)
+- `ai-search/00-claude-task-ledger.md` (this audit note)
+
+### Search outcome
+
+A search of the repo confirmed no prior helper / template /
+prepend mechanism: no `.claude/` directory; no file matching
+`*template*` under the project root; zero matches for "priority
+miss", "priority-miss", "prompt template", "scope template",
+"prompt prepend", "prepend helper" across the repo. Therefore
+this audit note creates the smallest durable documentation-only
+artifact rather than extending an existing helper.
+
+### Changed Files
+
+- `ai-search/00-claude-scope-prompt-template.md` (new file)
+- `ai-search/00-controller-checklist.md` (one new Section L gate
+  bullet immediately before Section M)
+- `ai-search/00-claude-task-ledger.md` (this audit note)
+
+No `harness/` change. No test change. No `benchmark-fixtures/`
+mutation. No prior WO boundary doc modification. No prior L0
+planning doc modification. No `00-open-questions.md`
+modification - no RK or DC row was needed; the change is doc-only
+and the Section L gate entry plus this audit note are sufficient.
+
+### Evidence
+
+- Search for existing helper / template / prepend: no prior
+  helper / template found.
+- ASCII check: new template file and the updated
+  `00-controller-checklist.md` contain zero non-ASCII bytes.
+- `__pycache__` absence: no `__pycache__` directories under the
+  project root.
+- Project root check: root contains exactly `ai-search/`,
+  `harness/`, and `benchmark-fixtures/`.
+- `benchmark-fixtures/` unchanged: 10-file inventory unchanged.
+- `harness/` unchanged: no harness module or test file touched.
+- OQ closure: none. OQ-003, OQ-015, OQ-031, OQ-035, OQ-048,
+  OQ-049, OQ-056, OQ-057, OQ-070, OQ-075, OQ-076 remain OPEN.
+- RK-039 duplication: none. The RK-039 row appears exactly once
+  in the Rejected Assumptions Tracker.
+- Real-benchmark-ready remains NO.
+
+### Non-Claim Constraints
+
+This audit note does not claim the Mandatory Priority-Miss Check
+template is sufficient, necessary, superior, best, complete,
+production-ready, recommended, or selected. It is the smallest
+durable doc-only artifact that fits the project's constraints. It
+does not introduce automation, scripts, generators, package files,
+CI, or new project structure. It does not introduce a Claude Code
+hook, settings file, or any machine-enforced prepend mechanism. It
+does not guarantee that any new chat absolutely remembers the
+block; it is a project-local convention with the responsibility
+on prompt authors and reviewing Claude sessions. Two stronger
+machine-enforcement paths (project-level `.claude/settings.json`
+`UserPromptSubmit` hook; user-global `~/.claude/settings.json`
+hook) exist and would actually enforce the prepend, but both
+require explicit Codex authorization in a separate packet because
+each counts as new project structure or out-of-repo state.
+
+All DC-020 through DC-070 boundary invariants carry forward. This
+audit note does not amend or broaden DC-003 through DC-070.
+Real-benchmark-ready remains NO.
+
+### Codex Review Result - Priority-Miss Template
+
+APPROVED WITH NOTES after Codex review-time wording correction.
+
+Codex found one documentation wording issue in
+`ai-search/00-claude-scope-prompt-template.md`: the template's
+"What this template does NOT do" section originally said it did
+not modify Section L, while the packet intentionally added one
+Section L gate entry. Codex corrected the statement to say the
+template does not replace, weaken, or narrow Section L; it adds a
+pre-Section-L priority-miss prompt convention. No scope expansion,
+harness change, benchmark-fixtures mutation, OQ closure, RK-039
+duplication, route creation, source qualification, corpus
+admission, benchmark execution, or real-benchmark-ready change was
+introduced.
