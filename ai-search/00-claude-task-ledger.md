@@ -15090,3 +15090,57 @@ WO-L0-WORKSHOP-REVIEW-01 and are NOT claimed exhaustive.
 All DC-020 through DC-069 boundary invariants carry forward.
 WO-L0-WORKSHOP-REVIEW-01 does not amend or broaden DC-003 through
 DC-069. Real-benchmark-ready remains NO.
+
+---
+
+## Codex Self-Review Note - Level 0B User Intent Gap
+
+Date: 2026-05-23
+Branch: `level0-next-index-test`
+Related commit: `fa067e5 Add workshop user intent mapper`
+Related tracker row: `RK-058`
+
+### Finding
+
+Codex missed a core Level 0B ordering issue: the workshop trace and
+review layers validated downstream behavior from declared
+`expected_item_kinds_touched` fields, but that did not prove the
+upstream `prompt_text -> user intent -> touched material shape` path.
+The user challenge correctly identified that user intent capture is
+the central problem, not a side concern.
+
+### Impact
+
+The trace could show candidate route fragments, workflow fragments,
+rejections, ambiguity, and no-route behavior while still depending on
+fixture-declared touched kinds. That means the trace surface was
+internally coherent, but it did not yet answer why a free-text prompt
+became a candidate, why it did not, or which signals justified the
+mapping.
+
+### Root Cause
+
+Codex treated a downstream indexing-logic trace as progress toward
+user-intent mapping without keeping the upstream boundary explicit
+enough. The fast-plan compression amplified the mistake: derived
+material and review scaffolds were completed before the durable
+canonical user-intent frame was created.
+
+### Corrective Action
+
+The emergency scaffold commit `fa067e5` added
+`harness/level0_workshop_user_intent_mapper.py` and
+`harness/tests/test_level0_workshop_user_intent_mapper.py` with
+19 targeted tests and a 1228/1228 full-suite result. This mapper is
+only a scaffold. The durable next layer must be a Canonical Intent
+Frame with inspectable `signal_evidence`, bounded shape affinity, and
+free-text prompt acceptance tests.
+
+### Carry-Forward Constraint
+
+Future Level 0B intent work must not treat declared prompt fixture
+fields as proof of user-intent capture. It must test free-text prompt
+input directly, record why signals fired or conflicted, preserve
+literal false authorization/readiness/selection booleans, create no
+route, admit no corpus, qualify no source, run no real benchmark, and
+leave real-benchmark-ready as NO.
