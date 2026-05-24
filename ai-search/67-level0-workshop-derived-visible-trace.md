@@ -346,7 +346,22 @@ phase begins.
 
 ## Test Surface
 
-`harness/tests/test_level0_workshop_derived_trace.py` contains 86
+WO-L0-WORKSHOP-RK058-CLOSURE-01 addendum: the test module's
+`_build_clean_prompt_records` helper no longer carries a
+per-prompt touched-kind plan. The 26 records are produced by
+routing the 26 planning-doc `prompt_text` strings through
+`map_level0_workshop_user_intent` (FRAME-D shim), and the
+resulting FRAME-C-derived `workshop_prompt_record` is adopted
+verbatim. The trace test therefore exercises the upstream
+FRAME-A NormalizedPromptView -> FRAME-B SignalEvidenceLedger ->
+FRAME-C CanonicalIntentFrame -> WorkshopPromptRecordAdapter
+pipeline for every record rather than relying on predeclared
+fixtures. RK-058 closure recorded in DC-077. Residual
+planning-intent vs FRAME-D-actual divergences are recorded as
+RK-060 OPEN (per-prompt rationale in
+`ai-search/00-level0-awesome-copilot-workshop-seed.md`).
+
+`harness/tests/test_level0_workshop_derived_trace.py` contains 93
 tests across the following test classes:
 
 - `CleanPassTest` (18) - output shape, fixed key set, count fields,
@@ -389,6 +404,18 @@ tests across the following test classes:
   HTTP-library, subprocess / shell, hashlib, retrieval-verb,
   scoring, external-integration tokens; absence of any prior-WO
   public function name; module file is ASCII.
+- `Rk058FixtureParityTest` (7) - added by
+  WO-L0-WORKSHOP-RK058-CLOSURE-01. Proves no prompt_text uses
+  the pre-closure synthetic placeholder string, the historical
+  `_PROMPT_PLAN` per-prompt touched-kind table is no longer
+  defined, the module imports `map_level0_workshop_user_intent`,
+  every prompt record carries the FRAME-C seven-field adapter
+  shape with a bounded category, the FRAME-D-derived per-category
+  counts match the validator's bounded
+  `EXPECTED_PROMPT_CATEGORY_DISTRIBUTION`, the 26 FRAME-D-derived
+  records pass `run_level0_workshop_derived_trace` end-to-end,
+  and the `_PLANNING_DOC_PROMPTS` tuple holds exactly 26 unique
+  `(workshop_prompt_id, prompt_text)` pairs.
 
 ## Non-Claim Constraints
 

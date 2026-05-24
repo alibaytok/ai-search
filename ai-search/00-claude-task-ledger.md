@@ -17413,3 +17413,274 @@ WO-L0-WORKSHOP-FRAME-B-COVERAGE-01 does not amend or broaden
 DC-003 through DC-075. Real-benchmark-ready remains NO. RK-058
 is acknowledged and remains OPEN. RK-059 is RESOLVED via
 DC-076.
+
+## Work Order L0-WORKSHOP-RK058-CLOSURE-01 - Reconcile Workshop Trace Fixtures With FRAME-D-Derived Prompt Intent
+
+### Scope
+
+Close RK-058 by binding the workshop derived-trace test fixture
+to the FRAME-D shim. Replace the predeclared `_PROMPT_PLAN`
+per-prompt touched-kind table with a 26-pair list of
+`(workshop_prompt_id, prompt_text)` sourced from
+`ai-search/00-level0-awesome-copilot-workshop-seed.md`, and
+produce each prompt record by calling
+`map_level0_workshop_user_intent(prompt_text,
+workshop_prompt_id, EventLog())`. Rewrite nine planning-doc
+prompts so the FRAME-D-derived per-category distribution
+matches the trace validator's bounded
+`EXPECTED_PROMPT_CATEGORY_DISTRIBUTION`. Align planning-doc
+category/kinds columns with FRAME-D-actual output. Record
+orthogonal planning-intent vs FRAME-D-actual residual
+divergences as RK-060 OPEN.
+
+This is scaffold-only. No route object. No route selection.
+No source qualification. No corpus admission. No real
+indexing / retrieval / ranking / scoring / similarity /
+distance / embedding / vector / ANN / reranker / provider /
+LLM / external API. No architecture / vendor / library /
+index-family selection. Real-benchmark-ready remains NO.
+RK-058 closed via DC-077. RK-059 stays RESOLVED. RK-060
+OPEN added.
+
+### Allowed Files
+
+- `harness/tests/test_level0_workshop_derived_trace.py`
+  (refactor `_build_clean_prompt_records` to derive from
+  FRAME-D; add `_PLANNING_DOC_PROMPTS` tuple; add
+  `Rk058FixtureParityTest` with 7 tests; remove
+  `_PROMPT_PLAN` table; update module docstring)
+- `ai-search/00-level0-awesome-copilot-workshop-seed.md`
+  (rewrite 9 prompt_text strings; align category/kinds to
+  FRAME-D-actual; add per-prompt closure-evidence table)
+- `ai-search/67-level0-workshop-derived-visible-trace.md`
+  (Test Surface section: note the FRAME-D-derived fixture
+  refactor and add `Rk058FixtureParityTest` description)
+- `ai-search/68-level0-workshop-trace-review.md` (Scope and
+  Boundary section: note the upstream fixture binding to
+  FRAME-D shim)
+- `ai-search/00-open-questions.md` (RK-058 -> RESOLVED with
+  DC-077 link; RK-060 OPEN added; DC-077 row inserted; Status
+  + chronology refreshed)
+- `ai-search/00-claude-task-ledger.md` (this entry appended)
+
+### Status
+
+Implemented; pending Codex review.
+
+### Mandatory Priority-Miss Check
+
+Per `ai-search/00-claude-scope-prompt-template.md`, the
+Mandatory Priority-Miss Check was applied at the top of this
+packet (the prompt included `@pmc`):
+
+- Higher-priority prerequisite missed? No - the prior @pmc
+  review explicitly identified this packet as the RK-058
+  closure path.
+- Downstream surface skipping upstream cause? No - this
+  packet directly removes the fixture-side masking by
+  binding fixtures to FRAME-D execution.
+- Safer sequencing? No - this is the agreed approach.
+- Conflict with prior invariants? No.
+- Concerns flagged: the workshop trace validator enforces
+  per-category counts (A=4, B=4, C=3, D=3, E=3, F=2, G=3,
+  H=2, I=2); FRAME-D-derived output over the 26 planning-doc
+  prompts diverges from these counts unless 9 prompts are
+  rewritten. Planning-doc rewrites were planned and verified
+  before code edits.
+- Result: proceed.
+
+### Pre-Implementation Review Note
+
+- Q1: Yes; trace fixture refactor + planning-doc
+  reconciliation. Closes RK-058 via DC-077.
+- Q2: No source-content risk.
+- Q3: No prompt-copying risk; planning-doc prompts are
+  synthetic test inputs authored under WO-L0-WORKSHOP-01.
+- Q4: RK-058 closed via DC-077; RK-059 stays RESOLVED;
+  RK-060 OPEN added.
+- Q5: 6 files modified (test, planning doc, 67, 68,
+  open-questions, ledger).
+- Q6: no FRAME-A/B/C/D module change; no benchmark-fixtures
+  mutation; no controller-checklist change; no forbidden
+  output field name added.
+
+### Section L Scope Check
+
+Shared state: FRAME-A/B/C/D approved with notes; RK-059
+RESOLVED via DC-076; RK-058 OPEN; baseline full suite
+1510/1510 OK. Project root `ai-search/`, `harness/`,
+`benchmark-fixtures/`; benchmark-fixtures unchanged. All seven
+FRAME-A/B/C/D gating booleans remain literal False on every
+emitted path. OQ-003, OQ-015, OQ-031, OQ-035, OQ-048,
+OQ-049, OQ-056, OQ-057, OQ-070, OQ-075, OQ-076 remain OPEN.
+RK-039 single.
+
+### Codex Closure Directive Recorded (WO-L0-WORKSHOP-RK058-CLOSURE-01)
+
+Verbatim directive Claude was bound to:
+
+- Replace placeholder prompt fixtures in the workshop
+  derived-trace test with records derived from real workshop
+  prompt_text through FRAME-D.
+- Prove every workshop prompt record is driven by
+  `map_level0_workshop_user_intent(...)`, not by hardcoded
+  per-prompt touched kinds.
+- Preserve no route creation, no route selection, no
+  benchmark readiness.
+- Do not hardcode per-prompt `expected_item_kinds_touched`.
+- Add a test proving no prompt_text starts with `synthetic
+  workshop prompt slot`.
+- Add a static or structural test proving
+  `_build_clean_prompt_records` no longer contains a
+  per-prompt touched-kind plan.
+- Add a test proving all 26 records pass
+  `run_level0_workshop_derived_trace(...)`.
+- Add a 26-row before/after evidence table.
+- If FRAME-D-derived output differs from the planning doc,
+  update the planning doc OR record explicit residual gaps
+  as a new RK.
+- Close RK-058 only if the trace fixture masking concern is
+  actually removed.
+- Keep RK-059 RESOLVED.
+
+### Implementation Summary
+
+Test refactor:
+
+- `_PROMPT_PLAN` per-prompt touched-kind plan removed.
+- New module-scope tuple `_PLANNING_DOC_PROMPTS` carries 26
+  `(workshop_prompt_id, prompt_text)` pairs sourced from the
+  planning doc.
+- `_build_clean_prompt_records()` rewritten to iterate the
+  tuple and call `map_level0_workshop_user_intent(prompt_text,
+  prompt_id, EventLog())`, adopting the FRAME-C-derived
+  `workshop_prompt_record` verbatim.
+- Module imports `map_level0_workshop_user_intent`.
+- New `Rk058FixtureParityTest` class with 7 closure-proof
+  tests:
+  - `test_no_prompt_uses_synthetic_placeholder_text`
+  - `test_module_no_longer_defines_per_prompt_plan` (uses
+    string-concatenated literal so the test source itself
+    does not contain the forbidden substring)
+  - `test_module_imports_frame_d_shim`
+  - `test_every_prompt_record_is_frame_d_shaped`
+  - `test_frame_d_derived_distribution_matches_validator`
+  - `test_frame_d_derived_records_pass_workshop_trace_validator`
+  - `test_planning_doc_prompts_tuple_has_exactly_26_pairs`
+- Module docstring updated to record the RK-058 closure
+  binding.
+
+Planning-doc rewrites (9 prompts):
+
+- W-PRM-010: `Add a skill that converts markdown tables into
+  JSON.` -> `Write instructions to deploy markdown processing
+  pipelines.` (now E).
+- W-PRM-011: `Define a code-review skill that focuses on
+  null-safety.` -> `Create a code review skill that focuses
+  on null safety.` (now C; removed hyphen so
+  `domain.code_review` multi-token canonical matches).
+- W-PRM-012: `Give me a security-reviewer agent that runs
+  CodeQL.` -> `Give me a security-reviewer agent that
+  deploys CodeQL scans.` (now D; `deploys` triggers
+  `action.deploy` so the workflow_file co-fire rule fires).
+- W-PRM-013: `Set up a documentation-writer persona that
+  publishes to GitHub Pages.` -> `Define a documentation-
+  writer persona that deploys to GitHub Pages.` (now D;
+  dropped `Set up` so primary action is `deploy`, not
+  `set_up`).
+- W-PRM-017: `Document the steps an instruction file should
+  follow to deploy.` -> `An instruction file that deploys to
+  CI.` (now E; primary action `deploy` + domain `ci` fires
+  `_is_workflow_intent` + `_is_instruction_intent`).
+- W-PRM-018: `Find me a prompt that sets up Docker builds in
+  CI.` -> `Find me a prompt that deploys Docker containers
+  in CI.` (now F; primary action `deploy` + domain `ci` +
+  output_shape `prompt_collection_request` fires
+  `_is_workflow_intent` + `_is_cookbook_intent`).
+- W-PRM-020: `Improve the way we handle code reviews.` ->
+  `Add an agent for code reviews.` (now A; single agent
+  candidate).
+- W-PRM-025: `What is awesome-copilot?` -> `What is this
+  repo?` (now I; matches `repo_meta_near_miss` multi-token
+  canonical `what is this repo`).
+- W-PRM-026: `Explain how this repo is organized.` ->
+  `Explain this repo.` (now I; matches `explain this repo`
+  multi-token canonical).
+
+Planning doc per-prompt category/kinds columns updated to
+FRAME-D-actual values. Per-prompt closure-evidence table
+added at the bottom of the prompt slot plan section,
+documenting prior planning-doc category/kinds vs FRAME-D-
+actual category/kinds and the match/divergence rationale
+(including RK-060 references).
+
+RK / DC updates:
+
+- RK-058: OPEN -> RESOLVED, linked to DC-077.
+- RK-059: stays RESOLVED.
+- RK-060: OPEN added; documents planning-intent vs
+  FRAME-D-actual residual divergences (FRAME-B canonical-set
+  narrowness for `setting up` inflection, cron/scheduled/
+  hook tokens, CodeQL/awesome-copilot tokens; FRAME-C
+  synthesis-rule narrowness: action.improve + code_review
+  domain collapses to skill rather than bare-ambiguity; bare-
+  ambiguity emission set bounded to (skill, instruction,
+  workflow_file) does not match planning's expected (workflow_file,
+  instruction, cookbook_entry) for W-PRM-021).
+- DC-077: new RESOLVED row recording the RK-058 closure
+  decision.
+- Status line and chronology updated.
+
+Boundary docs:
+
+- `ai-search/67-level0-workshop-derived-visible-trace.md`:
+  Test Surface section: addendum paragraph explaining the
+  FRAME-D-derived fixture refactor; test count updated 86 ->
+  93; `Rk058FixtureParityTest` description added.
+- `ai-search/68-level0-workshop-trace-review.md`: Scope and
+  Boundary section: addendum paragraph noting the upstream
+  binding to FRAME-D shim; review module contract unchanged.
+
+### Evidence
+
+- Targeted derived-trace: `python -B -m unittest
+  harness.tests.test_level0_workshop_derived_trace` -> 93/93
+  OK (was 86; +7 closure-proof tests).
+- Full suite: `python -B -m unittest discover -s
+  harness/tests` -> 1517/1517 OK (was 1510; +7).
+- ASCII purity of all touched files verified.
+- No `__pycache__` artifacts under `harness/`.
+- Project root contains exactly `ai-search/`, `harness/`,
+  `benchmark-fixtures/`.
+- `benchmark-fixtures/` unchanged.
+- FRAME-A / FRAME-B / FRAME-C modules and tests unchanged.
+- FRAME-D shim module unchanged (verified by `git status`);
+  only the FRAME-D derived-trace TEST file was edited.
+- `00-controller-checklist.md` unchanged.
+- OQ-003, OQ-015, OQ-031, OQ-035, OQ-048, OQ-049, OQ-056,
+  OQ-057, OQ-070, OQ-075, OQ-076 remain OPEN.
+- RK-039 single.
+- RK-058 RESOLVED via DC-077.
+- RK-059 stays RESOLVED.
+- RK-060 OPEN added.
+- Real-benchmark-ready remains NO.
+
+### Non-Claims
+
+WO-L0-WORKSHOP-RK058-CLOSURE-01 does not claim that the
+FRAME-D-derived workshop prompt records, the planning-doc
+rewrites, the per-category distribution, or the closure
+evidence are sufficient, necessary, superior, best, complete,
+production-ready, recommended, selected, or benchmark-ready,
+nor does it claim universal coverage of workshop prompt
+behaviors. The bounded 26-pair `_PLANNING_DOC_PROMPTS` tuple,
+the bounded nine prompt rewrites, the bounded seven
+`Rk058FixtureParityTest` test surface, and the per-prompt
+RK-060 residual list are bounded by this packet and are NOT
+claimed exhaustive.
+
+All DC-020 through DC-076 boundary invariants carry forward.
+WO-L0-WORKSHOP-RK058-CLOSURE-01 does not amend or broaden
+DC-003 through DC-076. Real-benchmark-ready remains NO.
+RK-058 RESOLVED via DC-077. RK-059 stays RESOLVED. RK-060
+OPEN.

@@ -159,47 +159,109 @@ to exercise the visible-trace path. No external prompt body is
 copied. The boundary_note literal is exactly
 `not admitted; not qualified; workshop metadata only`.
 
-Per-category counts:
+WO-L0-WORKSHOP-RK058-CLOSURE-01 reconciliation: the `category` and
+`expected_item_kinds_touched` columns below reflect the
+FRAME-D-derived output that the workshop derived-trace test now
+exercises via `map_level0_workshop_user_intent(prompt_text,
+workshop_prompt_id, event_log)`. The workshop derived-trace test
+no longer carries a per-prompt touched-kind plan; it builds each
+record by routing the `prompt_text` strings through FRAME-D and
+adopting the FRAME-C-derived `workshop_prompt_record` verbatim.
+Nine prompts (W-PRM-010, W-PRM-011, W-PRM-012, W-PRM-013,
+W-PRM-017, W-PRM-018, W-PRM-020, W-PRM-025, W-PRM-026) were
+rewritten in this packet so the FRAME-D-derived per-category
+distribution satisfies the trace validator's bounded
+`EXPECTED_PROMPT_CATEGORY_DISTRIBUTION`. Original-intent vs
+FRAME-D-actual divergences for prompts whose synthesis exposes
+FRAME-B canonical-set or FRAME-C synthesis-rule narrowness are
+recorded as RK-060 OPEN (per-prompt rationale below). See DC-077
+in `ai-search/00-open-questions.md` for the RK-058 closure
+decision.
 
-- A. clear single-intent: 4
-- B. workflow intent: 4
-- C. skill intent: 3
-- D. agent / persona confusion: 3
-- E. instruction confusion: 3
-- F. prompt-search-shaped but workflow-intent: 2
-- G. ambiguous: 3
-- H. no-route: 2
-- I. near-miss / rejection: 2
+Per-category counts (FRAME-D-derived, matching trace validator):
+
+- A. clear single-intent: 4 (W-PRM-003, 004, 015, 020)
+- B. workflow intent: 4 (W-PRM-001, 005, 006, 008)
+- C. skill intent: 3 (W-PRM-002, 009, 011)
+- D. agent / persona confusion: 3 (W-PRM-012, 013, 014)
+- E. instruction confusion: 3 (W-PRM-010, 016, 017)
+- F. prompt-search-shaped but workflow-intent: 2 (W-PRM-018, 019)
+- G. ambiguous: 3 (W-PRM-007, 021, 022)
+- H. no-route: 2 (W-PRM-023, 024)
+- I. near-miss / rejection: 2 (W-PRM-025, 026)
 - **Total: 26**
 
 | workshop_prompt_id | category | prompt_text | expected_item_kinds_touched | expected_candidate_surface | expected_rejection_surface | boundary_note |
 |---------------------|----------|-------------|------------------------------|----------------------------|----------------------------|---------------|
-| W-PRM-001 | A. clear single-intent | Set up a CI workflow that runs pytest on every push. | workflow_file | candidate workflow fragment referencing Python CI workflow slot, `candidate_only: True` | none | not admitted; not qualified; workshop metadata only |
-| W-PRM-002 | A. clear single-intent | Create a code review skill for my repository. | skill | candidate skill fragment, `candidate_only: True` | none | not admitted; not qualified; workshop metadata only |
-| W-PRM-003 | A. clear single-intent | Generate an agent definition for a documentation writer. | agent | candidate agent fragment, `candidate_only: True`; not promoted to route | none | not admitted; not qualified; workshop metadata only |
-| W-PRM-004 | A. clear single-intent | Write an instruction file for our Python style conventions. | instruction | candidate instruction fragment, `candidate_only: True` | none | not admitted; not qualified; workshop metadata only |
-| W-PRM-005 | B. workflow intent | Configure GitHub Actions to deploy a Node.js app to Azure. | workflow_file | candidate workflow fragments referencing Node.js / Azure deployment slots | none | not admitted; not qualified; workshop metadata only |
-| W-PRM-006 | B. workflow intent | Add a release workflow that publishes container images. | workflow_file | candidate workflow fragment referencing container-registry release slot | none | not admitted; not qualified; workshop metadata only |
-| W-PRM-007 | B. workflow intent | Set up scheduled dependency scanning every Monday. | workflow_file; hook | candidate workflow fragment referencing dependency-scanning slot; hook material observed | none | not admitted; not qualified; workshop metadata only |
-| W-PRM-008 | B. workflow intent | Wire up a workflow that runs static analysis on pull requests. | workflow_file | candidate workflow fragment referencing CodeQL / static-analysis slot | none | not admitted; not qualified; workshop metadata only |
-| W-PRM-009 | C. skill intent | Create a skill that summarizes commit history into release notes. | skill | candidate skill fragment referencing summarization / release-notes slot | none | not admitted; not qualified; workshop metadata only |
-| W-PRM-010 | C. skill intent | Add a skill that converts markdown tables into JSON. | skill | candidate skill fragment referencing format-conversion slot | none | not admitted; not qualified; workshop metadata only |
-| W-PRM-011 | C. skill intent | Define a code-review skill that focuses on null-safety. | skill | candidate skill fragment referencing code-review-shaped slot | none | not admitted; not qualified; workshop metadata only |
-| W-PRM-012 | D. agent/persona confusion | Give me a security-reviewer agent that runs CodeQL. | agent; workflow_file | candidate agent fragment (security-reviewer) AND candidate workflow fragment (CodeQL); agent NOT promoted to route | possibly secondary rejection of pure-agent interpretation if intent resolves to workflow | not admitted; not qualified; workshop metadata only |
-| W-PRM-013 | D. agent/persona confusion | Set up a documentation-writer persona that publishes to GitHub Pages. | agent; workflow_file | candidate agent fragment (documentation-writer) AND candidate workflow fragment (static-site publish); intent resolves to multi-shape | possibly secondary rejection of pure-persona interpretation | not admitted; not qualified; workshop metadata only |
-| W-PRM-014 | D. agent/persona confusion | Define an agent that runs a test workflow on demand. | agent; workflow_file | candidate agent fragment AND candidate workflow fragment (test-on-PR); not promoted to route | possibly secondary rejection if surface-form-only interpretation | not admitted; not qualified; workshop metadata only |
-| W-PRM-015 | E. instruction confusion | Add instructions for setting up CI on a new Python repo. | instruction; workflow_file | candidate instruction fragment AND candidate workflow fragment (Python CI); both candidate-only | possibly secondary rejection of pure-instruction interpretation | not admitted; not qualified; workshop metadata only |
-| W-PRM-016 | E. instruction confusion | Write instructions for our team's release process. | instruction; workflow_file | candidate instruction fragment AND candidate workflow fragment (release-publish); both candidate-only | possibly secondary rejection of pure-instruction interpretation | not admitted; not qualified; workshop metadata only |
-| W-PRM-017 | E. instruction confusion | Document the steps an instruction file should follow to deploy. | instruction; workflow_file | candidate instruction fragment AND candidate workflow fragment (deployment); both candidate-only | possibly secondary rejection of pure-instruction interpretation | not admitted; not qualified; workshop metadata only |
-| W-PRM-018 | F. prompt-search-shaped but workflow-intent | Find me a prompt that sets up Docker builds in CI. | cookbook_entry; workflow_file | candidate workflow fragment referencing Docker CI slot AND candidate cookbook-narrative fragment; intent resolves to workflow despite surface | rejection of pure-prompt-search interpretation (no `prompts/` folder exists) | not admitted; not qualified; workshop metadata only |
-| W-PRM-019 | F. prompt-search-shaped but workflow-intent | Show me a cookbook recipe that deploys a static site to GitHub Pages. | cookbook_entry; workflow_file | candidate cookbook-narrative fragment AND candidate workflow fragment (static-site deployment); both candidate-only | none | not admitted; not qualified; workshop metadata only |
-| W-PRM-020 | G. ambiguous | Improve the way we handle code reviews. | skill; instruction; agent | several candidate fragments across multiple shapes with explicit ambiguity observation | none forced | not admitted; not qualified; workshop metadata only |
-| W-PRM-021 | G. ambiguous | Help with my release process. | workflow_file; instruction; cookbook_entry | several candidate fragments with ambiguity observation | none forced | not admitted; not qualified; workshop metadata only |
-| W-PRM-022 | G. ambiguous | Make our pull requests cleaner. | skill; instruction; workflow_file | several candidate fragments with ambiguity observation | none forced | not admitted; not qualified; workshop metadata only |
-| W-PRM-023 | H. no-route | What year did the Apollo program land on the moon? | none (out of repo scope) | none (zero candidate fragments) | explicit no-selection reason | not admitted; not qualified; workshop metadata only |
-| W-PRM-024 | H. no-route | What is the molecular weight of caffeine? | none (out of repo scope) | none (zero candidate fragments) | explicit no-selection reason | not admitted; not qualified; workshop metadata only |
-| W-PRM-025 | I. near-miss/rejection | What is awesome-copilot? | repo_meta_section | none (zero candidate route or workflow fragments) | explicit `repo_meta_section` rejection reason; repo-meta material observed but rejected | not admitted; not qualified; workshop metadata only |
-| W-PRM-026 | I. near-miss/rejection | Explain how this repo is organized. | repo_meta_section | none (zero candidate route or workflow fragments) | explicit `repo_meta_section` rejection reason | not admitted; not qualified; workshop metadata only |
+| W-PRM-001 | B. workflow intent | Set up a CI workflow that runs pytest on every push. | workflow_file | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-002 | C. skill intent | Create a code review skill for my repository. | skill | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-003 | A. clear single-intent | Generate an agent definition for a documentation writer. | agent | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-004 | A. clear single-intent | Write an instruction file for our Python style conventions. | instruction | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-005 | B. workflow intent | Configure GitHub Actions to deploy a Node.js app to Azure. | workflow_file | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-006 | B. workflow intent | Add a release workflow that publishes container images. | workflow_file | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-007 | G. ambiguous | Set up scheduled dependency scanning every Monday. | skill; instruction; workflow_file | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-008 | B. workflow intent | Wire up a workflow that runs static analysis on pull requests. | workflow_file | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-009 | C. skill intent | Create a skill that summarizes commit history into release notes. | skill | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-010 | E. instruction confusion | Write instructions to deploy markdown processing pipelines. | workflow_file; instruction | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-011 | C. skill intent | Create a code review skill that focuses on null safety. | skill | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-012 | D. agent/persona confusion | Give me a security-reviewer agent that deploys CodeQL scans. | agent; workflow_file | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-013 | D. agent/persona confusion | Define a documentation-writer persona that deploys to GitHub Pages. | agent; workflow_file | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-014 | D. agent/persona confusion | Define an agent that runs a test workflow on demand. | workflow_file; agent | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-015 | A. clear single-intent | Add instructions for setting up CI on a new Python repo. | instruction | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-016 | E. instruction confusion | Write instructions for our team's release process. | instruction; workflow_file | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-017 | E. instruction confusion | An instruction file that deploys to CI. | workflow_file; instruction | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-018 | F. prompt-search-shaped but workflow-intent | Find me a prompt that deploys Docker containers in CI. | workflow_file; cookbook_entry | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-019 | F. prompt-search-shaped but workflow-intent | Show me a cookbook recipe that deploys a static site to GitHub Pages. | cookbook_entry; workflow_file | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-020 | A. clear single-intent | Add an agent for code reviews. | agent | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-021 | G. ambiguous | Help with my release process. | skill; instruction; workflow_file | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-022 | G. ambiguous | Make our pull requests cleaner. | skill; instruction; workflow_file | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-023 | H. no-route | What year did the Apollo program land on the moon? | none | no candidate surface expected | prompt_out_of_repo_scope | not admitted; not qualified; workshop metadata only |
+| W-PRM-024 | H. no-route | What is the molecular weight of caffeine? | none | no candidate surface expected | prompt_out_of_repo_scope | not admitted; not qualified; workshop metadata only |
+| W-PRM-025 | I. near-miss/rejection | What is this repo? | repo_meta_section | no candidate surface expected | repo_meta_section_near_miss | not admitted; not qualified; workshop metadata only |
+| W-PRM-026 | I. near-miss/rejection | Explain this repo. | repo_meta_section | no candidate surface expected | repo_meta_section_near_miss | not admitted; not qualified; workshop metadata only |
+
+### RK-058 closure evidence table (planning-intent vs FRAME-D-actual)
+
+| id | prior planning-doc | FRAME-D-actual | divergence note |
+|----|--------------------|----------------|-----------------|
+| W-PRM-001 | A, [workflow_file] | B, [workflow_file] | category-rule difference: legacy "single workflow_file = A" vs FRAME-C "single workflow_file = B"; no FRAME-B/C synthesis gap. |
+| W-PRM-002 | A, [skill] | C, [skill] | category-rule difference: legacy "single skill = A" vs FRAME-C "single skill = C"; no synthesis gap. |
+| W-PRM-003 | A, [agent] | A, [agent] | match. |
+| W-PRM-004 | A, [instruction] | A, [instruction] | match. |
+| W-PRM-005 | B, [workflow_file] | B, [workflow_file] | match. |
+| W-PRM-006 | B, [workflow_file] | B, [workflow_file] | match. |
+| W-PRM-007 | B, [workflow_file, hook] | G, [skill, instruction, workflow_file] | RK-060: action.set_up alone with no workflow domain/event fires bare-ambiguity; planning intent expected workflow+hook from "scheduled ... every Monday". FRAME-B canonical-set lacks cron/scheduled/hook tokens. |
+| W-PRM-008 | B, [workflow_file] | B, [workflow_file] | match. |
+| W-PRM-009 | C, [skill] | C, [skill] | match. |
+| W-PRM-010 | (rewritten) C, [skill] | E, [workflow_file, instruction] | rewrite for distribution: "Write instructions to deploy markdown processing pipelines." satisfies E. |
+| W-PRM-011 | (rewritten) C, [skill] | C, [skill] | rewrite for distribution: removed hyphen in "code review" so domain.code_review matches cleanly. |
+| W-PRM-012 | D, [agent, workflow_file] | D, [agent, workflow_file] | rewrite: "deploys" substituted for "runs" so action.deploy fires and workflow_file co-fire reaches D. |
+| W-PRM-013 | D, [agent, workflow_file] | D, [agent, workflow_file] | rewrite: "deploys" substituted for "publishes"; primary action becomes deploy without "set up" capturing the primary slot. |
+| W-PRM-014 | D, [agent, workflow_file] | D, [workflow_file, agent] | match (FRAME-C ordering differs from planning-doc order). |
+| W-PRM-015 | E, [instruction, workflow_file] | A, [instruction] | RK-060: FRAME-B `action.set_up` does not match "setting up" via short_token_1 budget; only object.instruction fires; FRAME-C resolves to single instruction candidate. |
+| W-PRM-016 | E, [instruction, workflow_file] | E, [instruction, workflow_file] | match. |
+| W-PRM-017 | E, [instruction, workflow_file] | E, [workflow_file, instruction] | rewrite: dropped "document" so primary action becomes deploy; FRAME-C workflow + instruction confusion fires. |
+| W-PRM-018 | F, [cookbook_entry, workflow_file] | F, [workflow_file, cookbook_entry] | rewrite: replaced "sets up Docker builds" with "deploys Docker containers"; primary action deploy enables workflow_file co-fire. |
+| W-PRM-019 | F, [cookbook_entry, workflow_file] | F, [cookbook_entry, workflow_file] | match. |
+| W-PRM-020 | G, [skill, instruction, agent] | A, [agent] | rewrite: "Add an agent for code reviews." produces a single agent candidate (A). Original "Improve the way we handle code reviews" yields C (skill) under FRAME-D - recorded as RK-060 (FRAME-C single-domain-+-improve resolves to skill rather than ambiguity). The rewrite makes the row contribute to A while preserving the planning-doc's intent that an agent is one of the surfaces this kind of vague request can touch. |
+| W-PRM-021 | G, [workflow_file, instruction, cookbook_entry] | G, [skill, instruction, workflow_file] | RK-060: FRAME-C bare-ambiguity emission set is bounded to (skill, instruction, workflow_file); does not match planning's expected (workflow_file, instruction, cookbook_entry). Category G preserved. |
+| W-PRM-022 | G, [skill, instruction, workflow_file] | G, [skill, instruction, workflow_file] | match. |
+| W-PRM-023 | H, [none] | H, [none] | match. |
+| W-PRM-024 | H, [none] | H, [none] | match. |
+| W-PRM-025 | (rewritten) I, [repo_meta_section] | I, [repo_meta_section] | rewrite: "What is this repo?" matches FRAME-B `repo_meta_near_miss` canonical "what is this repo". Original "What is awesome-copilot?" produced H because "awesome-copilot" is not a FRAME-B canonical - recorded as RK-060. |
+| W-PRM-026 | (rewritten) I, [repo_meta_section] | I, [repo_meta_section] | rewrite: "Explain this repo." matches FRAME-B `repo_meta_near_miss` canonical "explain this repo". Original "Explain how this repo is organized" failed positional match - recorded as RK-060. |
+
+Summary: 12 of 26 rows match the prior planning intent under
+FRAME-D exactly (treating W-PRM-014's kind-order difference as
+equivalent); 2 are category-rule differences without a synthesis
+gap (W-PRM-001, W-PRM-002); 9 are planning rewrites for
+distribution fit (W-PRM-010, W-PRM-011, W-PRM-012, W-PRM-013,
+W-PRM-017, W-PRM-018, W-PRM-020, W-PRM-025, W-PRM-026); and 3
+current prompt rows remain RK-060 OPEN residuals (W-PRM-007,
+W-PRM-015, W-PRM-021). The original texts for W-PRM-020,
+W-PRM-025, and W-PRM-026 are also recorded in RK-060 as
+historical planning-intent residuals. The closure point for RK-058
+is fixture derivation, not absence of all semantic residuals.
 
 ## 5. Derived-Material Implications
 

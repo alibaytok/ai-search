@@ -51,6 +51,19 @@ mean sufficient, necessary, best, complete, production-ready,
 recommended, selected, benchmark-ready, or route-ready.
 Real-benchmark-ready remains NO.
 
+WO-L0-WORKSHOP-RK058-CLOSURE-01 addendum: the upstream workshop
+derived-trace test now derives its 26 `workshop_prompt_record`
+inputs by routing the planning-doc `prompt_text` strings through
+the FRAME-D shim `map_level0_workshop_user_intent`. The review
+module's contract is unchanged - it still consumes an
+already-loaded workshop derived-trace output dict - but the
+records the review module sees in the test layer are now
+FRAME-C-derived rather than predeclared. RK-058 closed by
+DC-077. Residual planning-intent vs FRAME-D-actual divergences
+are recorded as RK-060 OPEN; the review module does not need to
+change for any of those residuals because the upstream trace
+contract is preserved.
+
 ## Public Surface
 
 ```
