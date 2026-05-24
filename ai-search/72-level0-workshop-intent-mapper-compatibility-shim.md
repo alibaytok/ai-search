@@ -23,11 +23,16 @@ ranking, scoring, similarity, distance, embedding, vector, ANN
 backend, reranker, provider call, LLM call, architecture
 selection, vendor selection, library selection, index-family
 selection, production-system selection, or benchmark execution.
-Real-benchmark-ready remains NO. RK-058 remains OPEN. RK-059 is
-added (FRAME-C synthesis gaps surfaced by FRAME-D smoke tests)
-and remains OPEN. OQ-003, OQ-015, OQ-031, OQ-035, OQ-048,
-OQ-049, OQ-056, OQ-057, OQ-070, OQ-075, OQ-076 remain OPEN.
-RK-039 single.
+Real-benchmark-ready remains NO. RK-058 remains OPEN. RK-059
+(FRAME-C synthesis gaps surfaced by FRAME-D smoke tests) was
+partially hardened by WO-L0-WORKSHOP-FRAME-C-HARDEN-01 via
+FRAME-C synthesis rule additions (bare-ambiguity short-circuit,
+workflow_file co-fire from action.deploy, cookbook_entry
+extension to prompt_collection_request). RK-059 remains OPEN
+because no-signal bare ambiguity such as `help with my project`
+still needs FRAME-B signal coverage. OQ-003, OQ-015, OQ-031,
+OQ-035, OQ-048, OQ-049, OQ-056, OQ-057, OQ-070, OQ-075,
+OQ-076 remain OPEN. RK-039 single.
 
 ## 2. Public surface
 
@@ -206,43 +211,68 @@ of the bounded halt reasons before raising the translated legacy
 exception, so existing legacy halt-reason consumers continue to
 observe a mapper-scoped halt alongside the FRAME-A halt event.
 
-## 8. RK-059 - upstream FRAME-C synthesis gaps surfaced by FRAME-D
+## 8. RK-059 partial hardening - FRAME-C synthesis fixed where signal evidence exists
 
-The FRAME-D rework pass (WO-L0-WORKSHOP-FRAME-D-R) derives
-output strictly from FRAME-C. Three pre-FRAME-D legacy
-categorical assertions diverge from FRAME-C-actual behavior;
-these divergences are recorded as RK-059 in
-`ai-search/00-open-questions.md` and remain OPEN. Closure is
-reserved for a later Codex-authorized FRAME-C-hardening packet;
-closure must NOT happen inside FRAME-D and must NOT introduce a
-parallel keyword classifier in any downstream module.
+The FRAME-D rework pass (WO-L0-WORKSHOP-FRAME-D-R) derived
+output strictly from FRAME-C and recorded three pre-FRAME-D
+legacy categorical divergences as RK-059. The follow-up packet
+**WO-L0-WORKSHOP-FRAME-C-HARDEN-01** fixes the FRAME-C synthesis
+cases that have signal evidence, but does not close RK-059
+because one no-signal bare-ambiguity case still requires FRAME-B
+coverage. The hardening is at the FRAME-C synthesis layer (not in
+FRAME-D) via three deterministic rule additions:
 
-The three gaps:
+1. **bare-ambiguity short-circuit** in
+   `_compute_shape_touch_plan`: when the FRAME-B ledger contains
+   an action signal alone (no target / domain / output_shape /
+   constraint / repo-meta / out-of-scope), emit a bounded
+   three-entry ambiguous list (`skill`, `instruction`,
+   `workflow_file`) and add `bare_ambiguity_action_only` to
+   `ambiguity_reasons`. The category selector short-circuits to
+   `G. ambiguous`. Partially hardens gap 3 for action-backed
+   bare ambiguity (`make this better`, `fix this`).
+2. **workflow_file co-fire from action.deploy**: when
+   `primary_action == "deploy"` and the primary workflow rule
+   did NOT fire (no workflow domain / workflow target / event
+   constraint) but at least one non-workflow candidate already
+   fires, append `workflow_file` with grade `"ambiguous"`. The
+   downstream `>= 2 candidate kinds` rule then sets
+   `ambiguity_level == "high"`, and the category selector
+   returns D (agent + workflow), F (cookbook + workflow), or G
+   as appropriate. Closes gap 1 (`Use an agent persona to deploy
+   this project`) and contributes to gap 2.
+3. **`cookbook_entry` extended to `prompt_collection_request`**:
+   `_is_cookbook_intent` now returns True for
+   `requested_output_shape in (recipe,
+   prompt_collection_request)`. Combined with the workflow_file
+   co-fire rule above, this closes gap 2 (`Give me a prompt
+   that deploys a static site`).
 
-1. **agent + deploy**: `action.deploy` + `object.agent` without
-   a workflow-domain signal or event-triggered constraint
-   classifies as `A. clear single-intent` with `["agent"]`
-   (FRAME-C) rather than `D. agent/persona confusion` with
-   `["agent", "workflow_file"]` (pre-FRAME-D legacy).
-2. **prompt + deploy**: `action.deploy` +
-   `output_shape.prompt_collection_request` without a
-   workflow-domain signal or event-triggered constraint
-   classifies as `H. no-route` with `["none"]` (FRAME-C) rather
-   than `F. prompt-search-shaped but workflow-intent` with
-   `["cookbook_entry", "workflow_file"]` (pre-FRAME-D legacy).
-3. **bare ambiguity**: Bare ambiguity phrases like
-   `make this better`, `fix this`, or `help with my project` do
-   not have a dedicated FRAME-B family and so classify as
-   `H. no-route` with `["none"]` and `ambiguity_level == "none"`
-   (FRAME-C) rather than `G. ambiguous` with multiple kinds and
-   `ambiguity_observed == True` (pre-FRAME-D legacy).
+RK-059 status: OPEN, with DC-075 recording partial hardening
+evidence. The corresponding smoke tests have been renamed and
+reworded to assert the intended
+legacy categorical contract through FRAME-D's FRAME-C-derived
+output:
 
-Three smoke-test methods document these gaps with docstring
-pointers to RK-059:
+- `test_agent_workflow_prompt_maps_to_confusion_category`
+- `test_prompt_surface_workflow_intent_maps_to_cookbook_and_workflow`
+- `test_bare_ambiguity_phrase_surfaces_ambiguity`
+- `test_bare_ambiguity_fix_phrase_surfaces_ambiguity`
 
-- `test_agent_workflow_prompt_maps_to_clear_single_intent_under_frame_c`
-- `test_prompt_surface_workflow_intent_maps_to_no_route_under_frame_c`
-- `test_bare_ambiguity_phrase_maps_to_no_route_under_frame_c`
+The FRAME-D module did NOT change in this hardening packet; the
+hardening is entirely in `harness/level0_workshop_canonical_intent_frame.py`.
+
+### Residual RK-059 / FRAME-B coverage limitation
+
+Bare-ambiguity inputs that FRAME-B cannot extract any action
+signal from (for example `help with my project`, whose tokens
+are absent from every FRAME-B canonical and alias) still
+classify as `H. no-route` via the no-signal path because the
+bare-ambiguity rule requires at least one `action.*` signal to
+fire in the FRAME-B ledger. This is a FRAME-B coverage concern
+(would require extending FRAME-B's families), and remains the
+open RK-059 residual for a future Codex-authorized FRAME-B
+coverage packet.
 
 ## 9. Validation order
 
@@ -293,8 +323,9 @@ pointers to RK-059:
   OQ-048, OQ-049, OQ-056, OQ-057, OQ-070, OQ-075, or OQ-076.
 - The shim does not close RK-058. Closure remains reserved for a
   later Codex-authorized packet.
-- The shim does not close RK-059. Closure remains reserved for a
-  later Codex-authorized FRAME-C-hardening packet.
+- RK-059 remains OPEN after WO-L0-WORKSHOP-FRAME-C-HARDEN-01;
+  DC-075 records partial hardening at the FRAME-C synthesis
+  layer, and the FRAME-D shim was NOT modified by that packet.
 - The shim does not duplicate RK-039.
 - All DC-020 through DC-073 boundary invariants carry forward.
 
@@ -314,23 +345,23 @@ contract change for the legacy categorical strings or the
 ## 12. Test surface
 
 `harness/tests/test_level0_workshop_user_intent_mapper.py`
-contains 42 tests across four TestCase classes:
+contains 44 tests across four TestCase classes:
 
 - `CleanMappingTest` (16): legacy smoke tests covering deploy /
   CI / skill / agent+deploy / instruction+pipeline /
-  prompt+deploy / bare-ambiguity / no-route / repo-meta /
+  prompt+deploy / bare-ambiguity / residual no-signal
+  bare-ambiguity / no-route / repo-meta /
   Turkish workflow / Turkish skill / downstream-compatible record
   shape / authorization-boolean check / event emission. Three
-  cases were renamed and reworded to reflect FRAME-C-actual
-  behavior with docstring pointers to RK-059
-  (`test_agent_workflow_prompt_maps_to_clear_single_intent_under_frame_c`,
-  `test_prompt_surface_workflow_intent_maps_to_no_route_under_frame_c`,
-  `test_bare_ambiguity_phrase_maps_to_no_route_under_frame_c`).
+  cases were renamed and reworded to assert the intended
+  categorical contract after FRAME-C hardening; one residual test
+  records that `help with my project` still no-routes until
+  FRAME-B emits a signal for it.
 - `RejectionTest` (4): legacy halt-and-translate tests
   (non-string, empty, invalid id, string-immutability).
 - `StaticScanTest` (1): legacy file-IO / network / indexing
   token absence.
-- `LegacyContractParityTest` (21): proves the FRAME-D shim
+- `LegacyContractParityTest` (23): proves the FRAME-D shim
   derives output strictly from FRAME-C while preserving the
   legacy fourteen-key shape, the legacy seven-key
   `workshop_prompt_record` shape, the legacy three named

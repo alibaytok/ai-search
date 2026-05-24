@@ -149,11 +149,37 @@ The `_compute_shape_touch_plan` predicate set runs over the
 synthesized CIF (NOT the raw prompt). Each predicate that fires
 appends one entry to `source_shape_affinity` with
 `affinity_basis` listing the contributing signal ids. Bounded
-predicates:
+predicates (with WO-L0-WORKSHOP-FRAME-C-HARDEN-01 additions
+marked `[HARDEN-01]`):
 
+- **`bare_ambiguity` short-circuit `[HARDEN-01]`**: at least
+  one `action.*` signal fires AND no target object AND no
+  informative domain AND no requested_output_shape AND no
+  constraint/negation signal AND no `repo_meta_near_miss` AND no
+  `out_of_scope`. When this fires, the synthesizer emits a
+  bounded three-entry ambiguous list with
+  `affinity_grade == "ambiguous"` for `skill`, `instruction`,
+  and `workflow_file`, and the ambiguity classifier records the
+  reason `"bare_ambiguity_action_only"`; the category selector
+  short-circuits to `G. ambiguous` regardless of which kinds
+  appear in the entry set. Partially hardens RK-059 gap 3 for
+  action-backed bare ambiguity.
 - **`workflow_file`**: primary action in (`set_up`, `configure`,
   `deploy`) AND (domain in (`ci`, `deployment`) OR any
   event-triggered constraint OR `target_object == "workflow"`).
+- **`workflow_file` co-fire `[HARDEN-01]`**: `primary_action ==
+  "deploy"` AND no workflow domain AND no event-triggered
+  constraint AND no `workflow` target AND at least one
+  non-workflow candidate kind already fires. Appends one
+  `workflow_file` entry with `affinity_basis` listing the
+  action signal ids and `affinity_grade == "ambiguous"`. The
+  rule is intentionally narrower than `_is_workflow_intent`: it
+  is gated on `primary_action == "deploy"` (which the
+  `_ACTION_TO_PRIMARY` table maps from the deploy / publish /
+  release / ship / dagit / yayinla family) and not on
+  `set_up` or `configure`, so existing single-intent results
+  for prompts like `Configure the instruction set` are
+  preserved. Closes RK-059 gaps 1 and 2.
 - **`skill`**: primary action in (`create`, `review`, `improve`,
   `explain`) AND no event-triggered constraint AND target in
   (`skill_capability`, `algorithm`, `repository`) OR domain in
@@ -166,8 +192,16 @@ predicates:
 - **`hook`**: target_object == `hook` OR (event-triggered
   constraint AND not workflow_intent).
 - **`plugin`**: target_object == `plugin`.
-- **`cookbook_entry`**: requested_output_shape == `recipe` OR
-  target_object == `recipe`.
+- **`cookbook_entry`** (extended `[HARDEN-01]`):
+  `requested_output_shape in (recipe,
+  prompt_collection_request)` OR `target_object == recipe`.
+  The extension to include `prompt_collection_request` ensures
+  that a prompt asking for a prompt example fires
+  `cookbook_entry`, enabling the `workflow_file` co-fire rule
+  to raise ambiguity for prompts like `Give me a prompt that
+  deploys a static site` and surface category
+  `F. prompt-search-shaped but workflow-intent`. Closes
+  RK-059 gap 2.
 - **`repo_meta_section`**: any `repo_meta_near_miss` signal
   fires (rejection-only; precedes candidate-kind decisions).
 - **`none`**: any `out_of_scope` signal fires (no-route;
@@ -177,9 +211,25 @@ If `repo_meta_near_miss` or `out_of_scope` fires, candidate
 item-kind predicates do NOT add entries; the affinity list
 contains only the rejection/no-route entry.
 
+If `bare_ambiguity` fires, only the bounded three-entry
+ambiguous list is emitted; candidate item-kind predicates do
+NOT add entries.
+
 If two or more candidate item-kinds fire, each entry's
 `affinity_grade` is downgraded to `"ambiguous"` to surface
 multi-shape ambiguity at the entry level.
+
+### Residual RK-059 / FRAME-B coverage limitation
+
+Bare-ambiguity inputs that FRAME-B cannot extract any action
+signal from (for example `help with my project`, whose tokens
+are absent from every FRAME-B canonical and alias) still
+classify as `H. no-route` via the no-signal path because the
+bare-ambiguity rule requires at least one `action.*` signal to
+fire in the FRAME-B ledger. This is a FRAME-B coverage concern
+(would require extending FRAME-B's families), and RK-059
+therefore remains OPEN until that upstream signal coverage is
+authorized and tested.
 
 ### Evidence band classification
 
@@ -191,9 +241,10 @@ multi-shape ambiguity at the entry level.
 
 ### Ambiguity classification
 
-- `high` if any of: repo-meta collides with candidate; out-of-
-  scope collides with candidate; >=2 distinct target objects; >=2
-  distinct candidate item kinds.
+- `high` if any of: `bare_ambiguity_action_only` `[HARDEN-01]`;
+  repo-meta collides with candidate; out-of-scope collides with
+  candidate; >=2 distinct target objects; >=2 distinct candidate
+  item kinds.
 - `none` if exactly one target object and one candidate kind, or
   if no candidates and no rejection (and no signals at all).
 - Otherwise `low`.
@@ -206,6 +257,11 @@ categories via the deterministic table in
 
 - out_of_scope -> `H. no-route`.
 - repo_meta_near_miss -> `I. near-miss/rejection`.
+- `bare_ambiguity` `[HARDEN-01]` -> `G. ambiguous` (short-
+  circuit; the bounded three-entry list emitted by the
+  bare-ambiguity shape-touch rule includes `instruction` and
+  `workflow_file` which would otherwise trigger the
+  instruction+workflow category E; the short-circuit forces G).
 - High ambiguity with workflow + cookbook -> `F. prompt-search-shaped but workflow-intent`.
 - High ambiguity with workflow + agent -> `D. agent/persona confusion`.
 - High ambiguity with workflow + instruction -> `E. instruction confusion`.

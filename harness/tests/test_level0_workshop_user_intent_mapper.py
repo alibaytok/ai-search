@@ -1,16 +1,10 @@
 """Tests for the Level 0B workshop user-intent mapper (FRAME-D shim).
 
-The shim now derives output strictly from the FRAME-C
-CanonicalIntentFrame. Some pre-FRAME-D legacy smoke-test
-assertions diverge from FRAME-C semantics; those divergences are
-recorded as upstream FRAME-C synthesis gaps under RK-059
-("FRAME-C synthesis gaps surfaced by FRAME-D smoke tests"). The
-affected smoke-test assertions in `CleanMappingTest` and in
-`LegacyContractParityTest` have been updated to FRAME-C-actual
-values with docstring pointers to RK-059. Closure of RK-059 is
-reserved for a later Codex-authorized FRAME-C-hardening packet;
-once FRAME-C is hardened, those tests should be updated to
-re-encode the pre-FRAME-D legacy categorical contract.
+The shim derives output strictly from the FRAME-C CanonicalIntentFrame.
+WO-L0-WORKSHOP-FRAME-C-HARDEN-01 teaches FRAME-C the two concrete
+deploy-related RK-059 gaps and the action-backed bare-ambiguity cases.
+No-signal bare ambiguity, such as `help with my project`, remains an
+open RK-059 residual until FRAME-B supplies a signal for that phrasing.
 """
 
 import copy
@@ -62,27 +56,27 @@ class CleanMappingTest(unittest.TestCase):
         self.assertEqual(output["expected_item_kinds_touched"], ["skill"])
         self.assertEqual(output["workshop_prompt_record"]["category"], "C. skill intent")
 
-    def test_agent_workflow_prompt_maps_to_clear_single_intent_under_frame_c(self):
-        """RK-059 upstream FRAME-C gap: action.deploy + object.agent
-        without a workflow domain or event-triggered constraint
-        classifies as `A. clear single-intent` with `["agent"]`.
-        The pre-FRAME-D legacy mapper classified this as `D.
-        agent/persona confusion` with `["agent", "workflow_file"]`
-        via keyword co-occurrence; FRAME-C's signal-driven
-        synthesizer does not derive a `workflow_file` candidate
-        from `deploy` alone. Closure of RK-059 is reserved for a
-        later Codex-authorized FRAME-C-hardening packet that
-        teaches `_compute_shape_touch_plan` to fire `workflow_file`
-        from a deploy/release verb co-occurring with any object
-        signal."""
+    def test_agent_workflow_prompt_maps_to_confusion_category(self):
+        """RK-059 gap 1 closed by WO-L0-WORKSHOP-FRAME-C-HARDEN-01:
+        FRAME-C's workflow_file co-fire rule now appends
+        `workflow_file` as an ambiguous co-fire candidate when
+        `action.deploy` is present alongside another candidate
+        kind without a workflow domain / workflow target /
+        event-triggered constraint. The mapper output through the
+        FRAME-D shim now reflects the intended legacy categorical
+        contract: category `D. agent/persona confusion` with
+        `expected_item_kinds_touched == ["agent", "workflow_file"]`
+        and `ambiguity_observed == True`."""
         output, _ = _map("Use an agent persona to deploy this project")
         self.assertEqual(
             output["workshop_prompt_record"]["category"],
-            "A. clear single-intent",
+            "D. agent/persona confusion",
         )
         self.assertEqual(
-            output["expected_item_kinds_touched"], ["agent"]
+            output["expected_item_kinds_touched"],
+            ["agent", "workflow_file"],
         )
+        self.assertTrue(output["ambiguity_observed"])
 
     def test_instruction_workflow_prompt_maps_to_confusion_category(self):
         """RK-059 surface note: FRAME-C orders the candidate
@@ -101,45 +95,75 @@ class CleanMappingTest(unittest.TestCase):
             ["workflow_file", "instruction"],
         )
 
-    def test_prompt_surface_workflow_intent_maps_to_no_route_under_frame_c(self):
-        """RK-059 upstream FRAME-C gap: `output_shape.prompt_collection_request`
-        + `action.deploy` without a workflow domain or
-        event-triggered constraint classifies as `H. no-route`
-        with `["none"]`. The pre-FRAME-D legacy mapper classified
-        this as `F. prompt-search-shaped but workflow-intent`
-        with `["cookbook_entry", "workflow_file"]` via keyword
-        co-occurrence. Closure of RK-059 is reserved for a later
-        Codex-authorized FRAME-C-hardening packet that teaches
-        the shape-touch plan to fire `cookbook_entry` from a
-        `prompt_collection_request` output shape even without a
-        recipe-targeted target object, and to fire `workflow_file`
-        from a deploy verb co-occurring with any output-shape
-        signal."""
+    def test_prompt_surface_workflow_intent_maps_to_cookbook_and_workflow(self):
+        """RK-059 gap 2 closed by WO-L0-WORKSHOP-FRAME-C-HARDEN-01:
+        FRAME-C now treats `output_shape.prompt_collection_request`
+        as a cookbook-shaped request, and the workflow_file
+        co-fire rule appends `workflow_file` when `action.deploy`
+        is present alongside that cookbook entry. The mapper
+        output through the FRAME-D shim now reflects the intended
+        legacy categorical contract: category `F. prompt-search-
+        shaped but workflow-intent` with
+        `expected_item_kinds_touched == ["cookbook_entry",
+        "workflow_file"]` and `ambiguity_observed == True`."""
         output, _ = _map("Give me a prompt that deploys a static site")
         self.assertEqual(
             output["workshop_prompt_record"]["category"],
-            "H. no-route",
+            "F. prompt-search-shaped but workflow-intent",
         )
         self.assertEqual(
             output["expected_item_kinds_touched"],
-            ["none"],
+            ["cookbook_entry", "workflow_file"],
+        )
+        self.assertTrue(output["ambiguity_observed"])
+
+    def test_bare_ambiguity_phrase_surfaces_ambiguity(self):
+        """RK-059 gap 3 partially hardened by
+        WO-L0-WORKSHOP-FRAME-C-HARDEN-01:
+        FRAME-C's bare-ambiguity rule fires when the FRAME-B
+        ledger contains an action signal alone (no informative
+        target, domain, output_shape, or constraint). The mapper
+        output through the FRAME-D shim now reflects the intended
+        legacy categorical contract: category `G. ambiguous` with
+        multiple plausible kinds and `ambiguity_observed == True`.
+        Bare-ambiguity inputs that FRAME-B cannot extract any
+        action signal from (for example `help with my project`,
+        whose tokens are absent from every FRAME-B canonical and
+        alias) still classify as `H. no-route` via the no-signal
+        path; that residual coverage limitation is a FRAME-B
+        coverage concern, not a FRAME-C synthesis concern."""
+        output, _ = _map("make this better")
+        self.assertEqual(
+            output["workshop_prompt_record"]["category"], "G. ambiguous"
+        )
+        self.assertTrue(output["ambiguity_observed"])
+        self.assertGreater(len(output["expected_item_kinds_touched"]), 1)
+        # FRAME-C's bounded bare-ambiguity emission set.
+        self.assertEqual(
+            output["expected_item_kinds_touched"],
+            ["skill", "instruction", "workflow_file"],
         )
 
-    def test_bare_ambiguity_phrase_maps_to_no_route_under_frame_c(self):
-        """RK-059 upstream FRAME-C gap: bare ambiguity phrases
-        like `make this better`, `fix this`, or `help with my
-        project` do not have a dedicated FRAME-B family. FRAME-C
-        classifies them as `H. no-route` with `["none"]` and
-        `ambiguity_level == "none"`. The pre-FRAME-D legacy mapper
-        classified them as `G. ambiguous` with multiple kinds and
-        `ambiguity_observed == True` via the `_AMBIGUOUS_TERMS`
-        keyword table. Closure of RK-059 is reserved for a later
-        Codex-authorized FRAME-C-hardening packet that introduces
-        a dedicated `bare_ambiguity` family or equivalent rule."""
-        output, _ = _map("make this better")
-        self.assertEqual(output["workshop_prompt_record"]["category"], "H. no-route")
-        self.assertFalse(output["ambiguity_observed"])
+    def test_bare_ambiguity_help_phrase_remains_no_route_until_frame_b_signal(self):
+        """`help with my project` remains the RK-059 residual because
+        FRAME-B emits no signal for that phrasing yet."""
+        output, _ = _map("help with my project")
+        self.assertEqual(
+            output["workshop_prompt_record"]["category"], "H. no-route"
+        )
         self.assertEqual(output["expected_item_kinds_touched"], ["none"])
+        self.assertFalse(output["ambiguity_observed"])
+
+    def test_bare_ambiguity_fix_phrase_surfaces_ambiguity(self):
+        """Companion to the `make this better` case: `fix this`
+        triggers `action.improve` alone (no target / domain /
+        output_shape / constraint) and FRAME-C surfaces G
+        ambiguous."""
+        output, _ = _map("fix this")
+        self.assertEqual(
+            output["workshop_prompt_record"]["category"], "G. ambiguous"
+        )
+        self.assertTrue(output["ambiguity_observed"])
 
     def test_no_route_prompt_maps_to_none(self):
         output, _ = _map("What year did World War II end?")

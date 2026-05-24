@@ -250,11 +250,29 @@ _OUTPUT_SHAPE_TO_TAG = {
 # prompt) to bounded workshop item kinds. Each entry is a predicate
 # function from CIF to (matched, item_kind, affinity_grade,
 # basis_signal_kinds). Predicates run in declared order; multiple
-# can fire and contribute to ambiguity.
+# can fire and contribute to ambiguity. The bare-ambiguity rule
+# (added by WO-L0-WORKSHOP-FRAME-C-HARDEN-01) short-circuits when
+# the signal set is action-only with no informative
+# target/domain/output_shape/constraint and emits a bounded
+# three-entry ambiguous list; the workflow_file co-fire rule
+# (added by WO-L0-WORKSHOP-FRAME-C-HARDEN-01) appends workflow_file
+# as a co-occurring candidate when an action.deploy verb is present
+# alongside another candidate kind without a workflow domain /
+# workflow target / event-triggered constraint already firing the
+# primary workflow_file rule.
 _SHAPE_TOUCH_RULES_DOC = (
+    "bare_ambiguity: action signal present AND no target_object "
+    "AND no informative domain AND no requested_output_shape AND "
+    "no constraint AND no repo_meta_near_miss AND no out_of_scope "
+    "-> emit ambiguous entries for skill / instruction / "
+    "workflow_file with affinity_basis from action signals\n"
     "workflow_file: action in (set_up, configure, deploy) AND "
     "(domain ci/deployment OR constraint event_triggered/on_push/"
     "on_pull_request)\n"
+    "workflow_file co-fire: primary_action == deploy AND no "
+    "workflow domain AND no event-triggered constraint AND no "
+    "workflow target AND another candidate kind already fires "
+    "-> append workflow_file with affinity_grade 'ambiguous'\n"
     "skill: action in (create, review, improve, explain) AND "
     "target_object in (skill_capability, algorithm, repository) "
     "AND no event-triggered constraint\n"
@@ -264,12 +282,19 @@ _SHAPE_TOUCH_RULES_DOC = (
     "hook: target_object == hook OR (constraint event_triggered "
     "AND not full workflow_file context)\n"
     "plugin: target_object == plugin\n"
-    "cookbook_entry: requested_output_shape == recipe OR "
-    "target_object == recipe\n"
+    "cookbook_entry: requested_output_shape in (recipe, "
+    "prompt_collection_request) OR target_object == recipe\n"
     "repo_meta_section: any near_miss signal fires\n"
     "none: out_of_scope signal fires OR no synthesized action AND "
     "no synthesized target"
 )
+
+
+# Bare-ambiguity emission kinds. Bounded by
+# WO-L0-WORKSHOP-FRAME-C-HARDEN-01 and NOT claimed exhaustive.
+# Order is stable so the deduped `expected_item_kinds_touched`
+# list at the result level is deterministic.
+_BARE_AMBIGUITY_KINDS = ("skill", "instruction", "workflow_file")
 
 
 _FORBIDDEN_ROUTE_STATUS_FIELDS = (
@@ -679,9 +704,51 @@ def _select_requested_output_shape(output_shape_signals):
     return _OUTPUT_SHAPE_TO_TAG.get(first)
 
 
+def _is_bare_ambiguity_signal_set(
+    by_kind, distinct_target_objects, domain_tags,
+    requested_output_shape, constraint_tags,
+):
+    """Bare-ambiguity rule (WO-L0-WORKSHOP-FRAME-C-HARDEN-01,
+    closing RK-059 gap 3): the FRAME-B ledger contains at least
+    one action signal but no informative target_object, no
+    informative domain, no requested_output_shape, no constraint
+    or negation signal, no repo_meta_near_miss, and no
+    out_of_scope. This pattern matches free-text bare-ambiguity
+    inputs like 'make this better', 'fix this', 'improve the
+    code', or 'make it work' which the FRAME-B `action.create` /
+    `action.improve` families partially capture (one action
+    signal, no other informative signals).
+
+    The rule is FRAME-C-internal: it consumes only the FRAME-B
+    ledger that the FRAME-C public function already accepts and
+    does NOT re-scan the raw prompt text. Inputs that FRAME-B
+    cannot extract any action signal from (for example
+    'help with my project', which contains no FRAME-B canonical
+    or alias term) still classify as H. no-route via the
+    no-signal path; that residual coverage limitation is a
+    FRAME-B coverage concern, not a FRAME-C synthesis concern.
+    """
+    if not by_kind.get("action"):
+        return False
+    if distinct_target_objects:
+        return False
+    if domain_tags:
+        return False
+    if requested_output_shape is not None:
+        return False
+    if constraint_tags:
+        return False
+    if by_kind.get("repo_meta_near_miss"):
+        return False
+    if by_kind.get("out_of_scope"):
+        return False
+    return True
+
+
 def _compute_shape_touch_plan(
     primary_action, distinct_target_objects, domain_tags,
     constraint_tags, requested_output_shape, by_kind,
+    bare_ambiguity=False,
 ):
     """Apply the bounded shape-touch rules and return a list of
     `{item_kind, affinity_basis, affinity_grade}` entries. Multiple
@@ -720,6 +787,21 @@ def _compute_shape_touch_plan(
 
     # If repo-meta or out-of-scope fired, do NOT add candidate kinds.
     if has_repo_meta or has_out_of_scope:
+        return affinity
+
+    # Bare-ambiguity short-circuit (closes RK-059 gap 3). When the
+    # signal set is action-only with no informative target / domain /
+    # output_shape / constraint, emit a bounded three-entry
+    # ambiguous list so the result is G with multiple plausible
+    # kinds rather than H no-route.
+    if bare_ambiguity:
+        action_basis = _ids_for("action")
+        for kind in _BARE_AMBIGUITY_KINDS:
+            affinity.append({
+                "item_kind": kind,
+                "affinity_basis": list(action_basis),
+                "affinity_grade": "ambiguous",
+            })
         return affinity
 
     workflow_actions = {"set_up", "configure", "deploy"}
@@ -775,7 +857,15 @@ def _compute_shape_touch_plan(
         return "plugin" in distinct_target_objects
 
     def _is_cookbook_intent():
-        if requested_output_shape == "recipe":
+        # WO-L0-WORKSHOP-FRAME-C-HARDEN-01 closes RK-059 gap 2 by
+        # treating `prompt_collection_request` as a cookbook-shaped
+        # request (in addition to the original `recipe` shape).
+        # A prompt that asks for a prompt example is shape-touching
+        # the cookbook surface; combined with a deploy verb, the
+        # downstream workflow_file co-fire then raises ambiguity
+        # to surface category F (prompt-search-shaped but
+        # workflow-intent).
+        if requested_output_shape in ("recipe", "prompt_collection_request"):
             return True
         if "recipe" in distinct_target_objects:
             return True
@@ -860,7 +950,9 @@ def _compute_shape_touch_plan(
         })
     if _is_cookbook_intent():
         contributing = []
-        if requested_output_shape == "recipe":
+        if requested_output_shape in (
+            "recipe", "prompt_collection_request"
+        ):
             contributing.append("output_shape")
         if "recipe" in distinct_target_objects:
             contributing.append("object")
@@ -868,6 +960,34 @@ def _compute_shape_touch_plan(
             "item_kind": "cookbook_entry",
             "affinity_basis": _ids_for(*contributing),
             "affinity_grade": _grade_for(True, contributing),
+        })
+
+    # workflow_file co-fire rule (WO-L0-WORKSHOP-FRAME-C-HARDEN-01
+    # closing RK-059 gaps 1 and 2). When `action.deploy` is present
+    # (`primary_action == "deploy"`, which covers the deploy /
+    # publish / release / ship / dagit / yayinla family aliases)
+    # and the primary `_is_workflow_intent` rule did NOT fire (no
+    # workflow domain, no event-triggered constraint, no
+    # `workflow` target), but at least one non-workflow candidate
+    # kind already fires, append `workflow_file` as an ambiguous
+    # co-fire so the downstream ambiguity classification surfaces
+    # the workflow/non-workflow tension and the category selector
+    # can return D (agent + workflow) or F (cookbook + workflow)
+    # rather than collapsing to a clear single-intent.
+    if (
+        primary_action == "deploy"
+        and not any(d in workflow_domains for d in domain_tags)
+        and not has_event_constraint
+        and "workflow" not in distinct_target_objects
+        and candidate_entries
+        and not any(
+            e["item_kind"] == "workflow_file" for e in candidate_entries
+        )
+    ):
+        candidate_entries.append({
+            "item_kind": "workflow_file",
+            "affinity_basis": _ids_for("action"),
+            "affinity_grade": "ambiguous",
         })
 
     # If multiple candidate item kinds fire, downgrade each entry's
@@ -914,8 +1034,15 @@ def _classify_evidence_band(by_kind, total_count):
 
 def _classify_ambiguity(distinct_target_objects, candidate_count,
                         has_repo_meta, has_out_of_scope,
-                        has_candidate_kinds):
+                        has_candidate_kinds, bare_ambiguity=False):
     reasons = []
+    # bare_ambiguity (WO-L0-WORKSHOP-FRAME-C-HARDEN-01 closing
+    # RK-059 gap 3) is the action-only signal pattern and is
+    # surfaced as a high-ambiguity reason so the category selector
+    # short-circuits to G regardless of which kinds the
+    # bare-ambiguity shape-touch entries populate.
+    if bare_ambiguity:
+        reasons.append("bare_ambiguity_action_only")
     if has_repo_meta and has_candidate_kinds:
         reasons.append("repo_meta_collides_with_candidate")
     if has_out_of_scope and has_candidate_kinds:
@@ -936,7 +1063,7 @@ def _classify_ambiguity(distinct_target_objects, candidate_count,
 
 def _select_workshop_category(
     candidate_kinds, has_repo_meta, has_out_of_scope, ambiguity_level,
-    requested_output_shape, by_kind,
+    requested_output_shape, by_kind, bare_ambiguity=False,
 ):
     """Map CIF -> bounded workshop category. Returns one of the
     nine bounded workshop categories."""
@@ -944,6 +1071,14 @@ def _select_workshop_category(
         return _WORKSHOP_CATEGORY_NO_ROUTE
     if has_repo_meta:
         return _WORKSHOP_CATEGORY_NEAR_MISS
+    # bare_ambiguity (WO-L0-WORKSHOP-FRAME-C-HARDEN-01 closing
+    # RK-059 gap 3) deterministically resolves to G regardless of
+    # which kinds the bare-ambiguity shape-touch entries populate.
+    # This is required because the bare-ambiguity entries include
+    # `instruction` and `workflow_file` which would otherwise
+    # trigger the instruction+workflow special-case category E.
+    if bare_ambiguity:
+        return _WORKSHOP_CATEGORY_AMBIGUOUS
     candidate_set = set(candidate_kinds)
     if ambiguity_level == "high" and len(candidate_set) >= 2:
         # Prompt-search-shaped + workflow-intent is a specific
@@ -1066,9 +1201,15 @@ def build_canonical_intent_frame(
         by_kind["output_shape"]
     )
 
+    bare_ambiguity = _is_bare_ambiguity_signal_set(
+        by_kind, distinct_target_objects, domain_tags,
+        requested_output_shape, constraint_tags,
+    )
+
     affinity = _compute_shape_touch_plan(
         primary_action, distinct_target_objects, domain_tags,
         constraint_tags, requested_output_shape, by_kind,
+        bare_ambiguity=bare_ambiguity,
     )
 
     candidate_kinds = [
@@ -1086,6 +1227,7 @@ def build_canonical_intent_frame(
     ambiguity_level, ambiguity_reasons = _classify_ambiguity(
         distinct_target_objects, len(set(candidate_kinds)),
         has_repo_meta, has_out_of_scope, has_candidate_kinds,
+        bare_ambiguity=bare_ambiguity,
     )
 
     evidence_band = _classify_evidence_band(by_kind, len(signals))
@@ -1103,6 +1245,7 @@ def build_canonical_intent_frame(
     category = _select_workshop_category(
         candidate_kinds, has_repo_meta, has_out_of_scope,
         ambiguity_level, requested_output_shape, by_kind,
+        bare_ambiguity=bare_ambiguity,
     )
 
     if has_out_of_scope or (

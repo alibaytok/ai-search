@@ -336,6 +336,181 @@ class ConflictingSignalsTest(unittest.TestCase):
         self.assertIn(ambiguity, ("low", "high"))
 
 
+class HardenedSynthesisTest(unittest.TestCase):
+    """Tests for WO-L0-WORKSHOP-FRAME-C-HARDEN-01 hardening the
+    RK-059 FRAME-C synthesis gaps surfaced by FRAME-D smoke tests.
+
+    Gap 1: action.deploy + object.agent -> D + [agent, workflow_file].
+    Gap 2: action.deploy + output_shape.prompt_collection_request ->
+           F + [cookbook_entry, workflow_file].
+    Gap 3: bare ambiguity (action signal alone) -> G + multiple
+           plausible kinds with high ambiguity.
+
+    Gap 3 is only partially hardened: no-signal bare ambiguity
+    still needs a future FRAME-B coverage packet."""
+
+    def test_agent_plus_deploy_yields_category_D_and_workflow_co_fire(self):
+        result = _frame_for(
+            "Use an agent persona to deploy this project"
+        )
+        record = result["workshop_prompt_record"]
+        self.assertEqual(record["category"], "D. agent/persona confusion")
+        self.assertEqual(
+            record["expected_item_kinds_touched"],
+            ["agent", "workflow_file"],
+        )
+        self.assertEqual(result["ambiguity_level"], "high")
+        kinds = [e["item_kind"] for e in result["source_shape_affinity"]]
+        self.assertIn("agent", kinds)
+        self.assertIn("workflow_file", kinds)
+
+    def test_agent_plus_deploy_workflow_co_fire_basis_is_action_signal(self):
+        result = _frame_for(
+            "Use an agent persona to deploy this project"
+        )
+        workflow_entries = [
+            e for e in result["source_shape_affinity"]
+            if e["item_kind"] == "workflow_file"
+        ]
+        self.assertEqual(len(workflow_entries), 1)
+        # The co-fire entry's basis points at action signals
+        # (which is where the deploy verb evidence lives).
+        action_ids = {
+            s["signal_id"] for s in result["signal_evidence"]
+            if s["family_kind"] == "action"
+        }
+        self.assertTrue(
+            set(workflow_entries[0]["affinity_basis"]).issubset(action_ids)
+        )
+
+    def test_prompt_collection_plus_deploy_yields_category_F(self):
+        result = _frame_for(
+            "Give me a prompt that deploys a static site"
+        )
+        record = result["workshop_prompt_record"]
+        self.assertEqual(
+            record["category"],
+            "F. prompt-search-shaped but workflow-intent",
+        )
+        self.assertEqual(
+            record["expected_item_kinds_touched"],
+            ["cookbook_entry", "workflow_file"],
+        )
+        self.assertEqual(result["ambiguity_level"], "high")
+        self.assertEqual(
+            result["requested_output_shape"], "prompt_collection_request"
+        )
+
+    def test_prompt_collection_request_alone_fires_cookbook_entry(self):
+        """Cookbook_entry now also fires when
+        `requested_output_shape == prompt_collection_request`
+        (extended rule). Without a deploy verb the result is a
+        clean single cookbook candidate."""
+        result = _frame_for("Show me a prompt for code review.")
+        kinds = [e["item_kind"] for e in result["source_shape_affinity"]]
+        self.assertIn("cookbook_entry", kinds)
+        # Without a deploy verb the workflow_file co-fire does NOT
+        # fire; the result is a clean single-intent.
+        self.assertNotIn("workflow_file", kinds)
+
+    def test_bare_ambiguity_make_this_better_yields_category_G(self):
+        result = _frame_for("make this better")
+        record = result["workshop_prompt_record"]
+        self.assertEqual(record["category"], "G. ambiguous")
+        self.assertEqual(result["ambiguity_level"], "high")
+        self.assertIn(
+            "bare_ambiguity_action_only",
+            result["ambiguity_reasons"],
+        )
+        self.assertEqual(
+            record["expected_item_kinds_touched"],
+            ["skill", "instruction", "workflow_file"],
+        )
+
+    def test_bare_ambiguity_fix_this_yields_category_G(self):
+        result = _frame_for("fix this")
+        record = result["workshop_prompt_record"]
+        self.assertEqual(record["category"], "G. ambiguous")
+        self.assertEqual(result["ambiguity_level"], "high")
+        self.assertIn(
+            "bare_ambiguity_action_only",
+            result["ambiguity_reasons"],
+        )
+
+    def test_bare_ambiguity_help_with_my_project_remains_no_route(self):
+        """`help with my project` has no FRAME-B signal yet; RK-059
+        remains open for that no-signal bare-ambiguity case.
+        """
+        result = _frame_for("help with my project")
+        record = result["workshop_prompt_record"]
+        self.assertEqual(record["category"], "H. no-route")
+        self.assertEqual(result["ambiguity_level"], "none")
+        self.assertEqual(record["expected_item_kinds_touched"], ["none"])
+
+    def test_bare_ambiguity_entries_have_ambiguous_grade(self):
+        result = _frame_for("make this better")
+        for entry in result["source_shape_affinity"]:
+            self.assertEqual(entry["affinity_grade"], "ambiguous")
+
+    def test_bare_ambiguity_does_not_fire_when_target_present(self):
+        """A prompt with both an action and a target object does
+        NOT trigger bare-ambiguity. `Create a skill for code review.`
+        has action.create + object.skill + domain.code_review."""
+        result = _frame_for("Create a skill for code review.")
+        self.assertNotIn(
+            "bare_ambiguity_action_only",
+            result["ambiguity_reasons"],
+        )
+        self.assertEqual(
+            result["workshop_prompt_record"]["category"],
+            "C. skill intent",
+        )
+
+    def test_bare_ambiguity_does_not_fire_when_no_signals(self):
+        """`zzz qqq.` has no FRAME-B signal at all; bare-ambiguity
+        requires at least an action signal and therefore does not
+        fire. The result remains H. no-route via the no-signal
+        path."""
+        result = _frame_for("zzz qqq.")
+        self.assertNotIn(
+            "bare_ambiguity_action_only",
+            result["ambiguity_reasons"],
+        )
+        self.assertEqual(
+            result["workshop_prompt_record"]["category"], "H. no-route"
+        )
+
+    def test_workflow_co_fire_skipped_when_workflow_domain_present(self):
+        """When a workflow domain is already firing, the primary
+        `_is_workflow_intent` rule fires and the co-fire rule is
+        skipped (because `workflow_file` is already in
+        `candidate_entries`)."""
+        result = _frame_for("Deploy to ci with a workflow")
+        kinds = [e["item_kind"] for e in result["source_shape_affinity"]]
+        workflow_count = sum(1 for k in kinds if k == "workflow_file")
+        self.assertEqual(workflow_count, 1)
+
+    def test_workflow_co_fire_only_triggers_for_action_deploy(self):
+        """The co-fire rule narrows to `primary_action == deploy`
+        so non-deploy actions like `configure` do not pull
+        workflow_file into otherwise clean single-intent cases."""
+        result = _frame_for("Configure the instruction set for the team.")
+        kinds = [e["item_kind"] for e in result["source_shape_affinity"]]
+        # The pre-hardening behavior for configure+instruction is
+        # preserved: single instruction candidate, no co-fire
+        # workflow_file. (Note: action.configure is in the FRAME-C
+        # workflow_actions set used by `_is_workflow_intent`, but
+        # absent any workflow domain or event constraint the
+        # primary workflow rule does not fire; the co-fire rule
+        # is intentionally narrower than `_is_workflow_intent` and
+        # only fires for `primary_action == deploy`.)
+        self.assertNotIn("workflow_file", kinds)
+        self.assertEqual(
+            result["workshop_prompt_record"]["category"],
+            "A. clear single-intent",
+        )
+
+
 class EvidenceBandTest(unittest.TestCase):
 
     def test_evidence_band_no_signal_for_unrecognized_prompt(self):

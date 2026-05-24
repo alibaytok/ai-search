@@ -16841,3 +16841,300 @@ All DC-020 through DC-073 boundary invariants carry forward.
 WO-L0-WORKSHOP-FRAME-D-R does not amend or broaden DC-003
 through DC-073. Real-benchmark-ready remains NO. RK-058 and
 RK-059 are acknowledged and remain OPEN.
+
+## Work Order L0-WORKSHOP-FRAME-C-HARDEN-01 - FRAME-C Synthesis Partial RK-059 Hardening
+
+### Scope
+
+Harden FRAME-C so the three RK-059 gaps surfaced by the
+FRAME-D-R smoke tests are fixed at the upstream CanonicalIntentFrame
+layer, not in FRAME-D. RK-059 records three synthesis gaps:
+(1) `action.deploy` + `object.agent` without a workflow domain /
+event-triggered constraint must produce `D. agent/persona
+confusion` with `[agent, workflow_file]` and high ambiguity;
+(2) `action.deploy` + `output_shape.prompt_collection_request`
+without a workflow domain / event-triggered constraint must
+produce `F. prompt-search-shaped but workflow-intent` with
+`[cookbook_entry, workflow_file]` and high ambiguity; (3) bare
+ambiguity phrases like `make this better` and `fix this` must
+produce `G. ambiguous` with multiple plausible kinds and high
+ambiguity. The fix is entirely in
+`harness/level0_workshop_canonical_intent_frame.py`; the
+FRAME-D shim module is NOT modified.
+
+This is scaffold-only. No route object. No route selection. No
+source qualification. No corpus admission. No real indexing /
+retrieval / ranking / scoring / similarity / distance /
+embedding / vector / ANN / reranker / provider / LLM / external
+API. No architecture / vendor / library / index-family
+selection. Real-benchmark-ready remains NO. RK-058 acknowledged
+and remains OPEN. RK-059 remains OPEN; DC-075 records partial hardening.
+
+### Allowed Files
+
+Exactly the seven files listed in the packet:
+
+- `harness/level0_workshop_canonical_intent_frame.py` (FRAME-C
+  synthesis hardening: bare-ambiguity short-circuit, workflow_file
+  co-fire from action.deploy, cookbook_entry extension to
+  prompt_collection_request)
+- `harness/tests/test_level0_workshop_canonical_intent_frame.py`
+  (new `HardenedSynthesisTest` class with 11 tests)
+- `harness/tests/test_level0_workshop_user_intent_mapper.py`
+  (three RK-059-tagged smoke tests renamed and reworded to
+  assert the intended legacy categorical contract through
+  FRAME-D's FRAME-C-derived output; companion `fix this` test
+  added)
+- `ai-search/71-level0-workshop-canonical-intent-frame.md`
+  (Shape Touch Plan section updated to document the three new
+  rules and the residual FRAME-B coverage limitation;
+  Ambiguity classification and Workshop category mapping
+  sections updated for `bare_ambiguity` short-circuit)
+- `ai-search/72-level0-workshop-intent-mapper-compatibility-shim.md`
+  (Section 8 rewritten to document RK-059 partial hardening via
+  the upstream FRAME-C rules; the residual FRAME-B coverage note
+  added; Non-claims section updated for RK-059 OPEN)
+- `ai-search/00-open-questions.md` (DC-075 appended; RK-059
+  marked RESOLVED with DC-075 link; Status and chronology
+  refreshed)
+- `ai-search/00-claude-task-ledger.md` (this entry appended)
+
+### Status
+
+Implemented; pending Codex review.
+
+### Mandatory Priority-Miss Check
+
+Per `ai-search/00-claude-scope-prompt-template.md`, the
+Mandatory Priority-Miss Check was applied at the top of this
+packet (the prompt included `@pmc`):
+
+- Higher-priority prerequisite missed? No - FRAME-A/B/C/D-R are
+  all approved with notes; RK-059 was explicitly recorded as
+  reserved for a later Codex-authorized FRAME-C-hardening packet.
+  This is that packet.
+- Downstream surface skipping upstream cause? No - the fix is
+  in FRAME-C synthesis (upstream), not FRAME-D shim
+  (downstream). Doing it in FRAME-D would reintroduce the
+  keyword-classifier-as-truth pattern Codex forbade.
+- Safer sequencing? No - FRAME-C-only hardening is the correct
+  path.
+- Conflict with prior invariants? No. RK-058 stays OPEN;
+  RK-039 single; OQ-003/015/031/035/048/049/056/057/070/075/076
+  stay OPEN.
+- Concerns flagged: bounded enums need no new values; FRAME-B
+  must NOT be modified, so bare-ambiguity recovery is limited
+  to prompts where FRAME-B already extracts at least one action
+  signal; inputs that produce zero FRAME-B signals (for example
+  `help with my project`) remain H. no-route via the no-signal
+  path - that is a residual FRAME-B coverage concern, not a
+  FRAME-C synthesis concern. DC-075 records partial hardening
+  evidence; RK-059 remains OPEN.
+- Result: proceed.
+
+### Pre-Implementation Review Note
+
+- Q1 (authorizes implementation): Yes; FRAME-C synthesis
+  hardening. Does NOT authorize retrieval / scoring / route
+  creation / source qualification / corpus admission / benchmark /
+  architecture-class selection. Does NOT close RK-058. Closes
+  RK-059 via DC-075.
+- Q2 (source-content risk): No.
+- Q3 (prompt-copying risk): No.
+- Q4 (OQ closure / RK risk): RK-059 remains OPEN; DC-075 records
+  partial hardening evidence; RK-058 stays OPEN; OQs stay OPEN;
+  RK-039 single.
+- Q5 (files): Modified (5): FRAME-C module, FRAME-C tests,
+  FRAME-D tests, FRAME-C boundary doc 71, FRAME-D boundary doc
+  72, open-questions (DC-075 add + RK-059 -> RESOLVED + Status /
+  chronology refresh). Appended (1): this ledger entry.
+- Q6 (forbidden work): no FRAME-A / FRAME-B module / test
+  change; no FRAME-D module change (only FRAME-D tests);
+  no benchmark-fixtures mutation; no controller-checklist
+  change; no parallel keyword classifier reintroduced in any
+  downstream module; no forbidden output field name added;
+  no new bounded enum value added; no new exception class
+  added.
+
+No scope drift detected.
+
+### Section L Scope Check
+
+Shared state before hardening: WO-L0-WORKSHOP-FRAME-A, FRAME-B,
+FRAME-C all approved with notes; FRAME-D-R implemented per
+Codex review-time rework directive deriving output strictly
+from FRAME-C; RK-059 OPEN; baseline full suite 1484/1484 OK;
+project root contains exactly `ai-search/`, `harness/`, and
+`benchmark-fixtures/`; `benchmark-fixtures/` SHA inventory
+unchanged. The seven FRAME-C gating booleans remain literal
+False on every emitted path of every prior workshop module.
+OQ-003, OQ-015, OQ-031, OQ-035, OQ-048, OQ-049, OQ-056,
+OQ-057, OQ-070, OQ-075, OQ-076 remain OPEN. RK-039 single.
+RK-058 OPEN.
+
+### Codex Hardening Directive Recorded (WO-L0-WORKSHOP-FRAME-C-HARDEN-01)
+
+Verbatim Codex hardening directive Claude was bound to:
+
+- Harden FRAME-C so the three RK-059 gaps are fixed at the
+  upstream CanonicalIntentFrame layer, not in FRAME-D.
+- Do not add a parallel keyword classifier to FRAME-D.
+- Do not make FRAME-D authoritative for classification.
+- Fix synthesis in FRAME-C only.
+- Update FRAME-D tests that were temporarily set to FRAME-C-
+  actual RK-059 behavior so they again assert the intended
+  legacy categorical contract through FRAME-C-derived output.
+- Keep RK-058 OPEN.
+- Close RK-059 only if and only if all three gaps are fixed in
+  FRAME-C and tests prove it.
+- All gating booleans remain literal False.
+- Halt before raise on every new exception path if any new
+  exception is added. Prefer no new exceptions unless necessary.
+- Keep all touched files ASCII-only.
+- No FRAME-A / FRAME-B modules / tests modification.
+- No reintroduction of legacy `_classify_prompt` or legacy
+  keyword tables into FRAME-D.
+- No forbidden output field names.
+
+### Implementation Summary
+
+Three deterministic rule additions to
+`harness/level0_workshop_canonical_intent_frame.py`:
+
+1. **Bare-ambiguity short-circuit** in `_compute_shape_touch_plan`.
+   New helper `_is_bare_ambiguity_signal_set(by_kind,
+   distinct_target_objects, domain_tags, requested_output_shape,
+   constraint_tags)` returns True iff the FRAME-B ledger has at
+   least one `action.*` signal but no `target_object`, no
+   informative `domain`, no `requested_output_shape`, no
+   `constraint`/`negation`, no `repo_meta_near_miss`, and no
+   `out_of_scope`. When True, `_compute_shape_touch_plan` emits
+   a bounded three-entry ambiguous list with
+   `affinity_grade == "ambiguous"` for `skill`, `instruction`,
+   and `workflow_file` (the new module-scope constant
+   `_BARE_AMBIGUITY_KINDS = (skill, instruction, workflow_file)`);
+   `_classify_ambiguity` records the new bounded reason
+   `bare_ambiguity_action_only` and returns `high`; and
+   `_select_workshop_category` short-circuits to `G. ambiguous`
+   (the short-circuit is required because the bare-ambiguity
+   kinds include `instruction` and `workflow_file` which would
+   otherwise trigger the instruction+workflow special-case E).
+   Partially hardens RK-059 gap 3 for action-backed bare ambiguity.
+
+2. **workflow_file co-fire from `action.deploy`**. After the
+   existing candidate predicates run, if `primary_action ==
+   "deploy"` (which the bounded `_ACTION_TO_PRIMARY` table maps
+   from the deploy / publish / release / ship / dagit / yayinla
+   family), no workflow domain fires, no event-triggered
+   constraint fires, `"workflow"` is not in
+   `distinct_target_objects`, and at least one non-workflow
+   candidate kind already fires, append one `workflow_file`
+   entry with `affinity_basis` listing the action signal ids
+   and `affinity_grade == "ambiguous"`. The downstream
+   `len(candidate_entries) >= 2` rule then sets all entries to
+   `ambiguous` grade, the ambiguity classifier reports
+   `multiple_candidate_item_kinds` -> `high`, and the category
+   selector returns `D. agent/persona confusion` (agent +
+   workflow_file), `F. prompt-search-shaped but workflow-intent`
+   (cookbook_entry + workflow_file), or another category as
+   appropriate. The rule is intentionally narrower than
+   `_is_workflow_intent` (which covers `set_up` / `configure` /
+   `deploy`); the narrow gating on `primary_action == "deploy"`
+   preserves the pre-hardening single-intent behavior for prompts
+   like `Configure the instruction set for the team.` (verified
+   by `test_workflow_co_fire_only_triggers_for_action_deploy`).
+   Closes RK-059 gap 1 and contributes to gap 2.
+
+3. **`_is_cookbook_intent` extended to `prompt_collection_request`**.
+   The predicate now returns True for `requested_output_shape in
+   (recipe, prompt_collection_request)` (in addition to the
+   original `recipe` shape and the `recipe`-targeted target
+   object). The `contributing` list in the cookbook_entry
+   builder is also extended to detect both output shapes.
+   Combined with the workflow_file co-fire rule above, this
+   closes RK-059 gap 2.
+
+`_compute_shape_touch_plan`, `_classify_ambiguity`, and
+`_select_workshop_category` gain new keyword-default-False
+`bare_ambiguity` parameters; `build_canonical_intent_frame`
+computes the flag once via `_is_bare_ambiguity_signal_set` and
+threads it through. No new public surface is added. No new
+exception class is added. No bounded enum value is added to
+`EVIDENCE_BANDS`, `AMBIGUITY_LEVELS`, `AFFINITY_GRADES`,
+`REQUESTED_OUTPUT_SHAPES`, `WORKSHOP_ITEM_KINDS`, or
+`WORKSHOP_PROMPT_CATEGORIES`. The `_SHAPE_TOUCH_RULES_DOC`
+module-scope constant is rewritten to document the new rules.
+
+`harness/tests/test_level0_workshop_canonical_intent_frame.py`
+gains a new `HardenedSynthesisTest` class with 11 tests proving
+each rule fix (agent+deploy, prompt+deploy, bare ambiguity make,
+bare ambiguity fix, ambiguous grades, bare-ambiguity short-
+circuit guards, workflow co-fire narrowness, cookbook_entry
+extension to prompt_collection_request, workflow co-fire signal
+basis provenance). Total FRAME-C tests: 89 (was 77).
+
+`harness/tests/test_level0_workshop_user_intent_mapper.py`
+renames and rewords the three RK-059-tagged smoke tests to
+assert the intended legacy categorical contract through
+FRAME-D's FRAME-C-derived output:
+
+- `test_agent_workflow_prompt_maps_to_confusion_category` (was
+  `test_agent_workflow_prompt_maps_to_clear_single_intent_under_frame_c`).
+- `test_prompt_surface_workflow_intent_maps_to_cookbook_and_workflow`
+  (was
+  `test_prompt_surface_workflow_intent_maps_to_no_route_under_frame_c`).
+- `test_bare_ambiguity_phrase_surfaces_ambiguity` (was
+  `test_bare_ambiguity_phrase_maps_to_no_route_under_frame_c`).
+- Companion `test_bare_ambiguity_fix_phrase_surfaces_ambiguity`
+  added for `fix this`.
+
+Total mapper tests: 44 (was 42).
+
+### Evidence
+
+- Targeted FRAME-C: `python -B -m unittest
+  harness.tests.test_level0_workshop_canonical_intent_frame` ->
+  89/89 OK.
+- Targeted mapper: `python -B -m unittest
+  harness.tests.test_level0_workshop_user_intent_mapper` ->
+  44/44 OK.
+- Full suite: `python -B -m unittest discover -s harness/tests`
+  -> 1498/1498 OK (was 1484; +12 FRAME-C tests, +2 mapper tests).
+- ASCII purity of all touched files verified.
+- No `__pycache__` artifacts under `harness/`.
+- Project root contains exactly `ai-search/`, `harness/`, and
+  `benchmark-fixtures/`.
+- `benchmark-fixtures/` unchanged.
+- FRAME-A and FRAME-B modules / tests unchanged.
+- FRAME-D shim module `harness/level0_workshop_user_intent_mapper.py`
+  unchanged (verified by `git status`).
+- `00-controller-checklist.md` unchanged.
+- OQ-003, OQ-015, OQ-031, OQ-035, OQ-048, OQ-049, OQ-056,
+  OQ-057, OQ-070, OQ-075, OQ-076 remain OPEN.
+- RK-039 single.
+- RK-058 remains OPEN.
+- RK-059 OPEN; partial hardening recorded in DC-075.
+- Real-benchmark-ready remains NO.
+
+### Non-Claims
+
+The hardening does not claim any new synthesized category,
+item kind, ambiguity reason, or affinity grade is sufficient,
+necessary, superior, best, complete, production-ready,
+recommended, selected, or benchmark-ready. The module does not
+claim universal intent understanding. The bounded three-entry
+`_BARE_AMBIGUITY_KINDS` tuple, the bounded one-entry extension
+to `_is_cookbook_intent`, the bounded one-entry `workflow_file`
+co-fire trigger, and the bounded one-entry
+`bare_ambiguity_action_only` ambiguity reason are bounded by
+WO-L0-WORKSHOP-FRAME-C-HARDEN-01 and are NOT claimed exhaustive.
+
+All DC-020 through DC-074 boundary invariants carry forward.
+WO-L0-WORKSHOP-FRAME-C-HARDEN-01 does not amend or broaden
+DC-003 through DC-074. Real-benchmark-ready remains NO. RK-058
+is acknowledged and remains OPEN. RK-059 remains OPEN; DC-075
+records partial hardening evidence.
+
+### Codex Review Correction - RK-059 Remains OPEN
+
+Codex review of WO-L0-WORKSHOP-FRAME-C-HARDEN-01 found one contract issue in the submitted evidence: RK-059 was marked RESOLVED even though the original hardening prompt explicitly included `help with my project` as a bare-ambiguity example, and that input still emits no FRAME-B signal and remains `H. no-route`. The code hardening is retained for RK-059 gap 1, gap 2, and action-backed bare-ambiguity cases (`make this better`, `fix this`), but RK-059 remains OPEN pending a future FRAME-B coverage packet or equivalent upstream signal-family expansion. DC-075 records partial hardening evidence only. RK-058 remains OPEN. Real-benchmark-ready remains NO.
