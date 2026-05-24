@@ -647,7 +647,7 @@ class SignalFamilyConstantTest(unittest.TestCase):
         required_ids = (
             "action.create", "action.configure", "action.set_up",
             "action.improve", "action.review", "action.explain",
-            "action.deploy",
+            "action.deploy", "action.assist",
             "object.workflow", "object.skill", "object.agent",
             "object.instruction", "object.hook", "object.plugin",
             "object.cookbook_entry", "object.repository",
@@ -665,6 +665,62 @@ class SignalFamilyConstantTest(unittest.TestCase):
         family_ids = {fam.family_id for fam in SIGNAL_FAMILIES}
         for fid in required_ids:
             self.assertIn(fid, family_ids)
+
+
+class ActionAssistFamilyTest(unittest.TestCase):
+    """Tests for the WO-L0-WORKSHOP-FRAME-B-COVERAGE-01
+    `action.assist` family that closes the remaining RK-059
+    no-signal bare-ambiguity coverage gap."""
+
+    def _signals_for(self, prompt):
+        view = build_level0_workshop_normalized_prompt_view(
+            prompt, EventLog()
+        )
+        ledger = extract_workshop_signal_evidence(view, EventLog())
+        return ledger["signal_evidence"]
+
+    def _action_assist_signals(self, prompt):
+        return [
+            s for s in self._signals_for(prompt)
+            if s["signal_family"] == "action.assist"
+        ]
+
+    def test_help_canonical_fires_action_assist(self):
+        signals = self._action_assist_signals("help with my project")
+        self.assertGreater(len(signals), 0)
+        self.assertEqual(signals[0]["family_kind"], "action")
+        self.assertEqual(signals[0]["language_alias_tag"], "en")
+
+    def test_can_you_help_fires_action_assist(self):
+        signals = self._action_assist_signals("can you help")
+        self.assertGreater(len(signals), 0)
+
+    def test_help_me_with_this_fires_action_assist(self):
+        signals = self._action_assist_signals("help me with this")
+        self.assertGreater(len(signals), 0)
+
+    def test_assist_canonical_fires_action_assist(self):
+        signals = self._action_assist_signals("please assist")
+        self.assertGreater(len(signals), 0)
+
+    def test_turkish_yardim_fires_action_assist(self):
+        signals = self._action_assist_signals("yardim et")
+        self.assertGreater(len(signals), 0)
+        self.assertEqual(signals[0]["language_alias_tag"], "tr")
+
+    def test_action_assist_contributes_to_primary_action(self):
+        signals = self._action_assist_signals("help with my project")
+        self.assertEqual(signals[0]["contributes_to"], ["primary_action"])
+
+    def test_action_assist_does_not_match_assistant_substring(self):
+        """`assistant` is edit distance 3 from canonical `assist`
+        (insertion of `ant`), outside the `short_token_1` budget
+        of 1. The new family must NOT fire on `assistant`
+        substrings."""
+        signals = self._action_assist_signals(
+            "Define a persona for the assistant role."
+        )
+        self.assertEqual(signals, [])
 
 
 class StaticScanTest(unittest.TestCase):

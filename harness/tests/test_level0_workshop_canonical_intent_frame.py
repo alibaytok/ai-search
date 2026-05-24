@@ -437,15 +437,57 @@ class HardenedSynthesisTest(unittest.TestCase):
             result["ambiguity_reasons"],
         )
 
-    def test_bare_ambiguity_help_with_my_project_remains_no_route(self):
-        """`help with my project` has no FRAME-B signal yet; RK-059
-        remains open for that no-signal bare-ambiguity case.
+    def test_bare_ambiguity_help_with_my_project_yields_category_G(self):
+        """RK-059 residual closed by
+        WO-L0-WORKSHOP-FRAME-B-COVERAGE-01: the new FRAME-B
+        `action.assist` family extracts `help` from
+        `help with my project`, so FRAME-C's bare-ambiguity rule
+        fires and the result is `G. ambiguous` with
+        `ambiguity_level == "high"` and
+        `expected_item_kinds_touched == ["skill", "instruction",
+        "workflow_file"]`.
         """
         result = _frame_for("help with my project")
         record = result["workshop_prompt_record"]
-        self.assertEqual(record["category"], "H. no-route")
-        self.assertEqual(result["ambiguity_level"], "none")
-        self.assertEqual(record["expected_item_kinds_touched"], ["none"])
+        self.assertEqual(record["category"], "G. ambiguous")
+        self.assertEqual(result["ambiguity_level"], "high")
+        self.assertIn(
+            "bare_ambiguity_action_only", result["ambiguity_reasons"]
+        )
+        self.assertEqual(
+            record["expected_item_kinds_touched"],
+            ["skill", "instruction", "workflow_file"],
+        )
+
+    def test_action_assist_canonical_help_matches(self):
+        """The new `action.assist` family extracts a signal from
+        the canonical token `help`."""
+        result = _frame_for("can you help")
+        action_families = {
+            s["signal_family"] for s in result["signal_evidence"]
+            if s["family_kind"] == "action"
+        }
+        self.assertIn("action.assist", action_families)
+
+    def test_action_assist_canonical_assist_matches(self):
+        """The new `action.assist` family extracts a signal from
+        the canonical token `assist`."""
+        result = _frame_for("please assist")
+        action_families = {
+            s["signal_family"] for s in result["signal_evidence"]
+            if s["family_kind"] == "action"
+        }
+        self.assertIn("action.assist", action_families)
+
+    def test_action_assist_turkish_alias_matches(self):
+        """The new `action.assist` family extracts a signal from
+        the Turkish alias `yardim`."""
+        result = _frame_for("yardim et")
+        action_families = {
+            s["signal_family"] for s in result["signal_evidence"]
+            if s["family_kind"] == "action"
+        }
+        self.assertIn("action.assist", action_families)
 
     def test_bare_ambiguity_entries_have_ambiguous_grade(self):
         result = _frame_for("make this better")

@@ -219,17 +219,25 @@ If two or more candidate item-kinds fire, each entry's
 `affinity_grade` is downgraded to `"ambiguous"` to surface
 multi-shape ambiguity at the entry level.
 
-### Residual RK-059 / FRAME-B coverage limitation
+### Residual RK-059 / FRAME-B coverage closure
 
-Bare-ambiguity inputs that FRAME-B cannot extract any action
-signal from (for example `help with my project`, whose tokens
-are absent from every FRAME-B canonical and alias) still
-classify as `H. no-route` via the no-signal path because the
-bare-ambiguity rule requires at least one `action.*` signal to
-fire in the FRAME-B ledger. This is a FRAME-B coverage concern
-(would require extending FRAME-B's families), and RK-059
-therefore remains OPEN until that upstream signal coverage is
-authorized and tested.
+Bare-ambiguity inputs that FRAME-B previously could not extract
+any action signal from (for example `help with my project`)
+classified as `H. no-route` via the no-signal path until
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-01 added the bounded
+`action.assist` family (`canonical_terms=("help", "assist")`,
+`tr_aliases=("yardim", "yardim et")`,
+`edit_distance_budget="short_token_1"`,
+`contributes_to=("primary_action",)`) to FRAME-B. The new
+family extracts an `action.*` signal for help / assist /
+Turkish yardim phrasings; FRAME-C's bare-ambiguity rule then
+fires and the result is `G. ambiguous`. RK-059 is RESOLVED via
+DC-076 after this packet. FRAME-C's `_ACTION_TO_PRIMARY` table
+was not extended by that packet, so an `action.assist`-only
+ledger produces `primary_action == None`; this is the desired
+behavior because the bare-ambiguity rule checks
+`by_kind["action"]` non-emptiness rather than primary_action
+specifically.
 
 ### Evidence band classification
 

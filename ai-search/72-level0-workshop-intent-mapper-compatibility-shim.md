@@ -25,14 +25,18 @@ selection, vendor selection, library selection, index-family
 selection, production-system selection, or benchmark execution.
 Real-benchmark-ready remains NO. RK-058 remains OPEN. RK-059
 (FRAME-C synthesis gaps surfaced by FRAME-D smoke tests) was
-partially hardened by WO-L0-WORKSHOP-FRAME-C-HARDEN-01 via
-FRAME-C synthesis rule additions (bare-ambiguity short-circuit,
+closed across two upstream packets and is RESOLVED via DC-076:
+WO-L0-WORKSHOP-FRAME-C-HARDEN-01 added the three FRAME-C
+synthesis rule additions (bare-ambiguity short-circuit,
 workflow_file co-fire from action.deploy, cookbook_entry
-extension to prompt_collection_request). RK-059 remains OPEN
-because no-signal bare ambiguity such as `help with my project`
-still needs FRAME-B signal coverage. OQ-003, OQ-015, OQ-031,
-OQ-035, OQ-048, OQ-049, OQ-056, OQ-057, OQ-070, OQ-075,
-OQ-076 remain OPEN. RK-039 single.
+extension to prompt_collection_request), and
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-01 added the bounded FRAME-B
+`action.assist` family so previously no-signal bare ambiguity
+like `help with my project`, `help me with this`, `can you
+help`, and Turkish `yardim et` now produces an action signal
+that FRAME-C consumes as bare ambiguity. OQ-003, OQ-015,
+OQ-031, OQ-035, OQ-048, OQ-049, OQ-056, OQ-057, OQ-070,
+OQ-075, OQ-076 remain OPEN. RK-039 single.
 
 ## 2. Public surface
 
@@ -323,9 +327,12 @@ coverage packet.
   OQ-048, OQ-049, OQ-056, OQ-057, OQ-070, OQ-075, or OQ-076.
 - The shim does not close RK-058. Closure remains reserved for a
   later Codex-authorized packet.
-- RK-059 remains OPEN after WO-L0-WORKSHOP-FRAME-C-HARDEN-01;
-  DC-075 records partial hardening at the FRAME-C synthesis
-  layer, and the FRAME-D shim was NOT modified by that packet.
+- RK-059 is RESOLVED after WO-L0-WORKSHOP-FRAME-B-COVERAGE-01;
+  DC-075 records the FRAME-C synthesis hardening, and DC-076
+  records the FRAME-B `action.assist` coverage that supplies the
+  missing signal for vague help phrasing. The FRAME-D shim module
+  was NOT modified by either packet; only this boundary doc and
+  the mapper tests were updated to reflect the upstream behavior.
 - The shim does not duplicate RK-039.
 - All DC-020 through DC-073 boundary invariants carry forward.
 
@@ -345,18 +352,19 @@ contract change for the legacy categorical strings or the
 ## 12. Test surface
 
 `harness/tests/test_level0_workshop_user_intent_mapper.py`
-contains 44 tests across four TestCase classes:
+contains 46 tests across four TestCase classes:
 
 - `CleanMappingTest` (16): legacy smoke tests covering deploy /
   CI / skill / agent+deploy / instruction+pipeline /
-  prompt+deploy / bare-ambiguity / residual no-signal
+  prompt+deploy / bare-ambiguity / assist-backed
   bare-ambiguity / no-route / repo-meta /
   Turkish workflow / Turkish skill / downstream-compatible record
   shape / authorization-boolean check / event emission. Three
   cases were renamed and reworded to assert the intended
-  categorical contract after FRAME-C hardening; one residual test
-  records that `help with my project` still no-routes until
-  FRAME-B emits a signal for it.
+  categorical contract after FRAME-C hardening; the former
+  `help with my project` residual test now asserts the DC-076
+  behavior where FRAME-B emits `action.assist` and FRAME-C
+  surfaces `G. ambiguous`.
 - `RejectionTest` (4): legacy halt-and-translate tests
   (non-string, empty, invalid id, string-immutability).
 - `StaticScanTest` (1): legacy file-IO / network / indexing
@@ -378,16 +386,17 @@ contains 44 tests across four TestCase classes:
 ## 13. Verification
 
 - `python -B -m unittest harness.tests.test_level0_workshop_user_intent_mapper`
-  -> 42/42 OK.
-- `python -B -m unittest discover -s harness/tests` -> 1484/1484
-  OK (baseline 1461 with 19 prior mapper tests removed and 42
-  new mapper tests added).
+  -> 46/46 OK after WO-L0-WORKSHOP-FRAME-B-COVERAGE-01.
+- `python -B -m unittest discover -s harness/tests` -> 1510/1510
+  OK after WO-L0-WORKSHOP-FRAME-B-COVERAGE-01.
 - Module source ASCII-only.
 - No `__pycache__` artifacts under `harness/`.
 - Project root contains exactly `ai-search/`, `harness/`, and
   `benchmark-fixtures/`.
 - `benchmark-fixtures/` unchanged.
-- FRAME-A, FRAME-B, FRAME-C modules / tests unchanged.
+- FRAME-A unchanged. FRAME-B module / tests and FRAME-C tests
+  changed under WO-L0-WORKSHOP-FRAME-B-COVERAGE-01; FRAME-D shim
+  module unchanged.
 - Workshop trace / review modules / tests unchanged.
 - WO-50 through WO-62 modules / tests unchanged.
 - `00-controller-checklist.md` unchanged.
@@ -395,5 +404,5 @@ contains 44 tests across four TestCase classes:
   OQ-057, OQ-070, OQ-075, OQ-076 remain OPEN.
 - RK-039 single.
 - RK-058 remains OPEN.
-- RK-059 added OPEN.
+- RK-059 RESOLVED by DC-076.
 - Real-benchmark-ready remains NO.

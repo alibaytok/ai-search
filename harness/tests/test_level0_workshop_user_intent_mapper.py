@@ -3,8 +3,12 @@
 The shim derives output strictly from the FRAME-C CanonicalIntentFrame.
 WO-L0-WORKSHOP-FRAME-C-HARDEN-01 teaches FRAME-C the two concrete
 deploy-related RK-059 gaps and the action-backed bare-ambiguity cases.
-No-signal bare ambiguity, such as `help with my project`, remains an
-open RK-059 residual until FRAME-B supplies a signal for that phrasing.
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-01 closes the remaining RK-059
+no-signal bare-ambiguity gap by adding the bounded FRAME-B
+`action.assist` family (`help`, `assist` plus Turkish `yardim` /
+`yardim et`), so `help with my project` now reaches FRAME-C as a
+bare-ambiguity signal set and the mapper output is `G. ambiguous`
+with multiple plausible kinds.
 """
 
 import copy
@@ -126,12 +130,12 @@ class CleanMappingTest(unittest.TestCase):
         output through the FRAME-D shim now reflects the intended
         legacy categorical contract: category `G. ambiguous` with
         multiple plausible kinds and `ambiguity_observed == True`.
-        Bare-ambiguity inputs that FRAME-B cannot extract any
-        action signal from (for example `help with my project`,
-        whose tokens are absent from every FRAME-B canonical and
-        alias) still classify as `H. no-route` via the no-signal
-        path; that residual coverage limitation is a FRAME-B
-        coverage concern, not a FRAME-C synthesis concern."""
+        WO-L0-WORKSHOP-FRAME-B-COVERAGE-01 also extends FRAME-B
+        with the `action.assist` family so vague help phrasing
+        (`help with my project`, `help me with this`, `can you
+        help`, Turkish `yardim et`) now produces a deterministic
+        action signal that FRAME-C consumes as bare ambiguity;
+        see `test_bare_ambiguity_help_phrase_surfaces_ambiguity`."""
         output, _ = _map("make this better")
         self.assertEqual(
             output["workshop_prompt_record"]["category"], "G. ambiguous"
@@ -144,15 +148,41 @@ class CleanMappingTest(unittest.TestCase):
             ["skill", "instruction", "workflow_file"],
         )
 
-    def test_bare_ambiguity_help_phrase_remains_no_route_until_frame_b_signal(self):
-        """`help with my project` remains the RK-059 residual because
-        FRAME-B emits no signal for that phrasing yet."""
+    def test_bare_ambiguity_help_phrase_surfaces_ambiguity(self):
+        """RK-059 residual closed by
+        WO-L0-WORKSHOP-FRAME-B-COVERAGE-01: the new FRAME-B
+        `action.assist` family extracts a signal for vague help
+        phrasing so FRAME-C's bare-ambiguity rule fires and the
+        mapper returns `G. ambiguous` with multiple plausible
+        kinds and `ambiguity_observed == True`."""
         output, _ = _map("help with my project")
         self.assertEqual(
-            output["workshop_prompt_record"]["category"], "H. no-route"
+            output["workshop_prompt_record"]["category"], "G. ambiguous"
         )
-        self.assertEqual(output["expected_item_kinds_touched"], ["none"])
-        self.assertFalse(output["ambiguity_observed"])
+        self.assertTrue(output["ambiguity_observed"])
+        self.assertEqual(
+            output["expected_item_kinds_touched"],
+            ["skill", "instruction", "workflow_file"],
+        )
+
+    def test_bare_ambiguity_can_you_help_surfaces_ambiguity(self):
+        """Companion case for `can you help`: the `action.assist`
+        signal is the only informative signal and FRAME-C's
+        bare-ambiguity rule fires."""
+        output, _ = _map("can you help")
+        self.assertEqual(
+            output["workshop_prompt_record"]["category"], "G. ambiguous"
+        )
+        self.assertTrue(output["ambiguity_observed"])
+
+    def test_bare_ambiguity_turkish_yardim_et_surfaces_ambiguity(self):
+        """Turkish `yardim et` matches `action.assist.tr_aliases`
+        and produces the same bare-ambiguity classification."""
+        output, _ = _map("yardim et")
+        self.assertEqual(
+            output["workshop_prompt_record"]["category"], "G. ambiguous"
+        )
+        self.assertTrue(output["ambiguity_observed"])
 
     def test_bare_ambiguity_fix_phrase_surfaces_ambiguity(self):
         """Companion to the `make this better` case: `fix this`

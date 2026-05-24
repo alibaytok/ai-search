@@ -303,6 +303,28 @@ SIGNAL_FAMILIES = (
         exclusion_terms=(),
         contributes_to=("primary_action",),
     ),
+    # action.assist is a bounded vague-help family added by
+    # WO-L0-WORKSHOP-FRAME-B-COVERAGE-01 to close the remaining
+    # RK-059 no-signal bare-ambiguity gap. Prompts like
+    # `help with my project`, `help me with this`, `can you help`,
+    # and Turkish `yardim et` previously extracted zero FRAME-B
+    # signals, leaving FRAME-C's bare-ambiguity rule unable to
+    # fire and the workshop category falling to `H. no-route`.
+    # The new family ensures at least one action signal is
+    # extracted so FRAME-C's bare-ambiguity rule classifies the
+    # prompt as `G. ambiguous`. The canonical-length-aware budget
+    # `short_token_1` yields edit-budget 1 only because the
+    # shortest canonical `help` is 4 characters; this keeps the
+    # family from producing noise matches on shorter tokens.
+    LexicalFamily(
+        family_id="action.assist",
+        family_kind="action",
+        canonical_terms=("help", "assist"),
+        tr_aliases=("yardim", "yardim et"),
+        edit_distance_budget="short_token_1",
+        exclusion_terms=(),
+        contributes_to=("primary_action",),
+    ),
     # object.*
     LexicalFamily(
         family_id="object.workflow",

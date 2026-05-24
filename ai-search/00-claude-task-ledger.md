@@ -17138,3 +17138,278 @@ records partial hardening evidence.
 ### Codex Review Correction - RK-059 Remains OPEN
 
 Codex review of WO-L0-WORKSHOP-FRAME-C-HARDEN-01 found one contract issue in the submitted evidence: RK-059 was marked RESOLVED even though the original hardening prompt explicitly included `help with my project` as a bare-ambiguity example, and that input still emits no FRAME-B signal and remains `H. no-route`. The code hardening is retained for RK-059 gap 1, gap 2, and action-backed bare-ambiguity cases (`make this better`, `fix this`), but RK-059 remains OPEN pending a future FRAME-B coverage packet or equivalent upstream signal-family expansion. DC-075 records partial hardening evidence only. RK-058 remains OPEN. Real-benchmark-ready remains NO.
+
+## Work Order L0-WORKSHOP-FRAME-B-COVERAGE-01 - FRAME-B Signal Coverage Closing Remaining RK-059 No-Signal Bare-Ambiguity Gap
+
+### Scope
+
+Add bounded FRAME-B signal coverage for vague bare-ambiguity /
+help phrasing so prompts like `help with my project`, `help me
+with this`, `can you help`, and Turkish `yardim et` produce a
+deterministic action signal that FRAME-C's bare-ambiguity rule
+(introduced by WO-L0-WORKSHOP-FRAME-C-HARDEN-01) consumes. The
+fix is entirely in
+`harness/level0_workshop_signal_evidence.py`; FRAME-A, FRAME-C
+module, and the FRAME-D shim module are NOT modified.
+
+This is scaffold-only. No route object. No route selection. No
+source qualification. No corpus admission. No real indexing /
+retrieval / ranking / scoring / similarity / distance /
+embedding / vector / ANN / reranker / provider / LLM / external
+API. No architecture / vendor / library / index-family
+selection. Real-benchmark-ready remains NO. RK-058 acknowledged
+and remains OPEN. RK-059 RESOLVED via DC-076 after this packet.
+
+### Allowed Files (inferred from packet scope; explicit list not provided)
+
+- `harness/level0_workshop_signal_evidence.py` (add
+  `action.assist` family entry to `SIGNAL_FAMILIES`)
+- `harness/tests/test_level0_workshop_signal_evidence.py`
+  (add `ActionAssistFamilyTest` with 7 tests; extend
+  `test_minimum_required_families_present` required_ids tuple)
+- `harness/tests/test_level0_workshop_canonical_intent_frame.py`
+  (rename the help-no-route test to the help-yields-G test;
+  add 3 new `action.assist` family-presence tests)
+- `harness/tests/test_level0_workshop_user_intent_mapper.py`
+  (rename the help-no-route mapper test to the
+  help-surfaces-ambiguity test; add 2 companion tests for
+  `can you help` and Turkish `yardim et`; update module
+  docstring)
+- `ai-search/70-level0-workshop-signal-evidence.md` (Non-Claim
+  Constraints section updated: SIGNAL_FAMILIES count 30 -> 31,
+  add WO-L0-WORKSHOP-FRAME-B-COVERAGE-01 addendum describing
+  the `action.assist` family and the residual closure)
+- `ai-search/71-level0-workshop-canonical-intent-frame.md`
+  (Residual RK-059 / FRAME-B coverage section rewritten as
+  Residual RK-059 / FRAME-B coverage closure noting the
+  upstream resolution)
+- `ai-search/72-level0-workshop-intent-mapper-compatibility-shim.md`
+  (Purpose section updated to mark RK-059 RESOLVED via DC-076)
+- `ai-search/00-open-questions.md` (RK-059 status RESOLVED with
+  DC-076 link; DC-076 row inserted; Status and chronology
+  refreshed)
+- `ai-search/00-claude-task-ledger.md` (this entry appended)
+
+### Status
+
+Implemented; pending Codex review.
+
+### Mandatory Priority-Miss Check
+
+Per `ai-search/00-claude-scope-prompt-template.md`, the
+Mandatory Priority-Miss Check was applied at the top of this
+packet (the prompt included `@pmc`):
+
+- Higher-priority prerequisite missed? No - FRAME-A/B/C/D-R
+  approved; FRAME-C-HARDEN-01 closed RK-059 gaps 1 and 2 fully
+  and gap 3 partially. The remaining gap was explicitly
+  reserved for a follow-up FRAME-B coverage packet. This is
+  that packet.
+- Downstream surface skipping upstream cause? No - the fix is
+  in FRAME-B signal extraction (upstream cause). FRAME-D and
+  FRAME-C are not modified beyond what's strictly necessary.
+- Safer sequencing? No - FRAME-B-only extension is the correct
+  path; doing it in FRAME-C would require FRAME-C to re-scan
+  raw text (forbidden), and doing it in FRAME-D would
+  reintroduce the keyword classifier pattern Codex forbade.
+- Conflict with prior invariants? No. RK-058 OPEN; RK-039
+  single; OQ-003/015/031/035/048/049/056/057/070/075/076 OPEN.
+- Concerns flagged: (a) packet did not list `Allowed files
+  exactly` - scoped edits to the minimum necessary; (b)
+  adding a new family shifts the SIGNAL_FAMILIES count from
+  30 to 31 - boundary doc 70 already mentions `30 families`
+  and must be updated; (c) `_ACTION_TO_PRIMARY` is NOT
+  extended - `action.assist` maps to `primary_action == None`,
+  which the bare-ambiguity rule tolerates because it checks
+  `by_kind["action"]` non-emptiness rather than primary_action
+  specifically.
+- Result: proceed.
+
+### Pre-Implementation Review Note
+
+- Q1 (authorizes implementation): Yes; FRAME-B signal coverage
+  extension. Does NOT authorize retrieval / scoring / route
+  creation / source qualification / corpus admission /
+  benchmark / architecture-class selection. Does NOT close
+  RK-058. Closes RK-059 via DC-076.
+- Q2 (source-content risk): No.
+- Q3 (prompt-copying risk): No.
+- Q4 (OQ closure / RK risk): RK-059 closed via DC-076; RK-058
+  stays OPEN; OQs stay OPEN; RK-039 single.
+- Q5 (files): Modified (8): FRAME-B module, FRAME-B tests,
+  FRAME-C tests, mapper tests, boundary docs 70 / 71 / 72,
+  open-questions (RK-059 -> RESOLVED + DC-076 add + Status /
+  chronology refresh). Appended (1): this ledger entry.
+- Q6 (forbidden work): no FRAME-A module / test change; no
+  FRAME-D shim module change; no benchmark-fixtures mutation;
+  no controller-checklist change; no parallel keyword
+  classifier reintroduced in any downstream module; no
+  forbidden output field name added; no new bounded enum
+  value added; no new exception class added.
+
+No scope drift detected.
+
+### Section L Scope Check
+
+Shared state before coverage extension: FRAME-A/B/C/D-R
+approved; FRAME-C-HARDEN-01 closed RK-059 gaps 1 and 2 and
+partially closed gap 3; RK-059 OPEN pending FRAME-B coverage;
+baseline full suite 1498/1498 OK; project root contains
+exactly `ai-search/`, `harness/`, and `benchmark-fixtures/`;
+`benchmark-fixtures/` unchanged. All seven FRAME-B and FRAME-C
+gating booleans remain literal False on every emitted path.
+OQ-003, OQ-015, OQ-031, OQ-035, OQ-048, OQ-049, OQ-056,
+OQ-057, OQ-070, OQ-075, OQ-076 remain OPEN. RK-039 single.
+RK-058 OPEN.
+
+### Codex Coverage Directive Recorded (WO-L0-WORKSHOP-FRAME-B-COVERAGE-01)
+
+Verbatim Codex coverage directive Claude was bound to:
+
+- Add bounded FRAME-B signal coverage for vague bare-ambiguity /
+  help phrasing so prompts like `help with my project`, `help
+  me with this`, `can you help` produce a deterministic signal
+  that FRAME-C can consume as bare ambiguity.
+- Fix upstream in FRAME-B only; do not make FRAME-D
+  authoritative.
+- Do not add route selection, retrieval, ranking, scoring,
+  embeddings, LLM / provider calls, source qualification,
+  corpus admission, or benchmark execution.
+- Keep all gating booleans literal False.
+- Keep touched files ASCII-only.
+- Add tests proving `help with my project` now reaches FRAME-C /
+  FRAME-D as `G. ambiguous` with multiple item kinds and high
+  ambiguity.
+- Keep RK-058 OPEN.
+- Close RK-059 only if all remaining coverage is fixed and
+  tests prove it; otherwise leave OPEN and record evidence.
+
+### Implementation Summary
+
+One bounded family added to FRAME-B `SIGNAL_FAMILIES`:
+
+    LexicalFamily(
+        family_id="action.assist",
+        family_kind="action",
+        canonical_terms=("help", "assist"),
+        tr_aliases=("yardim", "yardim et"),
+        edit_distance_budget="short_token_1",
+        exclusion_terms=(),
+        contributes_to=("primary_action",),
+    )
+
+Properties:
+
+- `edit_distance_budget="short_token_1"` plus the canonical-
+  length-aware budget table yields edit-budget 1 because the
+  shortest canonical `help` is 4 characters; `assistant` (edit
+  distance 3 from `assist`) does NOT match (verified by
+  `ActionAssistFamilyTest.test_action_assist_does_not_match_assistant_substring`).
+- `contributes_to=("primary_action",)` matches the existing
+  action.* family convention.
+- `family_kind="action"` ensures the new family appears in
+  `by_kind["action"]` which is the predicate FRAME-C's
+  `_is_bare_ambiguity_signal_set` checks for non-emptiness.
+
+FRAME-C's `_ACTION_TO_PRIMARY` table was NOT extended by this
+packet. `_select_primary_action` therefore maps `action.assist`
+to `primary_action == None`. The downstream FRAME-C bare-
+ambiguity rule fires on the action-signal-non-empty plus no-
+other-informative-signal pattern, emits the bounded three-entry
+ambiguous list `(skill, instruction, workflow_file)`, adds the
+`bare_ambiguity_action_only` reason to `ambiguity_reasons`,
+sets `ambiguity_level == "high"`, and the category selector
+short-circuits to `G. ambiguous`. FRAME-D translates verbatim.
+
+Test changes:
+
+- FRAME-B: added `ActionAssistFamilyTest` with 7 tests covering
+  `help`/`help with my project`/`help me with this`/`can you
+  help`/`assist`/`yardim et` plus the `assistant`-substring
+  negative test and the `contributes_to` shape check. Extended
+  `test_minimum_required_families_present` required_ids tuple
+  with `"action.assist"`. Total FRAME-B tests: 104 (was 97).
+- FRAME-C: renamed `test_bare_ambiguity_help_with_my_project_remains_no_route`
+  to `test_bare_ambiguity_help_with_my_project_yields_category_G`
+  and rewrote its assertions for the closure behavior. Added
+  three `action.assist` family-presence tests:
+  `test_action_assist_canonical_help_matches`,
+  `test_action_assist_canonical_assist_matches`,
+  `test_action_assist_turkish_alias_matches`. Total FRAME-C
+  tests: 92 (was 88).
+- Mapper: renamed `test_bare_ambiguity_help_phrase_remains_no_route_until_frame_b_signal`
+  to `test_bare_ambiguity_help_phrase_surfaces_ambiguity` and
+  rewrote its assertions. Added two companions:
+  `test_bare_ambiguity_can_you_help_surfaces_ambiguity` and
+  `test_bare_ambiguity_turkish_yardim_et_surfaces_ambiguity`.
+  Module docstring updated to reflect the closure. Total
+  mapper tests: 46 (was 44).
+
+Boundary doc updates:
+
+- `ai-search/70-level0-workshop-signal-evidence.md`: Non-Claim
+  Constraints section updated for SIGNAL_FAMILIES count
+  30 -> 31; addendum paragraph documents the `action.assist`
+  family, the canonical-length-aware budget rationale, the
+  `assistant`-substring negative behavior, and the explicit
+  no-modification statement for FRAME-C's `_ACTION_TO_PRIMARY`.
+  RK-059 RESOLVED reference added.
+- `ai-search/71-level0-workshop-canonical-intent-frame.md`:
+  Residual RK-059 / FRAME-B coverage section rewritten as a
+  closure note. Records that `_ACTION_TO_PRIMARY` was NOT
+  extended.
+- `ai-search/72-level0-workshop-intent-mapper-compatibility-shim.md`:
+  Purpose section RK-059 sentence updated to mark RK-059
+  RESOLVED via DC-076 across two upstream packets
+  (FRAME-C-HARDEN-01 + FRAME-B-COVERAGE-01).
+
+### Evidence
+
+- Targeted FRAME-B: `python -B -m unittest
+  harness.tests.test_level0_workshop_signal_evidence` ->
+  104/104 OK.
+- Targeted FRAME-C: `python -B -m unittest
+  harness.tests.test_level0_workshop_canonical_intent_frame` ->
+  92/92 OK.
+- Targeted mapper: `python -B -m unittest
+  harness.tests.test_level0_workshop_user_intent_mapper` ->
+  46/46 OK.
+- Full suite: `python -B -m unittest discover -s harness/tests`
+  -> 1510/1510 OK (was 1498; +7 FRAME-B + 3 FRAME-C + 2 net
+  new mapper).
+- ASCII purity of all touched files verified.
+- No `__pycache__` artifacts under `harness/`.
+- Project root contains exactly `ai-search/`, `harness/`, and
+  `benchmark-fixtures/`.
+- `benchmark-fixtures/` unchanged.
+- FRAME-A module / test unchanged.
+- FRAME-D shim module
+  `harness/level0_workshop_user_intent_mapper.py` unchanged
+  (verified by `git status`).
+- `00-controller-checklist.md` unchanged.
+- OQ-003, OQ-015, OQ-031, OQ-035, OQ-048, OQ-049, OQ-056,
+  OQ-057, OQ-070, OQ-075, OQ-076 remain OPEN.
+- RK-039 single.
+- RK-058 remains OPEN.
+- RK-059 RESOLVED via DC-076.
+- Real-benchmark-ready remains NO.
+
+### Non-Claims
+
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-01 does not claim that the
+new `action.assist` family, the canonical terms, the Turkish
+aliases, or the resulting bare-ambiguity classification are
+sufficient, necessary, superior, best, complete,
+production-ready, recommended, selected, or benchmark-ready,
+nor does it claim universal coverage of vague-help phrasing.
+The bounded `action.assist` family entry, the bounded
+two-element canonical_terms tuple, the bounded two-element
+tr_aliases tuple, and the `short_token_1` budget are bounded
+by WO-L0-WORKSHOP-FRAME-B-COVERAGE-01 and are NOT claimed
+exhaustive.
+
+All DC-020 through DC-075 boundary invariants carry forward.
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-01 does not amend or broaden
+DC-003 through DC-075. Real-benchmark-ready remains NO. RK-058
+is acknowledged and remains OPEN. RK-059 is RESOLVED via
+DC-076.

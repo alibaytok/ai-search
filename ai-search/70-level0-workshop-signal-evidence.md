@@ -363,8 +363,9 @@ byte count is 0.
 WO-L0-WORKSHOP-FRAME-B does not claim any signal, span, family,
 alias tag, count, or budget tag is sufficient, necessary,
 superior, best, complete, production-ready, recommended, or
-selected. The bounded `SIGNAL_FAMILIES` tuple (30 families
-covering the minimum required IDs), the bounded `FAMILY_KINDS`
+selected. The bounded `SIGNAL_FAMILIES` tuple (31 families after
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-01 added `action.assist`; was 30
+under WO-L0-WORKSHOP-FRAME-B), the bounded `FAMILY_KINDS`
 (8 entries), the bounded `BUDGET_TAGS` (3 entries), the bounded
 `LANGUAGE_TAGS` (3 entries), the bounded eleven-field signal
 record shape, the bounded twenty-two `ALLOWED_OUTPUT_KEYS`, the
@@ -372,9 +373,32 @@ documented U+0131 pre-fold rule, and the canonical-length-
 aware edit-budget table are bounded by WO-L0-WORKSHOP-FRAME-B
 and are NOT claimed exhaustive.
 
-All DC-020 through DC-071 boundary invariants carry forward.
-WO-L0-WORKSHOP-FRAME-B does not amend or broaden DC-003 through
-DC-071. RK-058 is acknowledged and remains OPEN. RK-039 remains
-active and is not duplicated. Real-benchmark-ready remains NO.
-OQ-003, OQ-015, OQ-031, OQ-035, OQ-048, OQ-049, OQ-056, OQ-057,
-OQ-070, OQ-075, OQ-076 remain OPEN.
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-01 addendum: the bounded family
+`action.assist` (`canonical_terms=("help", "assist")`,
+`tr_aliases=("yardim", "yardim et")`,
+`edit_distance_budget="short_token_1"`,
+`contributes_to=("primary_action",)`) was added to close the
+remaining RK-059 no-signal bare-ambiguity coverage gap so that
+prompts like `help with my project`, `help me with this`,
+`can you help`, and Turkish `yardim et` produce at least one
+action signal that FRAME-C's bare-ambiguity rule can consume.
+The new family fires on the canonical token `help` (length 4,
+within `short_token_1` budget of 1) and on `assist` (length 6,
+within `short_token_1` budget of 1), and does NOT fire on the
+longer substring `assistant` (edit distance 3 from `assist`,
+outside budget). FRAME-C's `_ACTION_TO_PRIMARY` table was NOT
+modified by this packet; `action.assist` therefore maps to
+`primary_action == None`, which is the desired behavior so the
+bare-ambiguity rule (which checks `by_kind["action"]`
+non-emptiness, not primary_action specifically) is the sole
+trigger downstream. No FRAME-A / FRAME-D module changes; no
+new bounded enum value added.
+
+All DC-020 through DC-075 boundary invariants carry forward.
+WO-L0-WORKSHOP-FRAME-B and WO-L0-WORKSHOP-FRAME-B-COVERAGE-01
+do not amend or broaden DC-003 through DC-075. RK-058 is
+acknowledged and remains OPEN. RK-039 remains active and is
+not duplicated. RK-059 RESOLVED via DC-076 after this packet.
+Real-benchmark-ready remains NO. OQ-003, OQ-015, OQ-031,
+OQ-035, OQ-048, OQ-049, OQ-056, OQ-057, OQ-070, OQ-075, OQ-076
+remain OPEN.
