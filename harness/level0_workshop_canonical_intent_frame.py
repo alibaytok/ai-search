@@ -849,6 +849,8 @@ def _compute_shape_touch_plan(
             or has_event_constraint
         ):
             return True
+        if "ci" in domain_tags and "plugin" in distinct_target_objects:
+            return True
         if "workflow" in distinct_target_objects:
             return True
         return False
@@ -889,6 +891,8 @@ def _compute_shape_touch_plan(
         return False
 
     def _is_plugin_intent():
+        if "ci" in domain_tags and "plugin" in distinct_target_objects:
+            return False
         return "plugin" in distinct_target_objects
 
     def _is_cookbook_intent():
@@ -995,6 +999,45 @@ def _compute_shape_touch_plan(
             "item_kind": "cookbook_entry",
             "affinity_basis": _ids_for(*contributing),
             "affinity_grade": _grade_for(True, contributing),
+        })
+
+    if (
+        primary_action is None
+        and set(distinct_target_objects) == {"workflow", "repository"}
+        and not domain_tags
+        and not constraint_tags
+        and requested_output_shape is None
+        and any(e["item_kind"] == "workflow_file" for e in candidate_entries)
+    ):
+        automation_repository_basis = _ids_for("object")
+        workflow_entry = next(
+            e for e in candidate_entries if e["item_kind"] == "workflow_file"
+        )
+        candidate_entries = [
+            e for e in candidate_entries if e["item_kind"] != "workflow_file"
+        ]
+        candidate_entries.append({
+            "item_kind": "skill",
+            "affinity_basis": list(automation_repository_basis),
+            "affinity_grade": "ambiguous",
+        })
+        candidate_entries.append({
+            "item_kind": "instruction",
+            "affinity_basis": list(automation_repository_basis),
+            "affinity_grade": "ambiguous",
+        })
+        candidate_entries.append(workflow_entry)
+
+    if (
+        primary_action is None
+        and {"skill_capability", "persona"}.issubset(distinct_target_objects)
+        and any(e["item_kind"] == "agent" for e in candidate_entries)
+        and not any(e["item_kind"] == "skill" for e in candidate_entries)
+    ):
+        candidate_entries.append({
+            "item_kind": "skill",
+            "affinity_basis": _ids_for("object"),
+            "affinity_grade": "ambiguous",
         })
 
     # workflow_file co-fire rule (WO-L0-WORKSHOP-FRAME-C-HARDEN-01
@@ -1163,6 +1206,8 @@ def _select_workshop_category(
             return _WORKSHOP_CATEGORY_PROMPT_SEARCH
         if "agent" in candidate_set and "workflow_file" in candidate_set:
             return _WORKSHOP_CATEGORY_AGENT
+        if candidate_set == {"skill", "instruction", "workflow_file"}:
+            return _WORKSHOP_CATEGORY_AMBIGUOUS
         if "instruction" in candidate_set and "workflow_file" in candidate_set:
             return _WORKSHOP_CATEGORY_INSTRUCTION
         # WO-L0-WORKSHOP-FRAME-C-HARDEN-02 closing the W-PRM-007

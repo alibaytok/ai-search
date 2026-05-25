@@ -76,8 +76,8 @@ class FrameBOverlayAutonomyTest(unittest.TestCase):
             {
                 "matrix_id": "L0-WS-PARSER-QUALITY-MINI-V1",
                 "case_count": 35,
-                "passed_count": 24,
-                "failed_count": 11,
+                "passed_count": 28,
+                "failed_count": 7,
             },
         )
         self.assertEqual(
@@ -85,8 +85,8 @@ class FrameBOverlayAutonomyTest(unittest.TestCase):
             {
                 "matrix_id": "L0-WS-PARSER-QUALITY-MINI-V1",
                 "case_count": 35,
-                "passed_count": 24,
-                "failed_count": 11,
+                "passed_count": 28,
+                "failed_count": 7,
             },
         )
 
@@ -177,8 +177,8 @@ class FrameBOverlayAutonomyTest(unittest.TestCase):
     def test_runner_optional_overlay_does_not_change_baseline_contract(self):
         result = run_intent_test_matrix(MINI_V1_PATH, EventLog())
         self.assertEqual(result["case_count"], 35)
-        self.assertEqual(result["passed_count"], 24)
-        self.assertEqual(result["failed_count"], 11)
+        self.assertEqual(result["passed_count"], 28)
+        self.assertEqual(result["failed_count"], 7)
 
     def test_frame_b_single_resolver_invariant(self):
         path = os.path.join("harness", "level0_workshop_signal_evidence.py")

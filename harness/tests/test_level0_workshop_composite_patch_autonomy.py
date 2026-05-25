@@ -113,8 +113,8 @@ class CompositePatchAutonomyTest(unittest.TestCase):
         )
         self.assertEqual(bundle["comparison"]["improved_cases"], ["TC-COMP-001"])
         self.assertEqual(bundle["comparison"]["regressed_cases"], [])
-        self.assertEqual(bundle["baseline_result_summary"]["passed_count"], 24)
-        self.assertEqual(bundle["candidate_result_summary"]["passed_count"], 25)
+        self.assertEqual(bundle["baseline_result_summary"]["passed_count"], 28)
+        self.assertEqual(bundle["candidate_result_summary"]["passed_count"], 29)
 
     def test_candidate_shape_and_gating_booleans(self):
         path = _write_temp_matrix(_matrix_with_composite_case())

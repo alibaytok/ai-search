@@ -753,6 +753,36 @@ class HardenedSynthesisTest(unittest.TestCase):
         )
 
 
+class MiniV1FrameCHardeningTest(unittest.TestCase):
+
+    def test_generic_automation_repository_surfaces_bare_shape_ambiguity(self):
+        result = _frame_for("Add automation to the repository.")
+        record = result["workshop_prompt_record"]
+        self.assertEqual(record["category"], "G. ambiguous")
+        self.assertEqual(
+            record["expected_item_kinds_touched"],
+            ["skill", "instruction", "workflow_file"],
+        )
+        self.assertEqual(result["ambiguity_level"], "high")
+
+    def test_ci_domain_with_integration_token_maps_to_workflow(self):
+        result = _frame_for("Establish a continuous integration job.")
+        record = result["workshop_prompt_record"]
+        self.assertEqual(record["category"], "B. workflow intent")
+        self.assertEqual(
+            record["expected_item_kinds_touched"], ["workflow_file"]
+        )
+
+    def test_explicit_skill_or_agent_surfaces_both_candidates(self):
+        result = _frame_for("Should this be a skill or an agent?")
+        record = result["workshop_prompt_record"]
+        self.assertEqual(record["category"], "G. ambiguous")
+        self.assertEqual(
+            record["expected_item_kinds_touched"], ["agent", "skill"]
+        )
+        self.assertEqual(result["ambiguity_level"], "high")
+
+
 class EvidenceBandTest(unittest.TestCase):
 
     def test_evidence_band_no_signal_for_unrecognized_prompt(self):

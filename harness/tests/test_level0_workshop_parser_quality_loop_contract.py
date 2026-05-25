@@ -505,6 +505,15 @@ class ParserQualityMiniV1EndToEndTest(unittest.TestCase):
         self._require_loaded()
         self.assertGreater(self.matrix_result["failed_count"], 0)
 
+    def test_mini_v1_frame_c_synthesis_bucket_is_closed(self):
+        self._require_loaded()
+        self.assertEqual(
+            self.matrix_result["per_failure_class_counts"][
+                "frame_c_synthesis_rule_gap"
+            ],
+            0,
+        )
+
     def test_no_forbidden_classifier_overrides_used(self):
         """The matrix relies on natural classifier behavior; no case may
         carry a `force_*` override tag that would bypass the heuristic."""
@@ -673,44 +682,42 @@ class UpgradeCandidatePlannerTest(unittest.TestCase):
             candidate_keys,
         )
 
-    def test_epoch_1_has_no_autonomous_table_or_matrix_candidate(self):
-        """Epoch 1 stops when only non-data-delta work remains.
+    def test_epoch_2_has_no_autonomous_table_matrix_or_frame_c_candidate(self):
+        """Epoch 2 stops when only clarification-design work remains.
 
         The autonomous materializers are bounded to FRAME-B canonical table
-        additions, matrix expected-field updates, and their composite. Any
-        remaining Mini-V1 candidate must therefore route outside that surface.
+        additions, matrix expected-field updates, and their composite. The
+        authorized FRAME-C hardening pass has also closed the shape-rule
+        bucket, so any remaining Mini-V1 candidate must route to the
+        clarification surface.
         """
         self._require_loaded()
-        autonomous_next_packets = {"FRAME-B-COVERAGE", "MATRIX-RECONCILE"}
+        closed_next_packets = {
+            "FRAME-B-COVERAGE",
+            "MATRIX-RECONCILE",
+            "FRAME-C-HARDEN",
+        }
         remaining_next_packets = {
             candidate["suggested_next_packet_type"]
             for candidate in self.candidates_result["upgrade_candidates"]
         }
-        self.assertEqual(
-            remaining_next_packets,
-            {"CLARIFICATION-DESIGN", "FRAME-C-HARDEN"},
-        )
-        self.assertTrue(
-            remaining_next_packets.isdisjoint(autonomous_next_packets)
-        )
+        self.assertEqual(remaining_next_packets, {"CLARIFICATION-DESIGN"})
+        self.assertTrue(remaining_next_packets.isdisjoint(closed_next_packets))
 
     def test_candidate_order_and_ids_are_deterministic(self):
         self._require_loaded()
         candidates = self.candidates_result["upgrade_candidates"]
         self.assertEqual(
             [candidate["affected_count"] for candidate in candidates],
-            [7, 4],
+            [7],
         )
         self.assertEqual(
             [candidate["candidate_id"] for candidate in candidates],
-            ["UPG-001", "UPG-002"],
+            ["UPG-001"],
         )
         self.assertEqual(
             [candidate["failure_class"] for candidate in candidates],
-            [
-                "frame_c_ambiguity_misreport",
-                "frame_c_synthesis_rule_gap",
-            ],
+            ["frame_c_ambiguity_misreport"],
         )
 
     def test_execution_log_is_ordered_by_step_and_iteration(self):
@@ -739,7 +746,7 @@ class UpgradeCandidatePlannerTest(unittest.TestCase):
         ]
         self.assertEqual(
             [entry["candidate_id"] for entry in assign_events],
-            ["UPG-001", "UPG-002"],
+            ["UPG-001"],
         )
         self.assertEqual(log[-1]["stage"], "scan_planner_output")
 
@@ -930,16 +937,16 @@ class CandidateCaseReviewReporterTest(unittest.TestCase):
             summary["candidate_review_summary_kind"],
             "level0_workshop_candidate_review_summary",
         )
-        self.assertEqual(summary["candidate_count"], 2)
+        self.assertEqual(summary["candidate_count"], 1)
         self.assertEqual(
             [review["candidate_id"] for review in summary["candidate_case_reviews"]],
-            ["UPG-001", "UPG-002"],
+            ["UPG-001"],
         )
         self.assertEqual(summary["overall_review_label_counts"], {
             "likely_matrix_expectation_drift": 0,
             "likely_negation_gap": 2,
             "likely_synthesis_gap": 5,
-            "needs_human_review": 4,
+            "needs_human_review": 0,
         })
 
     def test_review_rows_carry_observed_expected_fields(self):

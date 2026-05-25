@@ -401,7 +401,7 @@ SIGNAL_FAMILIES = (
         canonical_terms=("hook", "trigger", "webhook", "scheduled"),
         tr_aliases=("kanca", "tetikleyici"),
         edit_distance_budget="short_token_1",
-        exclusion_terms=(),
+        exclusion_terms=("cook",),
         contributes_to=("target_object",),
     ),
     LexicalFamily(
@@ -613,6 +613,7 @@ SIGNAL_FAMILIES = (
         canonical_terms=(
             "weather", "stock price", "world war",
             "moon landing", "molecular weight", "capital of",
+            "cook",
         ),
         tr_aliases=(),
         edit_distance_budget="none",

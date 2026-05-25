@@ -293,6 +293,12 @@ class EnglishFamilyFireTest(unittest.TestCase):
         families = _signal_families_for_view(view)
         self.assertIn("out_of_scope.general_world", families)
 
+    def test_cook_token_fires_out_of_scope_not_hook(self):
+        view = _build_view("How do I cook spaghetti carbonara?")
+        families = _signal_families_for_view(view)
+        self.assertIn("out_of_scope.general_world", families)
+        self.assertNotIn("object.hook", families)
+
     def test_do_not_fires_negation(self):
         view = _build_view("Do not deploy to production database.")
         families = _signal_families_for_view(view)
