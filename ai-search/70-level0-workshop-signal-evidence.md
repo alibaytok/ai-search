@@ -364,19 +364,20 @@ WO-L0-WORKSHOP-FRAME-B does not claim any signal, span, family,
 alias tag, count, or budget tag is sufficient, necessary,
 superior, best, complete, production-ready, recommended, or
 selected. The bounded `SIGNAL_FAMILIES` tuple (still 31 families
-after WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A; the bounded sibling
-canonical addition kept the family count unchanged because the
-new canonical is a sibling word-order entry inside the existing
-`repo_meta_near_miss.repo_navigation` family rather than a new
-family; was 31 after WO-L0-WORKSHOP-FRAME-B-COVERAGE-01 added
-`action.assist`; was 30 under WO-L0-WORKSHOP-FRAME-B), the
-bounded `FAMILY_KINDS` (8 entries), the bounded `BUDGET_TAGS`
-(3 entries), the bounded `LANGUAGE_TAGS` (3 entries), the
-bounded eleven-field signal record shape, the bounded
-twenty-two `ALLOWED_OUTPUT_KEYS`, the documented U+0131
-pre-fold rule, and the canonical-length-aware edit-budget table
-are bounded by WO-L0-WORKSHOP-FRAME-B and are NOT claimed
-exhaustive.
+after WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B; the bounded
+canonical_terms extension kept the family count unchanged
+because the new gerund-inflection canonicals are sibling
+canonical_terms entries inside the existing `action.set_up`
+family rather than a new family; was 31 after
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A; was 31 after
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-01 added `action.assist`; was
+30 under WO-L0-WORKSHOP-FRAME-B), the bounded `FAMILY_KINDS`
+(8 entries), the bounded `BUDGET_TAGS` (3 entries), the
+bounded `LANGUAGE_TAGS` (3 entries), the bounded eleven-field
+signal record shape, the bounded twenty-two
+`ALLOWED_OUTPUT_KEYS`, the documented U+0131 pre-fold rule,
+and the canonical-length-aware edit-budget table are bounded
+by WO-L0-WORKSHOP-FRAME-B and are NOT claimed exhaustive.
 
 WO-L0-WORKSHOP-FRAME-B-COVERAGE-01 addendum: the bounded family
 `action.assist` (`canonical_terms=("help", "assist")`,
@@ -421,13 +422,47 @@ FRAME-C, or FRAME-D module change; no `_match_multi_token_term`
 policy change (the strict-position rule is preserved); no new
 bounded enum value added; no new exception added.
 
-All DC-020 through DC-077 boundary invariants carry forward.
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B addendum: the bounded
+gerund inflection canonicals `setting up` and `sets up` were
+added to `action.set_up`'s existing `canonical_terms` tuple.
+The family's existing `edit_distance_budget == "short_token_1"`
+and the existing `_match_multi_token_term` strict-per-token
+budget rule are preserved; the new canonicals are matched as
+two-token canonical_terms entries under the same rule. No new
+family was introduced (family count remains 31). With the new
+inflection canonicals, FRAME-B's `action.set_up` fires on the
+planning-doc text
+`Add instructions for setting up CI on a new Python repo.`;
+FRAME-C's `_is_workflow_intent` then fires (primary_action
+`set_up` is in the workflow_actions set and domain.ci is in
+workflow_domains) and `workflow_file` co-fires alongside the
+already-firing `instruction` candidate; the workshop category
+becomes `E. instruction confusion` with the ordered kinds
+`[workflow_file, instruction]`. The new canonicals do NOT
+fire on word-swapped windows (the `_match_multi_token_term`
+rule requires positional match), do NOT fire on a standalone
+`setting` token without a following `up` token, and do NOT
+affect the existing `set up` / `setup` / `install` canonical
+match paths. This closes RK-060 residual (b). The distribution
+rebalance retargeted the prior WO-L0-WORKSHOP-RK058-CLOSURE-01
+rewrite of W-PRM-017 from category E to A by re-rewriting the
+prompt text in the seed and derived-trace fixture; the
+re-rewrite drops the deploy co-fire path so the prompt
+resolves to a clean single-instruction candidate (A). No
+FRAME-A, FRAME-C, or FRAME-D module change; no
+`_match_multi_token_term` policy change; no
+`_budget_limit_for_canonical` change; no new bounded enum
+value; no new exception class.
+
+All DC-020 through DC-078 boundary invariants carry forward.
 WO-L0-WORKSHOP-FRAME-B, WO-L0-WORKSHOP-FRAME-B-COVERAGE-01,
-and WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A do not amend or
-broaden DC-003 through DC-077. RK-039 remains active and is
-not duplicated. RK-058 RESOLVED via DC-077. RK-059 RESOLVED
-via DC-076. RK-060 remains OPEN with residuals (a), (b), (c),
-(d) outstanding; residuals (e) and (f) closed via DC-078.
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A, and
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B do not amend or broaden
+DC-003 through DC-078. RK-039 remains active and is not
+duplicated. RK-058 RESOLVED via DC-077. RK-059 RESOLVED via
+DC-076. RK-060 remains OPEN with residuals (a), (c), and
+(d) outstanding; residuals (e) and (f) closed via DC-078;
+residual (b) closed via DC-079.
 Real-benchmark-ready remains NO. OQ-003, OQ-015, OQ-031,
 OQ-035, OQ-048, OQ-049, OQ-056, OQ-057, OQ-070, OQ-075, OQ-076
 remain OPEN.

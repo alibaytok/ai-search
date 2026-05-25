@@ -209,9 +209,9 @@ Per-category counts (FRAME-D-derived, matching trace validator):
 | W-PRM-012 | D. agent/persona confusion | Give me a security-reviewer agent that deploys CodeQL scans. | agent; workflow_file | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
 | W-PRM-013 | D. agent/persona confusion | Define a documentation-writer persona that deploys to GitHub Pages. | agent; workflow_file | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
 | W-PRM-014 | D. agent/persona confusion | Define an agent that runs a test workflow on demand. | workflow_file; agent | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
-| W-PRM-015 | A. clear single-intent | Add instructions for setting up CI on a new Python repo. | instruction | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-015 | E. instruction confusion | Add instructions for setting up CI on a new Python repo. | workflow_file; instruction | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
 | W-PRM-016 | E. instruction confusion | Write instructions for our team's release process. | instruction; workflow_file | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
-| W-PRM-017 | E. instruction confusion | An instruction file that deploys to CI. | workflow_file; instruction | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-017 | A. clear single-intent | An instruction file for CI conventions. | instruction | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
 | W-PRM-018 | F. prompt-search-shaped but workflow-intent | Find me a prompt that deploys Docker containers in CI. | workflow_file; cookbook_entry | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
 | W-PRM-019 | F. prompt-search-shaped but workflow-intent | Show me a cookbook recipe that deploys a static site to GitHub Pages. | cookbook_entry; workflow_file | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
 | W-PRM-020 | A. clear single-intent | Add an agent for code reviews. | agent | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
@@ -240,9 +240,9 @@ Per-category counts (FRAME-D-derived, matching trace validator):
 | W-PRM-012 | D, [agent, workflow_file] | D, [agent, workflow_file] | rewrite: "deploys" substituted for "runs" so action.deploy fires and workflow_file co-fire reaches D. |
 | W-PRM-013 | D, [agent, workflow_file] | D, [agent, workflow_file] | rewrite: "deploys" substituted for "publishes"; primary action becomes deploy without "set up" capturing the primary slot. |
 | W-PRM-014 | D, [agent, workflow_file] | D, [workflow_file, agent] | match (FRAME-C ordering differs from planning-doc order). |
-| W-PRM-015 | E, [instruction, workflow_file] | A, [instruction] | RK-060: FRAME-B `action.set_up` does not match "setting up" via short_token_1 budget; only object.instruction fires; FRAME-C resolves to single instruction candidate. |
+| W-PRM-015 | E, [instruction, workflow_file] | E, [workflow_file, instruction] | match (canonical extension; FRAME-C ordering differs from planning-doc order): WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B added the bounded `setting up` / `sets up` canonicals to FRAME-B `action.set_up` so the gerund inflection matches under the family's existing `short_token_1` budget; FRAME-C's `_is_workflow_intent` then fires (action.set_up + domain.ci) and workflow_file co-fires alongside object.instruction; FRAME-D surfaces E/[workflow_file, instruction]. RK-060 residual (b) closed via DC-079. |
 | W-PRM-016 | E, [instruction, workflow_file] | E, [instruction, workflow_file] | match. |
-| W-PRM-017 | E, [instruction, workflow_file] | E, [workflow_file, instruction] | rewrite: dropped "document" so primary action becomes deploy; FRAME-C workflow + instruction confusion fires. |
+| W-PRM-017 | (rewritten) A, [instruction] | A, [instruction] | rewrite for distribution: under WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B the prior rewrite "An instruction file that deploys to CI." was re-rewritten to "An instruction file for CI conventions." to rebalance the per-category distribution after W-PRM-015's residual (b) closure shifted W-PRM-015 from A to E; removing "deploys" drops action.deploy so the workflow_file co-fire rule does not fire and the prompt resolves to a clean single-instruction candidate. |
 | W-PRM-018 | F, [cookbook_entry, workflow_file] | F, [workflow_file, cookbook_entry] | rewrite: replaced "sets up Docker builds" with "deploys Docker containers"; primary action deploy enables workflow_file co-fire. |
 | W-PRM-019 | F, [cookbook_entry, workflow_file] | F, [cookbook_entry, workflow_file] | match. |
 | W-PRM-020 | G, [skill, instruction, agent] | A, [agent] | rewrite: "Add an agent for code reviews." produces a single agent candidate (A). Original "Improve the way we handle code reviews" yields C (skill) under FRAME-D - recorded as RK-060 (FRAME-C single-domain-+-improve resolves to skill rather than ambiguity). The rewrite makes the row contribute to A while preserving the planning-doc's intent that an agent is one of the surfaces this kind of vague request can touch. |
@@ -253,19 +253,21 @@ Per-category counts (FRAME-D-derived, matching trace validator):
 | W-PRM-025 | I, [repo_meta_section] | I, [repo_meta_section] | match (original text restored): WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A added a source-safe assembled product-name canonical to FRAME-B `repo_meta_near_miss.repo_navigation`; the original planning text "What is awesome-copilot?" now matches under strict-position rule and FRAME-D surfaces I/[repo_meta_section]. RK-060 residual (e) closed via DC-078. |
 | W-PRM-026 | I, [repo_meta_section] | I, [repo_meta_section] | match (original text restored): WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A added the bounded sibling canonical "how this repo is organized" to FRAME-B `repo_meta_near_miss.repo_navigation`; the original planning text "Explain how this repo is organized." now matches under strict-position rule and FRAME-D surfaces I/[repo_meta_section]. RK-060 residual (f) closed via DC-078. |
 
-Summary: 14 of 26 rows match the prior planning intent under
-FRAME-D exactly (treating W-PRM-014's kind-order difference as
-equivalent and counting W-PRM-025's and W-PRM-026's restored
-original text after
-DC-078); 2 are category-rule differences without a synthesis gap
-(W-PRM-001, W-PRM-002); 7 are planning rewrites for distribution
-fit (W-PRM-010, W-PRM-011, W-PRM-012, W-PRM-013, W-PRM-017,
-W-PRM-018, W-PRM-020); and 3 current prompt rows
-remain RK-060 OPEN residuals (W-PRM-007, W-PRM-015, W-PRM-021).
-The original text for W-PRM-020 is also recorded in RK-060 as a
-historical planning-intent residual (residual (c)). Residuals (e)
-and (f) are closed by DC-078. The closure point for RK-058 is
-fixture derivation, not absence of all semantic residuals.
+Summary: 15 of 26 rows match the prior planning intent under
+FRAME-D exactly (treating W-PRM-014's and W-PRM-015's kind-order
+differences as equivalent and counting W-PRM-025's and
+W-PRM-026's restored original text after DC-078, plus
+W-PRM-015's canonical-extension match after DC-079); 2 are
+category-rule differences without a synthesis gap (W-PRM-001,
+W-PRM-002); 7 are planning rewrites for distribution fit
+(W-PRM-010, W-PRM-011, W-PRM-012, W-PRM-013, W-PRM-017,
+W-PRM-018, W-PRM-020); and 2 current prompt rows remain RK-060
+OPEN residuals (W-PRM-007, W-PRM-021). The original text for
+W-PRM-020 is also recorded in RK-060 as a historical
+planning-intent residual (residual (c)). Residuals (e) and (f)
+are closed by DC-078; residual (b) is closed by DC-079. The
+closure point for RK-058 is fixture derivation, not absence of
+all semantic residuals.
 
 ## 5. Derived-Material Implications
 

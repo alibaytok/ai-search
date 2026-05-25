@@ -433,6 +433,34 @@ class LegacyContractParityTest(unittest.TestCase):
             "repo_meta_section_near_miss",
         )
 
+    def test_setting_up_inflection_maps_to_instruction_confusion(self):
+        """RK-060 residual (b) closed by
+        WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B: the planning-doc text
+        `Add instructions for setting up CI on a new Python repo.`
+        now matches FRAME-B's new canonical `setting up` so
+        FRAME-C's workflow_intent path fires (action.set_up +
+        domain.ci) and workflow_file co-fires alongside the
+        already-firing instruction. The FRAME-D shim surfaces
+        category `E. instruction confusion` with
+        `expected_item_kinds_touched == [workflow_file,
+        instruction]` and `ambiguity_observed == True`."""
+        output, _ = _map(
+            "Add instructions for setting up CI on a new Python repo."
+        )
+        self.assertEqual(
+            output["workshop_prompt_record"]["category"],
+            "E. instruction confusion",
+        )
+        self.assertEqual(
+            output["expected_item_kinds_touched"],
+            ["workflow_file", "instruction"],
+        )
+        self.assertTrue(output["ambiguity_observed"])
+        self.assertEqual(
+            output["normalized_intent_observation"],
+            "instruction_surface_workflow_intent",
+        )
+
     def test_explain_how_this_repo_is_organized_maps_to_repo_meta_section(self):
         """RK-060 residual (f) closed by
         WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A: the planning-doc text

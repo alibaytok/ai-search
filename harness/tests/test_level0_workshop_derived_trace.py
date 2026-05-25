@@ -22,8 +22,7 @@ categorical fixtures. This closes RK-058's "declared touched-kind
 fixtures masking absence of durable prompt-text-to-intent capture"
 concern (see DC-077). Seven planning-doc prompts (W-PRM-010,
 W-PRM-011, W-PRM-012, W-PRM-013, W-PRM-017, W-PRM-018,
-W-PRM-020) currently carry rewrites authored by
-WO-L0-WORKSHOP-RK058-CLOSURE-01 so the FRAME-D-derived
+W-PRM-020) currently carry rewrites so the FRAME-D-derived
 per-category distribution satisfies the trace validator's full
 bounded per-category distribution. W-PRM-025's original planning
 text `What is awesome-copilot?` and W-PRM-026's original planning
@@ -31,7 +30,16 @@ text `Explain how this repo is organized.` were restored by
 WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A under DC-078 after the
 bounded source-safe product-name canonical and sibling
 word-order canonical were added to FRAME-B's
-`repo_meta_near_miss.repo_navigation` family.
+`repo_meta_near_miss.repo_navigation` family. W-PRM-015's
+original planning text `Add instructions for setting up CI on
+a new Python repo.` matches FRAME-D's planning intent (E,
+[workflow_file, instruction]) after
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B added the bounded gerund
+inflection canonicals `setting up` / `sets up` to FRAME-B's
+`action.set_up` family under DC-079; W-PRM-017's prior rewrite
+`An instruction file that deploys to CI.` was re-rewritten to
+`An instruction file for CI conventions.` in the same packet
+to rebalance the per-category distribution invariant.
 Prompts whose FRAME-D output still diverges from the original
 planning-doc INTENT (because of FRAME-B canonical-set or FRAME-C
 synthesis-rule narrowness) are recorded as RK-060 OPEN with
@@ -101,19 +109,28 @@ _ROUTE_STATUS_FIELDS = (
 # 26 (workshop_prompt_id, prompt_text) pairs sourced verbatim from
 # ai-search/00-level0-awesome-copilot-workshop-seed.md. Seven prompts
 # (W-PRM-010, W-PRM-011, W-PRM-012, W-PRM-013, W-PRM-017, W-PRM-018,
-# W-PRM-020) currently carry rewrites authored by
-# WO-L0-WORKSHOP-RK058-CLOSURE-01 in the planning doc so the
-# FRAME-D-derived per-category distribution satisfies the trace
-# validator's bounded `EXPECTED_PROMPT_CATEGORY_DISTRIBUTION`
+# W-PRM-020) currently carry rewrites so the FRAME-D-derived
+# per-category distribution satisfies the trace validator's bounded
+# `EXPECTED_PROMPT_CATEGORY_DISTRIBUTION`
 # (A=4, B=4, C=3, D=3, E=3, F=2, G=3, H=2, I=2). W-PRM-025's
 # original planning text `What is awesome-copilot?` and W-PRM-026's
 # original planning text `Explain how this repo is organized.` were
 # restored by WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A under DC-078
 # because bounded source-safe product-name and sibling word-order
 # canonicals added to FRAME-B's `repo_meta_near_miss.repo_navigation`
-# family now make both original texts reach category I. The original
+# family now make both original texts reach category I.
+# W-PRM-015's original planning text
+# `Add instructions for setting up CI on a new Python repo.`
+# reaches FRAME-D's planning-intent surrogate E/[workflow_file,
+# instruction] after WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B added
+# the bounded gerund inflection canonicals `setting up` /
+# `sets up` to FRAME-B's `action.set_up` family under DC-079;
+# W-PRM-017's prior rewrite was re-rewritten in the same packet
+# to `An instruction file for CI conventions.` so the
+# per-category distribution invariant stays balanced (A=4, E=3)
+# after W-PRM-015 shifted from A to E. The original
 # planning-doc INTENT for prompts whose FRAME-D-actual output
-# still diverges (residuals (a), (b), (c), and (d)) is
+# still diverges (residuals (a), (c), and (d)) is
 # recorded as RK-060 OPEN (FRAME-B canonical-set and FRAME-C
 # synthesis-rule narrowness residuals).
 #
@@ -138,7 +155,7 @@ _PLANNING_DOC_PROMPTS = (
     ("W-PRM-014", "Define an agent that runs a test workflow on demand."),
     ("W-PRM-015", "Add instructions for setting up CI on a new Python repo."),
     ("W-PRM-016", "Write instructions for our team's release process."),
-    ("W-PRM-017", "An instruction file that deploys to CI."),
+    ("W-PRM-017", "An instruction file for CI conventions."),
     ("W-PRM-018", "Find me a prompt that deploys Docker containers in CI."),
     ("W-PRM-019", "Show me a cookbook recipe that deploys a static site to GitHub Pages."),
     ("W-PRM-020", "Add an agent for code reviews."),
@@ -197,15 +214,22 @@ def _build_clean_prompt_records():
     `_PLANNING_DOC_PROMPTS` are sourced from
     `ai-search/00-level0-awesome-copilot-workshop-seed.md`. Seven
     prompts (W-PRM-010, W-PRM-011, W-PRM-012, W-PRM-013,
-    W-PRM-017, W-PRM-018, W-PRM-020) currently carry
-    rewrites authored by WO-L0-WORKSHOP-RK058-CLOSURE-01 so the
-    FRAME-D-derived per-category distribution satisfies the trace
-    validator's full bounded distribution (A=4, B=4, C=3, D=3,
-    E=3, F=2, G=3, H=2, I=2). W-PRM-025's and W-PRM-026's
+    W-PRM-017, W-PRM-018, W-PRM-020) currently carry rewrites so
+    the FRAME-D-derived per-category distribution satisfies the
+    trace validator's full bounded distribution (A=4, B=4, C=3,
+    D=3, E=3, F=2, G=3, H=2, I=2). W-PRM-025's and W-PRM-026's
     original planning texts were restored by
     WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A after FRAME-B was extended
     with bounded repo-navigation canonicals so both original
-    phrasings reach category I via FRAME-C.
+    phrasings reach category I via FRAME-C. W-PRM-015's original
+    planning text reaches its planning-intent surrogate
+    E/[workflow_file, instruction] after
+    WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B added the bounded
+    `setting up` / `sets up` canonicals to FRAME-B's
+    `action.set_up` family under DC-079; W-PRM-017's prior
+    rewrite was re-rewritten in the same packet to keep the
+    per-category distribution balanced after W-PRM-015 shifted
+    from A to E.
     """
     records = []
     for prompt_id, prompt_text in _PLANNING_DOC_PROMPTS:

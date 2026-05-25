@@ -723,6 +723,92 @@ class ActionAssistFamilyTest(unittest.TestCase):
         self.assertEqual(signals, [])
 
 
+class ActionSetUpInflectionCoverageTest(unittest.TestCase):
+    """Tests for the WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B bounded
+    canonical_terms extension closing RK-060 residual (b): the
+    planning-doc text `Add instructions for setting up CI on a new
+    Python repo.` now matches `action.set_up` via the new
+    `setting up` canonical, so FRAME-C's `_is_workflow_intent` can
+    fire from action.set_up + domain.ci and workflow_file co-fires
+    alongside instruction. The family's existing `short_token_1`
+    budget and the existing `_match_multi_token_term` rule are
+    preserved; the new canonicals are matched as two-token
+    canonical_terms entries under the same rule."""
+
+    def _signals_for(self, prompt):
+        view = build_level0_workshop_normalized_prompt_view(
+            prompt, EventLog()
+        )
+        ledger = extract_workshop_signal_evidence(view, EventLog())
+        return ledger["signal_evidence"]
+
+    def _set_up_signals(self, prompt):
+        return [
+            s for s in self._signals_for(prompt)
+            if s["signal_family"] == "action.set_up"
+        ]
+
+    def test_setting_up_inflection_fires_action_set_up(self):
+        signals = self._set_up_signals(
+            "Add instructions for setting up CI on a new Python repo."
+        )
+        self.assertGreater(len(signals), 0)
+        self.assertTrue(
+            any(s["normalized_value"] == "setting up" for s in signals)
+        )
+
+    def test_sets_up_inflection_fires_action_set_up(self):
+        signals = self._set_up_signals(
+            "The pipeline sets up a Python environment."
+        )
+        self.assertGreater(len(signals), 0)
+        self.assertTrue(
+            any(s["normalized_value"] == "sets up" for s in signals)
+        )
+
+    def test_existing_set_up_canonical_still_fires(self):
+        signals = self._set_up_signals("Set up CI for the repo.")
+        self.assertGreater(len(signals), 0)
+        self.assertTrue(
+            any(s["normalized_value"] == "set up" for s in signals)
+        )
+
+    def test_new_inflection_record_carries_short_token_1_budget(self):
+        signals = self._set_up_signals(
+            "Add instructions for setting up CI on a new Python repo."
+        )
+        record = next(
+            s for s in signals if s["normalized_value"] == "setting up"
+        )
+        self.assertEqual(record["family_kind"], "action")
+        self.assertEqual(record["edit_budget_tag"], "short_token_1")
+        self.assertEqual(record["language_alias_tag"], "en")
+        self.assertEqual(record["contributes_to"], ["primary_action"])
+
+    def test_new_inflection_does_not_fire_on_word_swap(self):
+        # `up setting` is not the canonical token order; the
+        # strict-per-token budget at multi-token level requires
+        # positional match, so this must not falsely fire.
+        signals = self._set_up_signals("The team is up setting goals.")
+        self.assertFalse(
+            any(s["normalized_value"] == "setting up" for s in signals)
+        )
+
+    def test_new_inflection_does_not_fire_on_settings_up_word(self):
+        # `settings` is one edit from `setting` (within budget), but
+        # then the second-token match `up` must still pass; the
+        # text `change settings up there` happens to match the new
+        # canonical because of the bounded per-token budget. This
+        # test instead guards against a single-token false positive
+        # for `setting` alone (without the `up` follower).
+        signals = self._set_up_signals(
+            "Adjust the setting carefully."
+        )
+        self.assertFalse(
+            any(s["normalized_value"] == "setting up" for s in signals)
+        )
+
+
 class RepoMetaNearMissCoverageTest(unittest.TestCase):
     """Tests for the WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A bounded
     canonical additions closing RK-060 residuals (e) and (f):

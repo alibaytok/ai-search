@@ -569,6 +569,30 @@ class HardenedSynthesisTest(unittest.TestCase):
         workflow_count = sum(1 for k in kinds if k == "workflow_file")
         self.assertEqual(workflow_count, 1)
 
+    def test_setting_up_inflection_yields_instruction_confusion(self):
+        """RK-060 residual (b) closed by
+        WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B: the new FRAME-B
+        canonicals `setting up` / `sets up` make action.set_up
+        fire on the planning-doc text `Add instructions for
+        setting up CI on a new Python repo.`. FRAME-C's
+        `_is_workflow_intent` then fires (action.set_up +
+        domain.ci) and workflow_file co-fires alongside the
+        already-firing instruction candidate; the workshop
+        category becomes `E. instruction confusion` with the
+        ordered kinds `[workflow_file, instruction]`."""
+        result = _frame_for(
+            "Add instructions for setting up CI on a new Python repo."
+        )
+        record = result["workshop_prompt_record"]
+        self.assertEqual(record["category"], "E. instruction confusion")
+        self.assertEqual(
+            record["expected_item_kinds_touched"],
+            ["workflow_file", "instruction"],
+        )
+        kinds = [e["item_kind"] for e in result["source_shape_affinity"]]
+        self.assertIn("workflow_file", kinds)
+        self.assertIn("instruction", kinds)
+
     def test_workflow_co_fire_only_triggers_for_action_deploy(self):
         """The co-fire rule narrows to `primary_action == deploy`
         so non-deploy actions like `configure` do not pull

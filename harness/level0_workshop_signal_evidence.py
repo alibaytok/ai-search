@@ -258,10 +258,27 @@ SIGNAL_FAMILIES = (
         exclusion_terms=(),
         contributes_to=("primary_action",),
     ),
+    # WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B closes RK-060 residual (b)
+    # by extending action.set_up's canonical_terms with the bounded
+    # gerund inflection `setting up` and the third-person `sets up`.
+    # The family's existing `short_token_1` budget and the existing
+    # `_match_multi_token_term` strict-per-token-budget rule are
+    # preserved; the new canonicals are matched as two-token
+    # canonical_terms entries under the same rule. The bounded
+    # addition keeps the family count at 31 (no new family).
+    # Together with object.instruction and domain.ci already firing
+    # for the planning-doc text `Add instructions for setting up CI
+    # on a new Python repo.`, this allows FRAME-C's
+    # `_is_workflow_intent` to fire from action.set_up + domain.ci
+    # so workflow_file co-fires alongside instruction; FRAME-C then
+    # surfaces category `E. instruction confusion` with
+    # `expected_item_kinds_touched == [workflow_file, instruction]`.
     LexicalFamily(
         family_id="action.set_up",
         family_kind="action",
-        canonical_terms=("set up", "setup", "install"),
+        canonical_terms=(
+            "set up", "setup", "install", "setting up", "sets up",
+        ),
         tr_aliases=("kur", "kurulum"),
         edit_distance_budget="short_token_1",
         exclusion_terms=(),

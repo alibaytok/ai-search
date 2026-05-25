@@ -18346,3 +18346,320 @@ Updated test deltas:
 - Derived trace: W-PRM-025 and W-PRM-026 original prompt_text values restored while preserving the bounded per-category distribution.
 
 Non-claims update: WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A closes only RK-060 residuals (e) and (f). It does not close RK-060, does not authorize a generalized repo-meta matcher, does not weaken the external-integration static scan, and does not add any route, retrieval, scoring, benchmark, source-qualification, corpus-admission, LLM/provider, or architecture-selection behavior. Real-benchmark-ready remains NO.
+
+---
+
+## WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B
+
+### Status
+
+Implemented; pending Codex review.
+
+### Mandatory Priority-Miss Check (@pmc)
+
+1. Higher-priority prerequisite? RK-058 RESOLVED via DC-077;
+   RK-059 RESOLVED via DC-076; RK-060 OPEN with residuals (a),
+   (b), (c), and (d) outstanding after DC-078 closed (e)/(f).
+   Triage plan recommends FRAME-B before FRAME-C; residual (b)
+   is FRAME-B-side, so this packet matches the recommended
+   sequencing.
+2. Downstream surface skipping upstream cause? No - (b) is a
+   FRAME-B canonical / inflection coverage gap; closing at
+   FRAME-B is the upstream layer (triage option `(b1)`).
+3. Safer / more direct sequencing? Yes - bounded canonical
+   addition is preferred to widening the edit-budget table or
+   introducing a gerund-aware folding rule.
+4. Conflicts with prior invariants / open OQs / RKs /
+   non-claims / real-benchmark-ready NO? None.
+5. Concern surfaced as a risk note: distribution-invariant
+   rebalance is required because adding `setting up` shifts
+   W-PRM-015 from FRAME-D-actual A to E. The packet absorbs
+   the drift by re-rewriting W-PRM-017's prior
+   WO-L0-WORKSHOP-RK058-CLOSURE-01 rewrite from E to A inside
+   the same packet.
+6. Priority-miss check: no higher-priority missed scope found.
+
+### Section L Scope Check
+
+- Goal: close RK-060 residual (b) at FRAME-B via bounded
+  `setting up` / `sets up` canonical additions to
+  `action.set_up`; rebalance distribution by re-rewriting
+  W-PRM-017 from E to A inside this packet.
+- Allowed files: exactly the 9 listed.
+- Forbidden: FRAME-A / C / D module change;
+  benchmark-fixtures mutation; controller-checklist change;
+  new bounded enum value; new exception class; forbidden
+  output field names; route / retrieval / scoring /
+  benchmark / source / corpus / LLM / provider /
+  architecture work; full closure of RK-060.
+- Halt conditions: forbidden phrase appears; FRAME-A / C / D
+  unintentionally modified; full suite regression;
+  distribution invariant break that cannot be reconciled in
+  this packet.
+- Definition of done: W-PRM-015 yields E through FRAME-D;
+  W-PRM-017 retargeted to A; full suite passes; RK-060
+  residual (b) closed via DC-079; (a) / (c) / (d) remain
+  OPEN.
+
+### Pre-Implementation Review Note
+
+- Q1: No new authorization beyond bounded FRAME-B canonical
+  addition; DC-020 through DC-078 boundary envelope carries
+  forward.
+- Q2: No source-content risk; two sibling canonical_terms
+  entries inside an existing family under the existing
+  budget rule plus a re-rewrite of an already-rewritten
+  prompt.
+- Q3: No prompt-copying risk; the new canonicals are the
+  bounded inflections of the existing `set up` canonical.
+- Q4: RK-058 / RK-059 stay RESOLVED; RK-060 stays OPEN with
+  (a), (c), (d) outstanding; residual (b) closed via
+  DC-079. OQs unchanged.
+- Q5: 9 files modified exactly.
+- Q6: No FRAME-A / C / D module modification; no
+  benchmark-fixtures mutation; no controller-checklist
+  change; no forbidden output field name; no forbidden
+  external-integration substring added to FRAME-B source.
+
+No scope drift detected.
+
+### Codex Directive Recorded
+
+Verbatim directive Claude was bound to (from the user
+prompt):
+
+- Close ONLY RK-060 residual (b) at FRAME-B.
+- W-PRM-015 should reach FRAME-D as the planning-intent
+  surrogate E/[instruction, workflow_file].
+- Prefer bounded canonical/alias additions to action.set_up,
+  e.g. `setting up` / `sets up`.
+- Do not change edit-budget policy or multi-token matching
+  policy.
+- No FRAME-A module/test change. No FRAME-C or FRAME-D
+  module change. No benchmark-fixtures or
+  controller-checklist mutation. No
+  route/retrieval/ranking/scoring/benchmark/source/corpus/
+  LLM/provider/architecture work.
+- Keep RK-060 OPEN unless all remaining residuals are
+  closed.
+
+### Implementation Summary
+
+FRAME-B module change in
+`harness/level0_workshop_signal_evidence.py`: extended the
+existing `action.set_up` family's `canonical_terms` tuple
+with the two bounded gerund-inflection canonicals
+`setting up` and `sets up`. The family's
+`edit_distance_budget == "short_token_1"` and the existing
+`_match_multi_token_term` strict-per-token rule are
+preserved; the new canonicals are matched as two-token
+canonical_terms entries under the same rule. No new family
+introduced; `SIGNAL_FAMILIES` family count remains 31. A
+block comment above the family entry documents the
+addition's RK-060 (b) closure and the unchanged matching
+policy.
+
+`harness/tests/test_level0_workshop_signal_evidence.py`:
+added `ActionSetUpInflectionCoverageTest` with six tests:
+inflection fires action.set_up; sets-up inflection fires;
+existing `set up` canonical still fires; new inflection
+record carries `short_token_1` budget tag; new inflection
+does not fire on word-swapped windows; new inflection does
+not fire on a standalone `setting` token.
+
+`harness/tests/test_level0_workshop_canonical_intent_frame.py`:
+added one FRAME-C end-to-end test
+`HardenedSynthesisTest::test_setting_up_inflection_yields_instruction_confusion`
+asserting W-PRM-015's planning-doc text yields
+`category == "E. instruction confusion"`,
+`expected_item_kinds_touched == [workflow_file,
+instruction]`, and both `workflow_file` and `instruction`
+appear in `source_shape_affinity`.
+
+`harness/tests/test_level0_workshop_user_intent_mapper.py`:
+added one FRAME-D mapper end-to-end test
+`test_setting_up_inflection_maps_to_instruction_confusion`
+asserting the same category, kind list,
+`ambiguity_observed == True`, and the legacy
+`normalized_intent_observation ==
+"instruction_surface_workflow_intent"`.
+
+`harness/tests/test_level0_workshop_derived_trace.py`:
+re-rewrote W-PRM-017's prompt_text from
+`An instruction file that deploys to CI.` to
+`An instruction file for CI conventions.` in
+`_PLANNING_DOC_PROMPTS`; updated the module-scope comment
+block and the `_build_clean_prompt_records` docstring to
+record the residual (b) closure path under DC-079 and the
+distribution rebalance.
+
+`ai-search/00-level0-awesome-copilot-workshop-seed.md`:
+updated W-PRM-015's prompt-table row (category column,
+expected kinds column, candidate-surface column) from
+`A. clear single-intent / [instruction] / candidate
+fragment of declared shape` to `E. instruction confusion /
+[workflow_file, instruction] / multiple candidate surfaces
+expected`; re-rewrote W-PRM-017's prompt_text to
+`An instruction file for CI conventions.` and updated its
+prompt-table row from E to A; updated the closure-evidence
+rows for both W-PRM-015 (match canonical-extension with
+DC-079 citation) and W-PRM-017 (re-rewrite for distribution
+rebalance under WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B);
+updated the summary line (15 of 26 rows match planning
+intent under FRAME-D; 7 planning rewrites remain; 2
+current prompt rows remain RK-060 OPEN residuals -
+W-PRM-007 and W-PRM-021).
+
+`ai-search/70-level0-workshop-signal-evidence.md`:
+added a WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B addendum to
+the Non-Claim Constraints section recording the bounded
+inflection coverage, the family-count-unchanged
+consequence, the residual (b) closure, the unchanged
+matching / budget policies, the unchanged FRAME-A /
+FRAME-C / FRAME-D modules, and the distribution rebalance;
+updated the family-count summary; refreshed the RK / DC
+carry-forward line to DC-079.
+
+`ai-search/00-open-questions.md`:
+appended a partial-closure note to the RK-060 row
+recording residual (b) closed via DC-079 and removing (b)
+from the remaining-OPEN list; added DC-079 row recording
+the partial-closure decision and the per-residual scope
+plus the W-PRM-017 distribution-rebalance note; updated
+the document Status header to lead with
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B; appended the new
+packet to the Work Order chronology.
+
+### Files Modified
+
+1. `harness/level0_workshop_signal_evidence.py`
+2. `harness/tests/test_level0_workshop_signal_evidence.py`
+3. `harness/tests/test_level0_workshop_canonical_intent_frame.py`
+4. `harness/tests/test_level0_workshop_user_intent_mapper.py`
+5. `harness/tests/test_level0_workshop_derived_trace.py`
+6. `ai-search/70-level0-workshop-signal-evidence.md`
+7. `ai-search/00-level0-awesome-copilot-workshop-seed.md`
+8. `ai-search/00-open-questions.md`
+9. `ai-search/00-claude-task-ledger.md` (this entry)
+
+### Residual closure status
+
+- (a) W-PRM-007 - OPEN (out of this packet's scope).
+- (b) W-PRM-015 - CLOSED via DC-079. Bounded gerund
+  inflection canonicals added to FRAME-B `action.set_up`;
+  the original planning-doc text now matches under the
+  family's existing `short_token_1` budget; FRAME-C's
+  `_is_workflow_intent` fires and workflow_file co-fires
+  alongside instruction; FRAME-D now surfaces
+  E/[workflow_file, instruction] for the original text.
+- (c) W-PRM-020 original - OPEN (FRAME-C-side; out of
+  scope).
+- (d) W-PRM-021 - OPEN (FRAME-C-side; out of scope).
+- (e) W-PRM-025 original - already CLOSED via DC-078 by
+  WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A (Codex correction
+  used a source-safe assembled product-name canonical).
+- (f) W-PRM-026 original - already CLOSED via DC-078 by
+  WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A.
+
+### Verification
+
+- Targeted four-module run
+  (FRAME-B + FRAME-C + mapper + derived-trace):
+  356/356 OK.
+- `python -B -m unittest discover -s harness/tests`:
+  1538/1538 OK (was 1530; +8 new tests = +6 FRAME-B + 1
+  FRAME-C + 1 mapper).
+- ASCII purity of all 9 touched files verified
+  (sum of bytes > 127 == 0 in each).
+- No `__pycache__` artifacts under `harness/`.
+- Project root contains exactly `ai-search/`, `harness/`,
+  `benchmark-fixtures/`.
+- `benchmark-fixtures/` unchanged.
+- FRAME-A module / test unchanged.
+- FRAME-C module unchanged (only its test file).
+- FRAME-D shim module unchanged (only its test file).
+- `ai-search/00-controller-checklist.md` unchanged.
+- RK-039 single (text unchanged).
+- RK-058 RESOLVED (unchanged).
+- RK-059 RESOLVED (unchanged).
+- RK-060 OPEN (residuals (a), (c), (d) outstanding;
+  residual (b) closed via DC-079; residuals (e) and (f)
+  closed via DC-078).
+- All 11 tracked OQs (OQ-003, OQ-015, OQ-031, OQ-035,
+  OQ-048, OQ-049, OQ-056, OQ-057, OQ-070, OQ-075, OQ-076)
+  remain OPEN.
+- Real-benchmark-ready remains NO.
+- `git status` shows exactly the nine allowed files
+  modified.
+
+### Explicit confirmations
+
+- No FRAME-A module or test modification.
+- No FRAME-C module modification (only its test file).
+- No FRAME-D module modification (only its test file).
+- No benchmark-fixtures mutation.
+- No `00-controller-checklist.md` modification.
+- No `_match_multi_token_term` policy change.
+- No `_budget_limit_for_canonical` table change.
+- No new bounded enum value added.
+- No new exception class added.
+- No forbidden output field names added.
+- No forbidden external-integration substring added to
+  FRAME-B source.
+- No real indexing, retrieval, ranking, scoring,
+  similarity, distance, embedding, vector, ANN, reranker,
+  LLM / provider call, route object creation, route
+  selection, source qualification, corpus admission, real
+  benchmark execution, architecture / vendor / library /
+  index-family / production-system selection, IDE /
+  extension / chat / collaborator integration, Source
+  Card or Route Card creation, production artifact
+  contracts, third-party dependencies, CLI introduction,
+  subprocess or shell execution.
+- No closure of RK-058 (already RESOLVED).
+- No closure of RK-059 (already RESOLVED).
+- No full closure of RK-060 (residuals (a), (c), (d)
+  remain OPEN).
+- No duplication of RK-039.
+
+### Structural gaps noticed
+
+The residual (b) closure required no edit to FRAME-C or
+FRAME-D because FRAME-C's `_is_workflow_intent` already
+treats `set_up` as a workflow action and
+`_is_instruction_intent` already fires from
+`instruction_set` in `distinct_target_objects`; the only
+missing piece was the FRAME-B inflection match, exactly
+as the triage plan's option `(b1)` predicted. The
+distribution rebalance via W-PRM-017 re-rewrite is a
+bounded planning-doc edit that does not require any
+cross-frame change. The remaining RK-060 residuals split
+cleanly: (a) is FRAME-B canonical-set extension for
+cron / scheduled / hook tokens; (c) and (d) are FRAME-C
+synthesis-rule refinements (the proposed
+WO-L0-WORKSHOP-FRAME-C-HARDEN-02 packet's scope).
+
+### Non-Claims
+
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B does not claim that
+the bounded gerund-inflection canonical addition, the
+closure of residual (b), the re-rewrite of W-PRM-017 for
+distribution rebalance, the eight added tests, or the
+partial closure of RK-060 are sufficient, necessary,
+superior, best, complete, production-ready, recommended,
+selected, or benchmark-ready. The bounded two-canonical
+addition, the bounded six-test
+`ActionSetUpInflectionCoverageTest` surface, the bounded
+one-test FRAME-C addition, the bounded one-test FRAME-D
+mapper addition, the W-PRM-017 re-rewrite for
+distribution rebalance, and the per-residual closure
+status are bounded by WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B
+and are NOT claimed exhaustive.
+
+All DC-020 through DC-079 boundary invariants carry
+forward. WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B does not
+amend or broaden DC-003 through DC-079. Real-benchmark-
+ready remains NO. RK-058 stays RESOLVED. RK-059 stays
+RESOLVED. RK-060 stays OPEN with residuals (a), (c), and
+(d) outstanding; residuals (e) and (f) closed via DC-078;
+residual (b) closed via DC-079.
