@@ -673,6 +673,27 @@ class UpgradeCandidatePlannerTest(unittest.TestCase):
             candidate_keys,
         )
 
+    def test_epoch_1_has_no_autonomous_table_or_matrix_candidate(self):
+        """Epoch 1 stops when only non-data-delta work remains.
+
+        The autonomous materializers are bounded to FRAME-B canonical table
+        additions, matrix expected-field updates, and their composite. Any
+        remaining Mini-V1 candidate must therefore route outside that surface.
+        """
+        self._require_loaded()
+        autonomous_next_packets = {"FRAME-B-COVERAGE", "MATRIX-RECONCILE"}
+        remaining_next_packets = {
+            candidate["suggested_next_packet_type"]
+            for candidate in self.candidates_result["upgrade_candidates"]
+        }
+        self.assertEqual(
+            remaining_next_packets,
+            {"CLARIFICATION-DESIGN", "FRAME-C-HARDEN"},
+        )
+        self.assertTrue(
+            remaining_next_packets.isdisjoint(autonomous_next_packets)
+        )
+
     def test_candidate_order_and_ids_are_deterministic(self):
         self._require_loaded()
         candidates = self.candidates_result["upgrade_candidates"]

@@ -186,6 +186,24 @@ class CompositePatchAutonomyTest(unittest.TestCase):
         with self.assertRaises(CompositePatchMalformedDelta):
             run_composite_patch_candidate(MINI_V1_PATH, bad_delta, EventLog())
 
+    def test_epoch_boundary_allows_only_table_and_matrix_inner_steps(self):
+        self.assertEqual(autonomy.MAX_COMPOSITE_STEPS, 5)
+        self.assertEqual(
+            autonomy.COMPOSITE_INNER_PATCH_KINDS,
+            ("frame_b_canonical_addition", "matrix_expected_field_update"),
+        )
+        forbidden_step_kinds = (
+            "composite_patch",
+            "frame_c_shape_rule_update",
+            "clarification_surface_update",
+            "vocabulary_correction_update",
+        )
+        for patch_kind in forbidden_step_kinds:
+            delta = _composite_delta()
+            delta["steps"][0]["patch_kind"] = patch_kind
+            with self.assertRaises(CompositePatchMalformedDelta):
+                run_composite_patch_candidate(MINI_V1_PATH, delta, EventLog())
+
     def test_rejects_conflicting_matrix_step_values(self):
         delta = _composite_delta()
         delta["steps"].append(
