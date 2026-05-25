@@ -1,0 +1,1092 @@
+{
+  "admission_review_pack_kind": "level0_workshop_admission_review_pack",
+  "snapshot_path": "harness/raw_candidate_pools/L0-WS-RAW-CANDIDATES-v1.raw_candidates.json",
+  "snapshot_candidate_count": 69,
+  "eligible_candidate_count": 18,
+  "excluded_candidate_count": 51,
+  "target_admitted_count": 20,
+  "target_holdout_count": 5,
+  "target_met": false,
+  "review_conclusion": "insufficient_unique_candidates_for_20_plus_5",
+  "shape_axis_enum": [
+    "agent_persona_surface",
+    "deployment_surface",
+    "docs_instruction_surface",
+    "general_world_question",
+    "long_prompt",
+    "multi_intent",
+    "prompt_meta_question",
+    "repo_workflow_surface",
+    "test_generation_surface",
+    "translation_or_language_surface",
+    "vague_request"
+  ],
+  "eligible_candidates": [
+    {
+      "candidate_id": "RC-00003",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-awesome-copilot-workshop-seed.md",
+      "source_line": 200,
+      "prompt_text_normalized": "Generate an agent definition for a documentation writer.",
+      "review_status": "eligible_for_human_admission_review",
+      "suggested_shape_axes": [
+        "agent_persona_surface",
+        "docs_instruction_surface"
+      ],
+      "admission_status": "not_admitted",
+      "holdout_status": "not_holdout"
+    },
+    {
+      "candidate_id": "RC-00011",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-awesome-copilot-workshop-seed.md",
+      "source_line": 210,
+      "prompt_text_normalized": "Define a documentation-writer persona that deploys to GitHub Pages.",
+      "review_status": "eligible_for_human_admission_review",
+      "suggested_shape_axes": [
+        "agent_persona_surface",
+        "deployment_surface",
+        "docs_instruction_surface"
+      ],
+      "admission_status": "not_admitted",
+      "holdout_status": "not_holdout"
+    },
+    {
+      "candidate_id": "RC-00014",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-awesome-copilot-workshop-seed.md",
+      "source_line": 213,
+      "prompt_text_normalized": "Write instructions for our team's release process.",
+      "review_status": "eligible_for_human_admission_review",
+      "suggested_shape_axes": [
+        "docs_instruction_surface"
+      ],
+      "admission_status": "not_admitted",
+      "holdout_status": "not_holdout"
+    },
+    {
+      "candidate_id": "RC-00020",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-prompt-set.md",
+      "source_line": 71,
+      "prompt_text_normalized": "Set up CI for a new Python project on GitHub Actions.",
+      "review_status": "eligible_for_human_admission_review",
+      "suggested_shape_axes": [
+        "repo_workflow_surface"
+      ],
+      "admission_status": "not_admitted",
+      "holdout_status": "not_holdout"
+    },
+    {
+      "candidate_id": "RC-00021",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-prompt-set.md",
+      "source_line": 73,
+      "prompt_text_normalized": "Write a unit test for this Python function.",
+      "review_status": "eligible_for_human_admission_review",
+      "suggested_shape_axes": [
+        "test_generation_surface"
+      ],
+      "admission_status": "not_admitted",
+      "holdout_status": "not_holdout"
+    },
+    {
+      "candidate_id": "RC-00022",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-prompt-set.md",
+      "source_line": 74,
+      "prompt_text_normalized": "Write a unit test for this function and explain what it does.",
+      "review_status": "eligible_for_human_admission_review",
+      "suggested_shape_axes": [
+        "docs_instruction_surface",
+        "multi_intent",
+        "test_generation_surface"
+      ],
+      "admission_status": "not_admitted",
+      "holdout_status": "not_holdout"
+    },
+    {
+      "candidate_id": "RC-00023",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-prompt-set.md",
+      "source_line": 75,
+      "prompt_text_normalized": "Deploy this to staging and notify the team in Slack.",
+      "review_status": "eligible_for_human_admission_review",
+      "suggested_shape_axes": [
+        "deployment_surface",
+        "multi_intent"
+      ],
+      "admission_status": "not_admitted",
+      "holdout_status": "not_holdout"
+    },
+    {
+      "candidate_id": "RC-00024",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-prompt-set.md",
+      "source_line": 77,
+      "prompt_text_normalized": "Make this better.",
+      "review_status": "eligible_for_human_admission_review",
+      "suggested_shape_axes": [
+        "vague_request"
+      ],
+      "admission_status": "not_admitted",
+      "holdout_status": "not_holdout"
+    },
+    {
+      "candidate_id": "RC-00025",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-prompt-set.md",
+      "source_line": 81,
+      "prompt_text_normalized": "What is the best prompt to deploy a static site to GitHub Pages?",
+      "review_status": "eligible_for_human_admission_review",
+      "suggested_shape_axes": [
+        "deployment_surface",
+        "prompt_meta_question"
+      ],
+      "admission_status": "not_admitted",
+      "holdout_status": "not_holdout"
+    },
+    {
+      "candidate_id": "RC-00026",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-prompt-set.md",
+      "source_line": 82,
+      "prompt_text_normalized": "What year did World War II end?",
+      "review_status": "eligible_for_human_admission_review",
+      "suggested_shape_axes": [
+        "general_world_question"
+      ],
+      "admission_status": "not_admitted",
+      "holdout_status": "not_holdout"
+    },
+    {
+      "candidate_id": "RC-00027",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-prompt-set.md",
+      "source_line": 83,
+      "prompt_text_normalized": "What is the boiling point of water in Celsius?",
+      "review_status": "eligible_for_human_admission_review",
+      "suggested_shape_axes": [
+        "general_world_question"
+      ],
+      "admission_status": "not_admitted",
+      "holdout_status": "not_holdout"
+    },
+    {
+      "candidate_id": "RC-00028",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-prompt-set.md",
+      "source_line": 86,
+      "prompt_text_normalized": "Set up Spanish vocabulary review and deploy reminders to my phone.",
+      "review_status": "eligible_for_human_admission_review",
+      "suggested_shape_axes": [
+        "deployment_surface",
+        "multi_intent",
+        "translation_or_language_surface"
+      ],
+      "admission_status": "not_admitted",
+      "holdout_status": "not_holdout"
+    },
+    {
+      "candidate_id": "RC-00029",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-prompt-set.md",
+      "source_line": 87,
+      "prompt_text_normalized": "Review my code and translate the comments into French.",
+      "review_status": "eligible_for_human_admission_review",
+      "suggested_shape_axes": [
+        "multi_intent",
+        "translation_or_language_surface"
+      ],
+      "admission_status": "not_admitted",
+      "holdout_status": "not_holdout"
+    },
+    {
+      "candidate_id": "RC-00030",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-prompt-set.md",
+      "source_line": 88,
+      "prompt_text_normalized": "Create a structured prompt pattern for daily team standups and add a summary step to our CI workflow.",
+      "review_status": "eligible_for_human_admission_review",
+      "suggested_shape_axes": [
+        "long_prompt",
+        "multi_intent",
+        "prompt_meta_question",
+        "repo_workflow_surface"
+      ],
+      "admission_status": "not_admitted",
+      "holdout_status": "not_holdout"
+    },
+    {
+      "candidate_id": "RC-00031",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-prompt-set.md",
+      "source_line": 89,
+      "prompt_text_normalized": "What is prompt engineering?",
+      "review_status": "eligible_for_human_admission_review",
+      "suggested_shape_axes": [
+        "prompt_meta_question"
+      ],
+      "admission_status": "not_admitted",
+      "holdout_status": "not_holdout"
+    },
+    {
+      "candidate_id": "RC-00032",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-prompt-set.md",
+      "source_line": 90,
+      "prompt_text_normalized": "Explain the history of prompt design.",
+      "review_status": "eligible_for_human_admission_review",
+      "suggested_shape_axes": [
+        "docs_instruction_surface",
+        "prompt_meta_question"
+      ],
+      "admission_status": "not_admitted",
+      "holdout_status": "not_holdout"
+    },
+    {
+      "candidate_id": "RC-00033",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-prompt-set.md",
+      "source_line": 91,
+      "prompt_text_normalized": "Configure GitHub Actions to run pytest on every pull request.",
+      "review_status": "eligible_for_human_admission_review",
+      "suggested_shape_axes": [
+        "repo_workflow_surface",
+        "test_generation_surface"
+      ],
+      "admission_status": "not_admitted",
+      "holdout_status": "not_holdout"
+    },
+    {
+      "candidate_id": "RC-00034",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-prompt-set.md",
+      "source_line": 92,
+      "prompt_text_normalized": "Add a deployment workflow for a Node.js app to Azure.",
+      "review_status": "eligible_for_human_admission_review",
+      "suggested_shape_axes": [
+        "deployment_surface",
+        "repo_workflow_surface"
+      ],
+      "admission_status": "not_admitted",
+      "holdout_status": "not_holdout"
+    }
+  ],
+  "excluded_candidates": [
+    {
+      "candidate_id": "RC-00001",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-awesome-copilot-workshop-seed.md",
+      "source_line": 198,
+      "prompt_text_normalized": "Set up a CI workflow that runs pytest on every push.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "planning_doc_fixture",
+          "path": "harness/tests/test_level0_workshop_derived_trace.py",
+          "id": "W-PRM-001"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00002",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-awesome-copilot-workshop-seed.md",
+      "source_line": 199,
+      "prompt_text_normalized": "Create a code review skill for my repository.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-INTENT-MATRIX-SMOKE-001.intent.matrix.json",
+          "id": "SM-002"
+        },
+        {
+          "scope": "planning_doc_fixture",
+          "path": "harness/tests/test_level0_workshop_derived_trace.py",
+          "id": "W-PRM-002"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00004",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-awesome-copilot-workshop-seed.md",
+      "source_line": 201,
+      "prompt_text_normalized": "Write an instruction file for our Python style conventions.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "planning_doc_fixture",
+          "path": "harness/tests/test_level0_workshop_derived_trace.py",
+          "id": "W-PRM-004"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00005",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-awesome-copilot-workshop-seed.md",
+      "source_line": 202,
+      "prompt_text_normalized": "Configure GitHub Actions to deploy a Node.js app to Azure.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-INTENT-MATRIX-SMOKE-001.intent.matrix.json",
+          "id": "SM-001"
+        },
+        {
+          "scope": "planning_doc_fixture",
+          "path": "harness/tests/test_level0_workshop_derived_trace.py",
+          "id": "W-PRM-005"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00006",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-awesome-copilot-workshop-seed.md",
+      "source_line": 203,
+      "prompt_text_normalized": "Add a release workflow that publishes container images.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "planning_doc_fixture",
+          "path": "harness/tests/test_level0_workshop_derived_trace.py",
+          "id": "W-PRM-006"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00007",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-awesome-copilot-workshop-seed.md",
+      "source_line": 204,
+      "prompt_text_normalized": "Set up scheduled dependency scanning every Monday.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-INTENT-MATRIX-SMOKE-001.intent.matrix.json",
+          "id": "SM-008"
+        },
+        {
+          "scope": "planning_doc_fixture",
+          "path": "harness/tests/test_level0_workshop_derived_trace.py",
+          "id": "W-PRM-007"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00008",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-awesome-copilot-workshop-seed.md",
+      "source_line": 206,
+      "prompt_text_normalized": "Create a skill that summarizes commit history into release notes.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "planning_doc_fixture",
+          "path": "harness/tests/test_level0_workshop_derived_trace.py",
+          "id": "W-PRM-009"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00009",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-awesome-copilot-workshop-seed.md",
+      "source_line": 207,
+      "prompt_text_normalized": "Write instructions to deploy markdown processing pipelines.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "planning_doc_fixture",
+          "path": "harness/tests/test_level0_workshop_derived_trace.py",
+          "id": "W-PRM-010"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00010",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-awesome-copilot-workshop-seed.md",
+      "source_line": 208,
+      "prompt_text_normalized": "Create a code review skill that focuses on null safety.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "planning_doc_fixture",
+          "path": "harness/tests/test_level0_workshop_derived_trace.py",
+          "id": "W-PRM-011"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00012",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-awesome-copilot-workshop-seed.md",
+      "source_line": 211,
+      "prompt_text_normalized": "Define an agent that runs a test workflow on demand.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-INTENT-MATRIX-SMOKE-001.intent.matrix.json",
+          "id": "SM-014"
+        },
+        {
+          "scope": "planning_doc_fixture",
+          "path": "harness/tests/test_level0_workshop_derived_trace.py",
+          "id": "W-PRM-014"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00013",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-awesome-copilot-workshop-seed.md",
+      "source_line": 212,
+      "prompt_text_normalized": "Add instructions for setting up CI on a new Python repo.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-INTENT-MATRIX-SMOKE-001.intent.matrix.json",
+          "id": "SM-009"
+        },
+        {
+          "scope": "planning_doc_fixture",
+          "path": "harness/tests/test_level0_workshop_derived_trace.py",
+          "id": "W-PRM-015"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00015",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-awesome-copilot-workshop-seed.md",
+      "source_line": 219,
+      "prompt_text_normalized": "Make our pull requests cleaner.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-INTENT-MATRIX-SMOKE-001.intent.matrix.json",
+          "id": "SM-015"
+        },
+        {
+          "scope": "planning_doc_fixture",
+          "path": "harness/tests/test_level0_workshop_derived_trace.py",
+          "id": "W-PRM-022"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00016",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-awesome-copilot-workshop-seed.md",
+      "source_line": 220,
+      "prompt_text_normalized": "What year did the Apollo program land on the moon?",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-INTENT-MATRIX-SMOKE-001.intent.matrix.json",
+          "id": "SM-003"
+        },
+        {
+          "scope": "planning_doc_fixture",
+          "path": "harness/tests/test_level0_workshop_derived_trace.py",
+          "id": "W-PRM-023"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00017",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-awesome-copilot-workshop-seed.md",
+      "source_line": 221,
+      "prompt_text_normalized": "What is the molecular weight of caffeine?",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "planning_doc_fixture",
+          "path": "harness/tests/test_level0_workshop_derived_trace.py",
+          "id": "W-PRM-024"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00018",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-awesome-copilot-workshop-seed.md",
+      "source_line": 222,
+      "prompt_text_normalized": "What is awesome-copilot?",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-INTENT-MATRIX-SMOKE-001.intent.matrix.json",
+          "id": "SM-012"
+        },
+        {
+          "scope": "planning_doc_fixture",
+          "path": "harness/tests/test_level0_workshop_derived_trace.py",
+          "id": "W-PRM-025"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00019",
+      "source_kind": "workshop_seed",
+      "source_path": "ai-search/00-level0-awesome-copilot-workshop-seed.md",
+      "source_line": 223,
+      "prompt_text_normalized": "Explain how this repo is organized.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-INTENT-MATRIX-SMOKE-001.intent.matrix.json",
+          "id": "SM-013"
+        },
+        {
+          "scope": "planning_doc_fixture",
+          "path": "harness/tests/test_level0_workshop_derived_trace.py",
+          "id": "W-PRM-026"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00035",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 1,
+      "prompt_text_normalized": "Create a GitHub Actions workflow to run tests on every pull request.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-001"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00036",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 2,
+      "prompt_text_normalized": "Add a CI workflow that lints Python code on push.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-002"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00037",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 3,
+      "prompt_text_normalized": "Build a release workflow that publishes a Python package.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-003"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00038",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 4,
+      "prompt_text_normalized": "Author a skill that drafts release notes.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-004"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00039",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 5,
+      "prompt_text_normalized": "Make a skill that summarizes pull requests.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-005"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00040",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 6,
+      "prompt_text_normalized": "Define a skill for triaging issues.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-006"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00041",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 7,
+      "prompt_text_normalized": "Create an agent that automatically responds to new issues.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-007"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00042",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 8,
+      "prompt_text_normalized": "Build an agent persona for our support team.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-008"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00043",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 9,
+      "prompt_text_normalized": "Write instructions for onboarding new contributors.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-009"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00044",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 10,
+      "prompt_text_normalized": "Document how to run the test suite locally.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-010"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00045",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 11,
+      "prompt_text_normalized": "What time is it in Tokyo?",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-011"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00046",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 12,
+      "prompt_text_normalized": "How do I cook spaghetti carbonara?",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-012"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00047",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 13,
+      "prompt_text_normalized": "Tell me a joke.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-013"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00048",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 14,
+      "prompt_text_normalized": "What is this repository about?",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-014"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00049",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 15,
+      "prompt_text_normalized": "How is the project structured?",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-015"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00050",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 16,
+      "prompt_text_normalized": "Fix this.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-016"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00051",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 17,
+      "prompt_text_normalized": "Improve things.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-017"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00052",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 18,
+      "prompt_text_normalized": "Can you help me?",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-018"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00053",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 19,
+      "prompt_text_normalized": "Create both a workflow and a skill for code review.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-019"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00054",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 20,
+      "prompt_text_normalized": "Set up CI and write documentation for it.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-020"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00055",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 21,
+      "prompt_text_normalized": "Build something useful for our team.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-021"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00056",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 22,
+      "prompt_text_normalized": "Add automation to the repository.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-022"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00057",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 23,
+      "prompt_text_normalized": "Set up a GitHub Actions pipeline for testing.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-023"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00058",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 24,
+      "prompt_text_normalized": "Configure CI to run our test suite.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-024"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00059",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 25,
+      "prompt_text_normalized": "Establish a continuous integration job.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-025"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00060",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 26,
+      "prompt_text_normalized": "On every push, lint the Python code via a workflow.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-026"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00061",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 27,
+      "prompt_text_normalized": "Tests should run automatically when a pull request opens.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-027"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00062",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 28,
+      "prompt_text_normalized": "I would really love it if we had a GitHub Actions workflow that ran tests on pull requests.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-028"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00063",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 29,
+      "prompt_text_normalized": "Hey team, can we add a skill for code review at some point?",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-029"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00064",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 30,
+      "prompt_text_normalized": "I do not want a workflow; just give me instructions.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-030"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00065",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 31,
+      "prompt_text_normalized": "Skip the agent; only create a skill.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-031"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00066",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 32,
+      "prompt_text_normalized": "Add a security review workflow inspired by industry best practices.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-032"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00067",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 33,
+      "prompt_text_normalized": "Build a code review skill modeled on common open-source patterns.",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-033"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00068",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 34,
+      "prompt_text_normalized": "Should this be a skill or an agent?",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-034"
+        }
+      ]
+    },
+    {
+      "candidate_id": "RC-00069",
+      "source_kind": "matrix_file",
+      "source_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+      "source_line": 35,
+      "prompt_text_normalized": "Is a workflow or a hook the right tool here?",
+      "review_status": "excluded_duplicate_existing_prompt",
+      "duplicate_references": [
+        {
+          "scope": "intent_matrix",
+          "path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json",
+          "id": "QM-035"
+        }
+      ]
+    }
+  ],
+  "corpus_admission_authorized": false,
+  "holdout_created": false,
+  "expected_fields_generated": false,
+  "parser_invocation_performed": false
+}
