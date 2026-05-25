@@ -224,3 +224,18 @@ Added by Codex direct note after review of Microsoft Chat Customizations Evaluat
 - [ ] Any future diagnostic reporter must be deterministic unless explicitly authorized otherwise, and diagnostics must remain review evidence only.
 - [ ] Any future use of LLM-assisted semantic review must be advisory, non-gating, and wrapped by explicit deterministic contract checks before it can affect approval.
 - [ ] Do not treat prompt, skill, agent, or customization-file diagnostics as route validation, source qualification, benchmark evidence, or production readiness.
+
+## N. Level 0 Workshop Core Freeze Gate
+
+Added by Codex after Mini-V1 closure to prevent autonomous-loop growth from becoming uncontrolled parser-core mutation. These checks apply to any future Work Order that touches Level 0 workshop parser materializers, autonomous-loop promotion, parser core files, overlay/proposal handling, corpus expansion, or Mini-V1 follow-up scope. This section does not authorize an overlay store, confidence decay, corpus expansion, benchmark claim, source admission, route creation, or parser-core promotion.
+
+- [ ] The current Mini-V1 closure state is treated as an epoch baseline, not as parser completeness or benchmark readiness.
+- [ ] Any autonomous-loop candidate may detect, plan, evaluate, compare, and emit a proposal, but may not write parser core without an explicit human-review gate.
+- [ ] `materialization_authorized=True` alone is not sufficient for parser-core writes; parser-core promotion requires a second explicit human gate.
+- [ ] FRAME-B or FRAME-C core source changes require a named human-authored Work Order, changed-file scope, direct diff review, and full-suite verification.
+- [ ] Autonomous materializers must fail closed when the human-review gate is absent, even if strict-improvement evidence is present.
+- [ ] Promotion proposals must preserve bounded patch kinds, evidence, comparison result, affected case ids, staleness hashes, and semantic case-result verification data.
+- [ ] Core-freeze work must not widen composite patch kinds, add FRAME-C overlays, add confidence decay, expand corpus, or introduce an overlay store unless separately authorized.
+- [ ] Corpus expansion must not begin until the freeze gate is either implemented or explicitly deferred with recorded rationale.
+- [ ] Any future learned-overlay design must preserve `core + empty overlay == core` before it can evaluate non-empty overlays.
+- [ ] No benchmark, production-readiness, route-validation, source-qualification, or corpus-admission claim may be inferred from Mini-V1 passing.

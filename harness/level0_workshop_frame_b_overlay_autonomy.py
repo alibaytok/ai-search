@@ -97,6 +97,10 @@ class FrameBMaterializationNotAuthorized(Exception):
     """Raised when FRAME-B materialization lacks explicit authority."""
 
 
+class FrameBParserCoreFreezeViolation(FrameBMaterializationNotAuthorized):
+    """Raised when parser-core writes lack the human review gate."""
+
+
 class FrameBMaterializationRejectedBundle(Exception):
     """Raised when a non-accepted FRAME-B bundle is materialized."""
 
@@ -374,6 +378,7 @@ def materialize_accepted_frame_b_canonicals(
     signal_evidence_path,
     matrix_path=None,
     materialization_authorized=False,
+    human_review_gate=False,
     event_log=None,
 ):
     """Materialize only proven-improving FRAME-B canonical additions."""
@@ -387,6 +392,10 @@ def materialize_accepted_frame_b_canonicals(
     if materialization_authorized is not True:
         raise FrameBMaterializationNotAuthorized(
             "materialization_authorized must be True"
+        )
+    if human_review_gate is not True:
+        raise FrameBParserCoreFreezeViolation(
+            "human_review_gate must be True for parser-core writes"
         )
     if bundle["decision"] != "accepted":
         raise FrameBMaterializationRejectedBundle(

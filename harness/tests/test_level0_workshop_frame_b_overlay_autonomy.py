@@ -9,6 +9,7 @@ from harness.level0_workshop_frame_b_overlay_autonomy import (
     FRAME_B_OVERLAY_DECISION_REASONS,
     FRAME_B_OVERLAY_EXECUTION_LOG_FIELDS,
     FrameBMaterializationNotAuthorized,
+    FrameBParserCoreFreezeViolation,
     FrameBMaterializationStaleSource,
     materialize_accepted_frame_b_canonicals,
     run_frame_b_overlay_candidate,
@@ -262,11 +263,41 @@ class FrameBOverlayAutonomyTest(unittest.TestCase):
                     _accepted_materialization_bundle(),
                     path,
                     materialization_authorized=True,
+                    human_review_gate=True,
                 )
             with open(path, "rb") as handle:
                 self.assertEqual(handle.read(), changed)
         finally:
             os.remove(path)
+
+    def test_materializer_requires_human_review_gate_for_parser_core(self):
+        path, original = self._temp_signal_source()
+        try:
+            with self.assertRaises(FrameBParserCoreFreezeViolation):
+                materialize_accepted_frame_b_canonicals(
+                    _accepted_materialization_bundle(),
+                    path,
+                    materialization_authorized=True,
+                    human_review_gate=False,
+                )
+            with open(path, "rb") as handle:
+                self.assertEqual(handle.read(), original)
+        finally:
+            os.remove(path)
+
+    def test_autonomous_candidate_path_leaves_parser_core_unchanged(self):
+        core_paths = (
+            os.path.join("harness", "level0_workshop_signal_evidence.py"),
+            os.path.join("harness", "level0_workshop_canonical_intent_frame.py"),
+        )
+        before = {}
+        for path in core_paths:
+            with open(path, "rb") as handle:
+                before[path] = handle.read()
+        run_frame_b_overlay_candidate(MINI_V1_PATH, _upg_002_delta(), EventLog())
+        for path in core_paths:
+            with open(path, "rb") as handle:
+                self.assertEqual(handle.read(), before[path])
 
     def test_materializer_writes_only_accepted_family_terms_to_temp_source(self):
         path, original = self._temp_signal_source()
@@ -275,6 +306,7 @@ class FrameBOverlayAutonomyTest(unittest.TestCase):
                 _accepted_materialization_bundle(),
                 path,
                 materialization_authorized=True,
+                human_review_gate=True,
             )
             self.assertEqual(
                 result["materialized_family_ids"],

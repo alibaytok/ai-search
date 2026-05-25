@@ -105,6 +105,12 @@ class CompositePatchMaterializationNotAuthorized(Exception):
     """Raised when composite materialization lacks explicit authority."""
 
 
+class CompositePatchParserCoreFreezeViolation(
+    CompositePatchMaterializationNotAuthorized
+):
+    """Raised when parser-core writes lack the human review gate."""
+
+
 class CompositePatchMaterializationRejectedBundle(Exception):
     """Raised when a rejected composite bundle is materialized."""
 
@@ -355,6 +361,7 @@ def materialize_accepted_composite_patch(
     matrix_path,
     signal_evidence_path,
     materialization_authorized=False,
+    human_review_gate=False,
     event_log=None,
 ):
     """Materialize one accepted composite patch transactionally."""
@@ -370,6 +377,10 @@ def materialize_accepted_composite_patch(
     if materialization_authorized is not True:
         raise CompositePatchMaterializationNotAuthorized(
             "materialization_authorized must be True"
+        )
+    if human_review_gate is not True:
+        raise CompositePatchParserCoreFreezeViolation(
+            "human_review_gate must be True for parser-core writes"
         )
     if bundle["decision"] != "accepted":
         raise CompositePatchMaterializationRejectedBundle(

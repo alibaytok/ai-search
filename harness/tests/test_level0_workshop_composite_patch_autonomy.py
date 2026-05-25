@@ -12,6 +12,7 @@ import harness.level0_workshop_composite_patch_autonomy as autonomy
 from harness.level0_workshop_composite_patch_autonomy import (
     CompositePatchMalformedDelta,
     CompositePatchMaterializationNotAuthorized,
+    CompositePatchParserCoreFreezeViolation,
     CompositePatchMaterializationRejectedBundle,
     CompositePatchMaterializationStaleSource,
     CompositePatchMaterializationVerificationFailed,
@@ -260,6 +261,7 @@ class CompositePatchAutonomyTest(unittest.TestCase):
                     path,
                     source_path,
                     materialization_authorized=True,
+                    human_review_gate=True,
                     event_log=EventLog(),
                 )
         finally:
@@ -281,6 +283,7 @@ class CompositePatchAutonomyTest(unittest.TestCase):
                     path,
                     source_path,
                     materialization_authorized=True,
+                    human_review_gate=True,
                     event_log=EventLog(),
                 )
         finally:
@@ -301,8 +304,37 @@ class CompositePatchAutonomyTest(unittest.TestCase):
                     path,
                     source_path,
                     materialization_authorized=True,
+                    human_review_gate=True,
                     event_log=EventLog(),
                 )
+        finally:
+            os.remove(path)
+            os.remove(source_path)
+
+    def test_materializer_requires_human_review_gate_for_parser_core(self):
+        path = _write_temp_matrix(_matrix_with_composite_case())
+        source_path = _make_temp_source_copy()
+        with open(path, "rb") as handle:
+            original_matrix = handle.read()
+        with open(source_path, "rb") as handle:
+            original_source = handle.read()
+        try:
+            bundle = run_composite_patch_candidate(
+                path, _composite_delta(), EventLog()
+            )
+            with self.assertRaises(CompositePatchParserCoreFreezeViolation):
+                materialize_accepted_composite_patch(
+                    bundle,
+                    path,
+                    source_path,
+                    materialization_authorized=True,
+                    human_review_gate=False,
+                    event_log=EventLog(),
+                )
+            with open(path, "rb") as handle:
+                self.assertEqual(handle.read(), original_matrix)
+            with open(source_path, "rb") as handle:
+                self.assertEqual(handle.read(), original_source)
         finally:
             os.remove(path)
             os.remove(source_path)
@@ -319,6 +351,7 @@ class CompositePatchAutonomyTest(unittest.TestCase):
                 path,
                 source_path,
                 materialization_authorized=True,
+                human_review_gate=True,
                 event_log=EventLog(),
             )
             with open(source_path, "r", encoding="ascii") as handle:
@@ -373,6 +406,7 @@ class CompositePatchAutonomyTest(unittest.TestCase):
                         path,
                         source_path,
                         materialization_authorized=True,
+                        human_review_gate=True,
                         event_log=EventLog(),
                     )
             with open(path, "rb") as handle:
@@ -401,6 +435,24 @@ class CompositePatchAutonomyTest(unittest.TestCase):
         finally:
             os.remove(path)
         self.assertEqual(first, second)
+
+    def test_autonomous_candidate_path_leaves_parser_core_unchanged(self):
+        core_paths = (
+            signal_evidence_module.__file__,
+            os.path.join("harness", "level0_workshop_canonical_intent_frame.py"),
+        )
+        before = {}
+        for core_path in core_paths:
+            with open(core_path, "rb") as handle:
+                before[core_path] = handle.read()
+        path = _write_temp_matrix(_matrix_with_composite_case())
+        try:
+            run_composite_patch_candidate(path, _composite_delta(), EventLog())
+        finally:
+            os.remove(path)
+        for core_path in core_paths:
+            with open(core_path, "rb") as handle:
+                self.assertEqual(handle.read(), before[core_path])
 
     def test_static_scan_has_no_process_or_network_imports(self):
         with open(
