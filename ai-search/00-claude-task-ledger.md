@@ -17684,3 +17684,234 @@ WO-L0-WORKSHOP-RK058-CLOSURE-01 does not amend or broaden
 DC-003 through DC-076. Real-benchmark-ready remains NO.
 RK-058 RESOLVED via DC-077. RK-059 stays RESOLVED. RK-060
 OPEN.
+
+## Work Order L0-WORKSHOP-RK060-TRIAGE-01 - Triage RK-060 Residuals Into Codex-Authorizable Follow-Up Packets
+
+### Scope
+
+Triage the six RK-060 residuals (planning-intent vs FRAME-D-
+actual divergences surfaced by WO-L0-WORKSHOP-RK058-CLOSURE-01)
+into a small, ordered set of Codex-authorizable follow-up
+packets. Documentation-only triage. Authors a new triage plan
+at `ai-search/00-rk060-triage-plan.md`. Updates the RK-060 row
+in `ai-search/00-open-questions.md` to point at the triage
+plan. Appends this ledger entry. Authorizes nothing. Does NOT
+close RK-060.
+
+Scaffold-only and documentation-only. No code or test change.
+No FRAME-A / FRAME-B / FRAME-C / FRAME-D module or test
+modification. No benchmark-fixtures mutation. No controller-
+checklist change. Real-benchmark-ready remains NO. RK-058 stays
+RESOLVED. RK-059 stays RESOLVED. RK-060 stays OPEN.
+
+### Allowed Files
+
+- `ai-search/00-rk060-triage-plan.md` (new)
+- `ai-search/00-open-questions.md` (RK-060 row update; Status /
+  chronology refresh; no RK / DC status change)
+- `ai-search/00-claude-task-ledger.md` (this entry appended)
+
+### Status
+
+Implemented; pending Codex review.
+
+### Mandatory Priority-Miss Check
+
+Per `ai-search/00-claude-scope-prompt-template.md`, the
+Mandatory Priority-Miss Check was applied at the top of this
+packet (the prompt included `@pmc`):
+
+- Higher-priority prerequisite missed? No - RK-058 and RK-059
+  RESOLVED; HARDEN-01 / COVERAGE-01 / RK058-CLOSURE-01 reviewed
+  and committed; RK-060 is the only OPEN workshop risk; triage
+  is the documented next step.
+- Downstream surface skipping upstream cause? No - triage IS
+  the upstream planning step before any FRAME-B / FRAME-C /
+  FRAME-D module modification.
+- Safer sequencing? No - triage-then-author-then-implement is
+  the agreed flow.
+- Conflict with prior invariants? No.
+- Concerns flagged: residuals (a), (e), (f) all touch FRAME-B
+  canonical-set / window-matching policy and could fold into
+  one packet; residual (b) is a FRAME-B inflection / budget
+  policy knob and could either join (a) / (e) / (f) or split.
+  Residuals (c) and (d) are FRAME-C synthesis-rule changes and
+  should travel together. The triage proposes one FRAME-B
+  packet covering (a), (e), (f), and optionally (b), and one
+  FRAME-C packet covering (c), (d), with explicit notes that
+  Codex may split (b) into a sibling packet if preferred.
+- Result: proceed.
+
+### Pre-Implementation Review Note
+
+- Q1: No new authorization. Triage authorizes nothing; it
+  enumerates and proposes.
+- Q2: No source-content risk; the triage reads only the RK-060
+  row and existing planning-doc content.
+- Q3: No prompt-copying risk; the six residuals are quoted
+  from `00-open-questions.md`.
+- Q4: RK-058 stays RESOLVED; RK-059 stays RESOLVED; RK-060
+  stays OPEN. No new RK. No new DC. OQs unchanged.
+- Q5: 3 files modified (1 new triage doc; open-questions update;
+  this ledger entry).
+- Q6: no FRAME-A / FRAME-B / FRAME-C / FRAME-D module or test
+  modification; no benchmark-fixtures mutation; no controller-
+  checklist change; no forbidden output field name added.
+
+No scope drift detected.
+
+### Section L Scope Check
+
+Shared state: RK-058 RESOLVED via DC-077; RK-059 RESOLVED via
+DC-076; RK-060 OPEN with six enumerated residuals; full suite
+1517/1517 OK; project root `ai-search/`, `harness/`,
+`benchmark-fixtures/`; `benchmark-fixtures/` unchanged; FRAME-A
+/ B / C / D modules unchanged. All seven FRAME-A / B / C / D
+gating booleans remain literal False on every emitted path.
+OQ-003, OQ-015, OQ-031, OQ-035, OQ-048, OQ-049, OQ-056,
+OQ-057, OQ-070, OQ-075, OQ-076 remain OPEN. RK-039 single.
+
+### Codex Triage Directive Recorded
+
+Verbatim directive Claude was bound to:
+
+- Triage the six RK-060 residuals into a small, ordered set of
+  Codex-authorizable follow-up packets.
+- Documentation-only triage. Does NOT authorize any FRAME-B /
+  FRAME-C / FRAME-D module modification.
+- Does NOT close RK-060.
+- Categorize the six residuals by upstream layer.
+- For each category, propose a Codex-authorizable follow-up
+  packet with proposed WO id, scope, allowed-files sketch,
+  expected test additions, expected behaviour change per
+  residual, explicit non-authorization list, estimated risk
+  surface.
+- For each residual, state which proposed packet would close
+  it. Recommend sequencing.
+- No new RK. No new DC.
+
+### Implementation Summary
+
+Triage plan created at `ai-search/00-rk060-triage-plan.md`
+with the following structure:
+
+1. Header (WO id, document type, owner, status) and non-claim
+   envelope explicitly stating the triage authorizes nothing.
+2. Six RK-060 residuals quoted from `00-open-questions.md`.
+3. Categorization table mapping each residual to its upstream
+   layer:
+   - FRAME-B canonical-set extension: (a), (e).
+   - FRAME-B inflection / budget policy: (b).
+   - FRAME-B multi-token-window matching policy: (f).
+   - FRAME-C synthesis-rule refinement: (c), (d).
+4. Two proposed Codex-authorizable follow-up packets:
+   - **Proposed packet 1 - WO-L0-WORKSHOP-FRAME-B-COVERAGE-02**
+     covers FRAME-B-side residuals (a), (e), (f), and
+     optionally (b). Allowed-files sketch lists the FRAME-B
+     module / test, the downstream FRAME-C / mapper / derived-
+     trace tests for end-to-end recording, boundary doc 70,
+     the planning doc, open-questions, and ledger. Expected
+     test additions: family-presence tests, negative noise-
+     match tests, end-to-end shifts to the planning intent.
+     Risk surface notes the SIGNAL_FAMILIES count growth and
+     the backward-compatibility check required against the
+     trace validator's per-category distribution invariant.
+   - **Proposed packet 2 - WO-L0-WORKSHOP-FRAME-C-HARDEN-02**
+     covers FRAME-C-side residuals (c), (d). Allowed-files
+     sketch lists the FRAME-C module / test, the downstream
+     mapper / derived-trace tests, boundary doc 71, the
+     planning doc, open-questions, and ledger. Expected test
+     additions: synthesis-rule positive tests, negative tests
+     guarding against over-firing on single-skill prompts, and
+     end-to-end mapper assertions. Risk surface notes the
+     potential need for a per-subfamily bare-ambiguity emission
+     table.
+5. Per-residual closure map mapping each residual to its
+   proposed packet.
+6. Recommended sequencing: FRAME-B first (Packet 1), then
+   re-reconcile the planning doc / trace fixture if Packet 1
+   perturbs the per-category distribution, then FRAME-C
+   second (Packet 2). Optional sub-split for residual (b) and
+   optional alternative for residual (f) documented for Codex
+   to choose between approaches.
+7. Explicit list of what the triage does NOT authorize.
+8. Non-claim envelope carrying forward DC-020 through DC-077
+   boundary invariants.
+
+`ai-search/00-open-questions.md` updated:
+- RK-060 row: appended a sentence pointing at the triage plan
+  and naming the two proposed packets and the sequencing.
+  RK-060 status remains OPEN.
+- Status line: rewritten to lead with the triage and preserve
+  the prior closure entries as historical context.
+- Chronology: appended `WO-L0-WORKSHOP-RK060-TRIAGE-01` with
+  status `implemented; pending Codex review`.
+- No new DC row.
+- No RK / OQ status change.
+
+### Per-residual closure map (from the triage plan)
+
+| residual | proposed packet |
+|----------|------------------|
+| (a) W-PRM-007 | Packet 1 (FRAME-B-COVERAGE-02) |
+| (b) W-PRM-015 | Packet 1, or sibling FRAME-B-COVERAGE-02b |
+| (c) W-PRM-020 original | Packet 2 (FRAME-C-HARDEN-02) |
+| (d) W-PRM-021 | Packet 2 (FRAME-C-HARDEN-02) |
+| (e) W-PRM-025 original | Packet 1 (FRAME-B-COVERAGE-02) |
+| (f) W-PRM-026 original | Packet 1 (FRAME-B-COVERAGE-02) |
+
+### Recommended sequencing
+
+1. Packet 1 first (FRAME-B layer is upstream of FRAME-C).
+2. Re-reconcile planning doc and trace fixture after Packet 1
+   if Packet 1 perturbs the validator's per-category
+   distribution invariant; treat that re-reconciliation as
+   part of Packet 1 rather than a separate packet.
+3. Packet 2 second.
+4. Optional split: residual (b) into sibling FRAME-B-COVERAGE-02b
+   if Codex prefers smaller reviews.
+5. Optional alternative for residual (f): document strict
+   word-order policy and rewrite the planning text instead of
+   extending FRAME-B.
+
+### Evidence
+
+- Full suite: `python -B -m unittest discover -s
+  harness/tests` -> 1517/1517 OK (unchanged; no test file was
+  modified).
+- ASCII purity of all three touched files verified.
+- No `__pycache__` artifacts under `harness/`.
+- Project root contains exactly `ai-search/`, `harness/`,
+  `benchmark-fixtures/`.
+- `benchmark-fixtures/` unchanged.
+- FRAME-A / FRAME-B / FRAME-C / FRAME-D modules and tests
+  unchanged.
+- `00-controller-checklist.md` unchanged.
+- RK-039 single.
+- RK-058 RESOLVED (unchanged).
+- RK-059 RESOLVED (unchanged).
+- RK-060 OPEN (unchanged status; row updated to point at
+  triage plan).
+- All 11 tracked OQs (OQ-003, OQ-015, OQ-031, OQ-035, OQ-048,
+  OQ-049, OQ-056, OQ-057, OQ-070, OQ-075, OQ-076) remain OPEN.
+- Real-benchmark-ready remains NO.
+- `git status` shows exactly the three allowed files.
+
+### Non-Claims
+
+WO-L0-WORKSHOP-RK060-TRIAGE-01 does not claim that the
+proposed categorization, the proposed packets, the proposed
+allowed-files sketches, the proposed test additions, the
+expected behaviour changes, or the recommended sequencing are
+sufficient, necessary, superior, best, complete, production-
+ready, recommended, selected, or benchmark-ready. The triage
+is bounded descriptive content authored to help Codex author
+follow-up packets; the actual closure decisions, scopes,
+allowed files, test surfaces, and behaviour changes remain
+Codex's authority.
+
+All DC-020 through DC-077 boundary invariants carry forward.
+WO-L0-WORKSHOP-RK060-TRIAGE-01 does not amend or broaden
+DC-003 through DC-077. Real-benchmark-ready remains NO. RK-058
+stays RESOLVED. RK-059 stays RESOLVED. RK-060 stays OPEN
+pending Codex-authorized follow-up packets.
