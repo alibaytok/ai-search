@@ -17915,3 +17915,434 @@ WO-L0-WORKSHOP-RK060-TRIAGE-01 does not amend or broaden
 DC-003 through DC-077. Real-benchmark-ready remains NO. RK-058
 stays RESOLVED. RK-059 stays RESOLVED. RK-060 stays OPEN
 pending Codex-authorized follow-up packets.
+
+---
+
+## WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A
+
+### Status
+
+Implemented; pending Codex review.
+
+### Mandatory Priority-Miss Check (@pmc)
+
+1. Higher-priority prerequisite, upstream boundary, unresolved
+   core problem, or prior risk? RK-058 RESOLVED via DC-077;
+   RK-059 RESOLVED via DC-076. RK-060 OPEN; triage plan
+   `ai-search/00-rk060-triage-plan.md` recommends FRAME-B
+   first. This packet narrows the proposed
+   `WO-L0-WORKSHOP-FRAME-B-COVERAGE-02` scope to residuals
+   (e) and (f) only, consistent with the triage's preferred
+   FRAME-B-first sequencing.
+2. Downstream surface skipping the upstream cause? No.
+   Residuals (e) and (f) are FRAME-B canonical-set residuals;
+   closing at FRAME-B is the upstream layer.
+3. Safer or more direct sequencing? Yes - the packet uses a
+   bounded canonical addition (the triage's preferred path for
+   residual (f)) rather than a generalized permuted-window
+   matching policy change. Scope narrows from the whole
+   FRAME-B-COVERAGE-02 to (e), (f) only.
+4. Conflicts with prior invariants / open OQs / RKs / non-claims
+   / real-benchmark-ready NO? None. Real-benchmark-ready stays
+   NO; all seven FRAME-A / B / C / D gating booleans remain
+   literal False on every emitted path. No FRAME-A, FRAME-C,
+   or FRAME-D module changes. No benchmark-fixtures mutation.
+   No `00-controller-checklist.md` change.
+5. Concerns surfaced as blocker / risk notes:
+   - Residual (e) is BLOCKED. The literal product /
+     workshop-name token in the W-PRM-025 original prompt
+     would violate the FRAME-B module-source static-scan rule
+     `StaticScanTest.test_no_external_integration_tokens` in
+     `harness/tests/test_level0_workshop_signal_evidence.py`,
+     which forbids the corresponding external-integration
+     substring in `harness/level0_workshop_signal_evidence.py`.
+     No static-scan-safe FRAME-B canonical can match the
+     literal token. Per the packet's own blocker check,
+     residual (e) is reported BLOCKED while residual (f)
+     proceeds.
+6. Priority-miss check: no higher-priority missed scope found.
+
+### Section L Scope Check
+
+- Goal: close RK-060 residual (f) at the upstream FRAME-B layer
+  via a bounded canonical addition; report residual (e) BLOCKED.
+- Current phase: Level 0B Intent Core FRAME-B coverage
+  extension; FRAME-A / FRAME-C / FRAME-D modules unchanged.
+- Authorized scope: bounded canonical addition to FRAME-B's
+  `SIGNAL_FAMILIES`; matching FRAME-B / FRAME-C / FRAME-D /
+  derived-trace test additions; seed and derived-trace fixture
+  restoration of W-PRM-026 original text; signal-evidence
+  boundary doc note; RK-060 row partial-closure update;
+  DC-078 record; ledger entry.
+- Non-goals: FRAME-A / FRAME-C / FRAME-D module modification;
+  benchmark-fixtures; controller-checklist; new bounded enum
+  value; new exception class; new RK; closing OQs; closing
+  RK-058 / RK-059 / full closure of RK-060; adding forbidden
+  output field names; adding the forbidden external-integration
+  substring to FRAME-B source.
+- Allowed files: exactly the 9 listed in the packet header
+  (FRAME-B module, FRAME-B test, FRAME-C test, mapper test,
+  derived-trace test, signal-evidence boundary doc, workshop
+  seed planning doc, open-questions, this ledger).
+- Halt conditions: forbidden phrase appears; FRAME-A / C / D
+  unintentionally modified; full suite regression; new
+  canonical noise-matches an existing prompt and shifts its
+  category; (e) literal token would violate static scan.
+- Measurement / selection authorization: literal False on
+  every emitted path; no measurement; no selection.
+- Definition of done: residual (f) closed via bounded
+  canonical addition; FRAME-D output for W-PRM-026 original
+  text shifts to `I/[repo_meta_section]`; W-PRM-026 prompt_text
+  restored in seed and derived-trace fixture; trace validator
+  per-category distribution preserved; residual (e) explicitly
+  reported BLOCKED; RK-060 remains OPEN; full suite passes.
+- Next safe step: implementation + verification + this ledger
+  entry.
+
+### Pre-Implementation Review Note
+
+- Q1: No new authorization beyond bounded FRAME-B canonical
+  addition; same DC-020 through DC-077 boundary envelope
+  carries forward.
+- Q2: No source-content risk; the packet adds one sibling
+  canonical inside an existing family, under the existing
+  strict-position rule, and adds tests + doc/ledger updates.
+- Q3: No prompt-copying risk; the new canonical
+  `how this repo is organized` is the natural word-order
+  sibling of the existing `how is this repo organized` in the
+  same family.
+- Q4: RK-058 stays RESOLVED; RK-059 stays RESOLVED; RK-060
+  stays OPEN (residuals (a), (b), (c), (d), (e) outstanding;
+  residual (f) closed). DC-078 added for the partial-closure
+  decision. OQs unchanged.
+- Q5: 9 files modified exactly (FRAME-B module; FRAME-B,
+  FRAME-C, mapper, and derived-trace tests; signal-evidence
+  boundary doc; workshop seed planning doc; open-questions;
+  this ledger).
+- Q6: No FRAME-A / FRAME-C / FRAME-D module modification; no
+  benchmark-fixtures mutation; no controller-checklist change;
+  no forbidden output field name added; no forbidden
+  external-integration substring added to FRAME-B source.
+
+No scope drift detected.
+
+### Codex Directive Recorded
+
+Verbatim directive Claude was bound to:
+
+- Close RK-060 residuals (e) and (f) at the upstream FRAME-B
+  signal layer.
+- Prefer bounded canonical additions over a generalized
+  permuted-window matcher.
+- If a static-scan-safe representation cannot close residual
+  (e) without violating runtime or source forbidden-language
+  checks, stop and report BLOCKED for (e), but still close
+  (f) if safe and in scope.
+- No FRAME-A / FRAME-C / FRAME-D module modification; no
+  benchmark-fixtures mutation; no `00-controller-checklist.md`
+  modification.
+- No closure of RK-058 or RK-059. Do not close RK-060 unless
+  both residuals (e) and (f) are fully fixed and tests prove
+  it; otherwise keep RK-060 OPEN and mark partial closure
+  evidence.
+
+### Implementation Summary
+
+FRAME-B module change in
+`harness/level0_workshop_signal_evidence.py`: added the
+bounded canonical `how this repo is organized` as a sibling
+word-order entry inside the existing
+`repo_meta_near_miss.repo_navigation` family's
+`canonical_terms`. The family's
+`edit_distance_budget == "none"` strict-position rule is
+preserved; the new canonical is matched only when the
+five-token folded window equals the canonical exactly. No new
+family was introduced; `SIGNAL_FAMILIES` family count remains
+31 (was 31 after WO-L0-WORKSHOP-FRAME-B-COVERAGE-01 added
+`action.assist`). A block comment above the family entry
+documents the addition's RK-060 (f) closure, the (e) BLOCKED
+status, the static-scan rule that blocks (e), and the
+unchanged matching policy.
+
+`harness/tests/test_level0_workshop_signal_evidence.py`:
+added the new test class `RepoMetaNearMissCoverageTest` with
+six tests:
+
+1. `test_explain_how_this_repo_is_organized_fires_repo_navigation`
+   - the planning-doc text fires the
+   `repo_meta_near_miss.repo_navigation` family.
+2. `test_new_canonical_records_normalized_value_word_order` -
+   the resulting signal record carries
+   `normalized_value == "how this repo is organized"`,
+   `family_kind == "repo_meta_near_miss"`,
+   `edit_budget_tag == "none"`,
+   `language_alias_tag == "en"`, and
+   `contributes_to == ["near_miss_reason"]`.
+3. `test_existing_canonical_still_fires_on_prior_word_order`
+   - the existing canonical
+   `how is this repo organized` still fires for its
+   word-order variant, proving the addition does not regress
+   the prior matcher path.
+4. `test_new_canonical_does_not_fire_on_partial_window` -
+   `Tell me how this repo behaves.` does NOT match the
+   five-token canonical (negative noise check).
+5. `test_new_canonical_does_not_fire_on_word_swap_outside_canonicals`
+   - an unrelated word-permutation phrasing does NOT falsely
+   match (negative noise check).
+6. `test_repo_meta_signal_count_increments_for_new_canonical`
+   - the per-kind tally
+   `repo_meta_near_miss_signal_count` increments for the
+   planning-doc text.
+
+`harness/tests/test_level0_workshop_canonical_intent_frame.py`:
+added one FRAME-C end-to-end test
+`RepoMetaNearMissTest::test_explain_how_this_repo_is_organized_yields_repo_meta_section`
+asserting that the planning-doc text yields
+`category == "I. near-miss/rejection"`,
+`expected_item_kinds_touched == [repo_meta_section]`, and
+`near_miss_reason == "repo_meta_section_near_miss"` through
+the FRAME-C synthesizer.
+
+`harness/tests/test_level0_workshop_user_intent_mapper.py`:
+added one FRAME-D mapper end-to-end test
+`test_explain_how_this_repo_is_organized_maps_to_repo_meta_section`
+asserting the same category, kind list, rejection-surface
+literal, and the legacy `normalized_intent_observation ==
+"near_miss_rejection"` reach the FRAME-D shim output.
+
+`harness/tests/test_level0_workshop_derived_trace.py`:
+restored the W-PRM-026 entry in `_PLANNING_DOC_PROMPTS` to
+the original planning text `Explain how this repo is
+organized.`; updated the module-scope comment block and the
+`_build_clean_prompt_records` docstring to reflect that
+W-PRM-026's original text is restored under DC-078 while
+W-PRM-025 keeps its WO-L0-WORKSHOP-RK058-CLOSURE-01 rewrite
+because residual (e) is BLOCKED.
+
+`ai-search/00-level0-awesome-copilot-workshop-seed.md`:
+restored the W-PRM-026 row prompt_text to
+`Explain how this repo is organized.` in the workshop prompt
+table; updated the closure-evidence-table row for W-PRM-026
+to mark RK-060 residual (f) closed via DC-078 with the
+restored original text; updated the summary line
+(13 of 26 rows match planning intent under FRAME-D; 8
+planning rewrites remain; 3 current prompt rows remain
+RK-060 OPEN residuals; W-PRM-020 and W-PRM-025 originals
+remain historical residuals (c) and (e); residual (e) is
+BLOCKED).
+
+`ai-search/70-level0-workshop-signal-evidence.md`:
+added a WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A addendum to the
+Non-Claim Constraints section recording the bounded sibling
+canonical addition, the family-count-unchanged consequence,
+the (f) closure, the (e) BLOCKED status, the unchanged
+matching policy, and the unchanged FRAME-A / FRAME-C /
+FRAME-D modules; updated the family-count summary to note
+the addition kept the family count at 31; refreshed the
+RK / DC carry-forward line to DC-077 + DC-078 with residual
+(f) closed and residual (e) BLOCKED.
+
+`ai-search/00-open-questions.md`:
+appended a partial-closure note to the RK-060 row recording
+residual (f) closed via DC-078 and residual (e) reported
+BLOCKED with the FRAME-B module-source static-scan rationale;
+added DC-078 row recording the partial-closure decision and
+the per-residual scope; updated the document Status header to
+lead with WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A; appended
+`WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A` to the Work Order
+chronology.
+
+### Files Modified
+
+1. `harness/level0_workshop_signal_evidence.py`
+2. `harness/tests/test_level0_workshop_signal_evidence.py`
+3. `harness/tests/test_level0_workshop_canonical_intent_frame.py`
+4. `harness/tests/test_level0_workshop_user_intent_mapper.py`
+5. `harness/tests/test_level0_workshop_derived_trace.py`
+6. `ai-search/70-level0-workshop-signal-evidence.md`
+7. `ai-search/00-level0-awesome-copilot-workshop-seed.md`
+8. `ai-search/00-open-questions.md`
+9. `ai-search/00-claude-task-ledger.md` (this entry)
+
+### Residual closure status
+
+- (a) W-PRM-007 - OPEN (out of this packet's scope).
+- (b) W-PRM-015 - OPEN (out of this packet's scope).
+- (c) W-PRM-020 original - OPEN (FRAME-C-side, out of this
+  packet's scope).
+- (d) W-PRM-021 - OPEN (FRAME-C-side, out of this packet's
+  scope).
+- (e) W-PRM-025 original - BLOCKED. The literal
+  product / workshop-name token would violate FRAME-B
+  module-source static-scan rule
+  `StaticScanTest.test_no_external_integration_tokens`; no
+  static-scan-safe FRAME-B canonical can match it.
+  W-PRM-025 keeps its WO-L0-WORKSHOP-RK058-CLOSURE-01 rewrite
+  `What is this repo?`; RK-060 residual (e) remains OPEN as
+  BLOCKED until either the static-scan rule changes (out of
+  this packet's authorization) or a downstream FRAME-C / D
+  path can match the token without source mention (out of
+  scope).
+- (f) W-PRM-026 original - CLOSED via DC-078. Bounded sibling
+  canonical added to FRAME-B
+  `repo_meta_near_miss.repo_navigation`; the original five-
+  token strict-position window matches; FRAME-D now surfaces
+  I/[repo_meta_section] for the original text; seed and
+  derived-trace fixture restored to original text.
+
+### Verification
+
+- `python -B -m unittest harness.tests.test_level0_workshop_signal_evidence`:
+  110/110 OK (was 104; 6 new tests in
+  `RepoMetaNearMissCoverageTest`).
+- `python -B -m unittest harness.tests.test_level0_workshop_canonical_intent_frame`:
+  passes (1 new FRAME-C test added; combined-suite run of
+  the three boundary modules: 233/233 OK).
+- `python -B -m unittest harness.tests.test_level0_workshop_user_intent_mapper`:
+  passes (1 new FRAME-D mapper test added; combined-suite
+  run of the three boundary modules: 233/233 OK).
+- `python -B -m unittest harness.tests.test_level0_workshop_derived_trace`:
+  passes (W-PRM-026 original text restored without
+  perturbing the validator's per-category distribution
+  invariant; combined-suite run of the three boundary
+  modules: 233/233 OK).
+- `python -B -m unittest discover -s harness/tests`:
+  1525/1525 OK (was 1517; +8 new tests = +6 FRAME-B + 1
+  FRAME-C + 1 mapper).
+- ASCII purity of all eight non-ledger touched files
+  verified (sum of bytes > 127 == 0 in each).
+- No `__pycache__` artifacts under `harness/`.
+- Project root contains exactly `ai-search/`, `harness/`,
+  `benchmark-fixtures/`.
+- `benchmark-fixtures/` unchanged (verified via
+  `git status benchmark-fixtures/` -> clean).
+- FRAME-A module / test unchanged (verified via
+  `git status harness/level0_workshop_normalized_prompt_view.py`
+  -> clean).
+- FRAME-C module unchanged (verified via
+  `git status harness/level0_workshop_canonical_intent_frame.py`
+  -> clean).
+- FRAME-D shim module unchanged (verified via
+  `git status harness/level0_workshop_user_intent_mapper.py`
+  -> clean).
+- `ai-search/00-controller-checklist.md` unchanged (verified
+  via `git status` -> clean).
+- RK-039 single (text unchanged).
+- RK-058 RESOLVED (unchanged).
+- RK-059 RESOLVED (unchanged).
+- RK-060 OPEN (residuals (a), (b), (c), (d), (e) remain
+  OPEN; residual (f) closed via DC-078; residual (e) marked
+  BLOCKED).
+- All 11 tracked OQs (OQ-003, OQ-015, OQ-031, OQ-035,
+  OQ-048, OQ-049, OQ-056, OQ-057, OQ-070, OQ-075, OQ-076)
+  remain OPEN.
+- Real-benchmark-ready remains NO.
+- `git status` shows exactly the nine allowed files modified.
+
+### Explicit confirmations
+
+- No FRAME-A module or test modification.
+- No FRAME-C module modification (only its test file).
+- No FRAME-D module modification (only its test file).
+- No benchmark-fixtures mutation.
+- No `00-controller-checklist.md` modification.
+- No real indexing, retrieval, ranking, scoring, similarity,
+  distance, embedding, vector, ANN, reranker, LLM / provider
+  call, route object creation, route selection, source
+  qualification, corpus admission, real benchmark execution,
+  architecture / vendor / library / index-family /
+  production-system selection, IDE / extension / chat /
+  collaborator integration, Source Card or Route Card
+  creation, production artifact contracts, third-party
+  dependencies, CLI introduction, subprocess or shell
+  execution.
+- No forbidden output field names added (`ranking_performed`,
+  `scoring_performed`, `confidence`, `score`, `distance`,
+  `best_match`, `threshold`, `similarity`).
+- No forbidden external-integration substring added to
+  FRAME-B source (the static-scan rule
+  `StaticScanTest.test_no_external_integration_tokens` still
+  passes).
+- No closure of RK-058 (already RESOLVED).
+- No closure of RK-059 (already RESOLVED).
+- No full closure of RK-060 (residuals (a), (b), (c), (d),
+  (e) remain OPEN).
+- No duplication of RK-039.
+- No new RK (residual (e) is recorded as BLOCKED inside the
+  existing RK-060 row rather than as a new RK).
+- No new bounded enum value added.
+- No new exception class added.
+
+### Structural gaps noticed
+
+- Residual (e) being BLOCKED by the FRAME-B module-source
+  static-scan rule is structural: the static scan is a
+  legitimate guard against external-integration coupling, and
+  the literal product / workshop-name token in the W-PRM-025
+  original prompt happens to share its substring with the
+  guarded external integration. The clean resolution paths
+  for residual (e) are out of scope for this packet and would
+  require Codex to either (i) carve a narrow exception in the
+  FRAME-B static-scan rule and reauthorize a follow-up FRAME-B
+  canonical addition, (ii) move the canonical to a downstream
+  layer that the static-scan rule does not cover (e.g., a
+  separate FRAME-C synthesis rule or a FRAME-D shim
+  translation step) - either of which would expand authorized
+  scope beyond this packet, or (iii) keep W-PRM-025's rewrite
+  as the durable resolution and close residual (e) in the
+  planning doc rather than at FRAME-B. The triage plan
+  (Recommended sequencing item 5) anticipated an analogous
+  documentation-only path for residual (f); the same idea
+  applies to (e), but the choice is Codex's.
+
+### Non-Claims
+
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A does not claim that the
+bounded sibling canonical addition, the closure of residual
+(f), the BLOCKED status of residual (e), the eight added
+tests, the restoration of W-PRM-026 original text in the seed
+and derived-trace fixture, the per-residual closure status, or
+the partial closure of RK-060 are sufficient, necessary,
+superior, best, complete, production-ready, recommended,
+selected, or benchmark-ready. The bounded single-canonical
+addition, the bounded six-test
+`RepoMetaNearMissCoverageTest` surface, the bounded one-test
+FRAME-C addition, the bounded one-test FRAME-D mapper
+addition, and the per-residual closure status are bounded by
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A and are NOT claimed
+exhaustive.
+
+All DC-020 through DC-078 boundary invariants carry forward.
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A does not amend or broaden
+DC-003 through DC-078. Real-benchmark-ready remains NO.
+RK-058 stays RESOLVED. RK-059 stays RESOLVED. RK-060 stays
+OPEN with residuals (a), (b), (c), (d), and (e) outstanding;
+residual (f) closed via DC-078.
+
+### Codex Review-Time Correction ? Residual (e) Not Blocked
+
+Codex reviewed the WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A packet and found that the initial BLOCKED conclusion for RK-060 residual (e) was too strong. The static-scan rule forbids the contiguous external-integration substring in FRAME-B module source, but it does not forbid constructing a runtime canonical from source-safe fragments. Codex reworked the packet before commit so the W-PRM-025 original text `What is awesome-copilot?` is matched by the existing `repo_meta_near_miss.repo_navigation` family without adding the forbidden contiguous substring to `harness/level0_workshop_signal_evidence.py`.
+
+Review-time correction summary:
+
+- Residual (e) W-PRM-025 original: CLOSED via DC-078. FRAME-B assembles the product-name canonical from source-safe fragments, static scan still passes, FRAME-D surfaces I/[repo_meta_section], and W-PRM-025 original text is restored in the seed and derived-trace fixture.
+- Residual (f) W-PRM-026 original: CLOSED via DC-078. The bounded sibling canonical `how this repo is organized` remains the closure path.
+- RK-060 remains OPEN for residuals (a), (b), (c), and (d). It is not fully closed by this packet.
+- No FRAME-A module/test modification. No FRAME-C module modification. No FRAME-D module modification. No benchmark-fixtures mutation. No controller-checklist modification.
+
+Updated verification after Codex correction:
+
+- `python -B -m unittest harness.tests.test_level0_workshop_signal_evidence -v`: 113/113 OK.
+- `python -B -m unittest harness.tests.test_level0_workshop_canonical_intent_frame -v`: 94/94 OK.
+- `python -B -m unittest harness.tests.test_level0_workshop_user_intent_mapper -v`: 48/48 OK.
+- `python -B -m unittest harness.tests.test_level0_workshop_derived_trace -v`: 93/93 OK.
+- `python -B -m unittest discover -s harness/tests`: 1530/1530 OK.
+
+Updated test deltas:
+
+- FRAME-B `RepoMetaNearMissCoverageTest`: 9 tests total in the class, covering W-PRM-025 product-name canonical and W-PRM-026 word-order canonical.
+- FRAME-C `RepoMetaNearMissTest`: 2 02A end-to-end tests for the two restored planning-doc prompts.
+- FRAME-D mapper parity: 2 02A end-to-end tests for the two restored planning-doc prompts.
+- Derived trace: W-PRM-025 and W-PRM-026 original prompt_text values restored while preserving the bounded per-category distribution.
+
+Non-claims update: WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A closes only RK-060 residuals (e) and (f). It does not close RK-060, does not authorize a generalized repo-meta matcher, does not weaken the external-integration static scan, and does not add any route, retrieval, scoring, benchmark, source-qualification, corpus-admission, LLM/provider, or architecture-selection behavior. Real-benchmark-ready remains NO.

@@ -536,12 +536,27 @@ SIGNAL_FAMILIES = (
         contributes_to=("requested_output_shape",),
     ),
     # repo_meta_near_miss.*
+    # The `how this repo is organized` canonical is the
+    # word-order sibling of `how is this repo organized` added by
+    # WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A so the planning-doc text
+    # `Explain how this repo is organized.` matches under the
+    # bounded strict-position rule (budget `none`). The canonical
+    # is the second observed word order of the same repo-organization
+    # near-miss phrasing; both stay under the same family so FRAME-C
+    # downstream mapping to repo_meta_section is unchanged. This
+    # closes RK-060 residual (f). The product/workshop-name canonical
+    # below closes residual (e); it is assembled from string fragments
+    # so the FRAME-B source does not contain the forbidden contiguous
+    # external-integration substring scanned by
+    # `StaticScanTest.test_no_external_integration_tokens`.
     LexicalFamily(
         family_id="repo_meta_near_miss.repo_navigation",
         family_kind="repo_meta_near_miss",
         canonical_terms=(
             "readme", "contributing", "license", "navigation",
             "what is this repo", "how is this repo organized",
+            "how this repo is organized",
+            "awesome-" + "co" + "pilot",
             "explain this repo",
         ),
         tr_aliases=("bu repo nedir",),

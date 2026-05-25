@@ -284,6 +284,43 @@ class RepoMetaNearMissTest(unittest.TestCase):
             "I. near-miss/rejection",
         )
 
+    def test_explain_how_this_repo_is_organized_yields_repo_meta_section(self):
+        """RK-060 residual (f) closed by
+        WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A: the new FRAME-B
+        sibling canonical `how this repo is organized` fires on
+        the planning-doc text, FRAME-C maps the
+        `repo_meta_near_miss.repo_navigation` signal to
+        `expected_item_kinds_touched == [repo_meta_section]`,
+        and the workshop category becomes
+        `I. near-miss/rejection`."""
+        result = _frame_for("Explain how this repo is organized.")
+        record = result["workshop_prompt_record"]
+        self.assertEqual(record["category"], "I. near-miss/rejection")
+        self.assertEqual(
+            record["expected_item_kinds_touched"],
+            ["repo_meta_section"],
+        )
+        self.assertEqual(
+            result["near_miss_reason"], "repo_meta_section_near_miss"
+        )
+
+    def test_product_name_prompt_yields_repo_meta_section(self):
+        """RK-060 residual (e) closed by
+        WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A: FRAME-B assembles the
+        product-name canonical from source-safe fragments, then
+        FRAME-C maps the `repo_meta_near_miss.repo_navigation`
+        signal to the repo-meta rejection path."""
+        result = _frame_for("What is awesome-copilot?")
+        record = result["workshop_prompt_record"]
+        self.assertEqual(record["category"], "I. near-miss/rejection")
+        self.assertEqual(
+            record["expected_item_kinds_touched"],
+            ["repo_meta_section"],
+        )
+        self.assertEqual(
+            result["near_miss_reason"], "repo_meta_section_near_miss"
+        )
+
 
 class OutOfScopeTest(unittest.TestCase):
 

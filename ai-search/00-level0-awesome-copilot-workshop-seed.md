@@ -167,16 +167,18 @@ workshop_prompt_id, event_log)`. The workshop derived-trace test
 no longer carries a per-prompt touched-kind plan; it builds each
 record by routing the `prompt_text` strings through FRAME-D and
 adopting the FRAME-C-derived `workshop_prompt_record` verbatim.
-Nine prompts (W-PRM-010, W-PRM-011, W-PRM-012, W-PRM-013,
-W-PRM-017, W-PRM-018, W-PRM-020, W-PRM-025, W-PRM-026) were
-rewritten in this packet so the FRAME-D-derived per-category
-distribution satisfies the trace validator's bounded
+Seven prompts (W-PRM-010, W-PRM-011, W-PRM-012, W-PRM-013,
+W-PRM-017, W-PRM-018, W-PRM-020) currently carry rewrites so
+the FRAME-D-derived per-category distribution satisfies the trace
+validator's bounded
 `EXPECTED_PROMPT_CATEGORY_DISTRIBUTION`. Original-intent vs
 FRAME-D-actual divergences for prompts whose synthesis exposes
 FRAME-B canonical-set or FRAME-C synthesis-rule narrowness are
 recorded as RK-060 OPEN (per-prompt rationale below). See DC-077
 in `ai-search/00-open-questions.md` for the RK-058 closure
-decision.
+decision. W-PRM-025 and W-PRM-026 were restored to their original
+planning text under DC-078 after bounded repo-meta canonical
+coverage was added to FRAME-B.
 
 Per-category counts (FRAME-D-derived, matching trace validator):
 
@@ -217,8 +219,8 @@ Per-category counts (FRAME-D-derived, matching trace validator):
 | W-PRM-022 | G. ambiguous | Make our pull requests cleaner. | skill; instruction; workflow_file | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
 | W-PRM-023 | H. no-route | What year did the Apollo program land on the moon? | none | no candidate surface expected | prompt_out_of_repo_scope | not admitted; not qualified; workshop metadata only |
 | W-PRM-024 | H. no-route | What is the molecular weight of caffeine? | none | no candidate surface expected | prompt_out_of_repo_scope | not admitted; not qualified; workshop metadata only |
-| W-PRM-025 | I. near-miss/rejection | What is this repo? | repo_meta_section | no candidate surface expected | repo_meta_section_near_miss | not admitted; not qualified; workshop metadata only |
-| W-PRM-026 | I. near-miss/rejection | Explain this repo. | repo_meta_section | no candidate surface expected | repo_meta_section_near_miss | not admitted; not qualified; workshop metadata only |
+| W-PRM-025 | I. near-miss/rejection | What is awesome-copilot? | repo_meta_section | no candidate surface expected | repo_meta_section_near_miss | not admitted; not qualified; workshop metadata only |
+| W-PRM-026 | I. near-miss/rejection | Explain how this repo is organized. | repo_meta_section | no candidate surface expected | repo_meta_section_near_miss | not admitted; not qualified; workshop metadata only |
 
 ### RK-058 closure evidence table (planning-intent vs FRAME-D-actual)
 
@@ -248,20 +250,22 @@ Per-category counts (FRAME-D-derived, matching trace validator):
 | W-PRM-022 | G, [skill, instruction, workflow_file] | G, [skill, instruction, workflow_file] | match. |
 | W-PRM-023 | H, [none] | H, [none] | match. |
 | W-PRM-024 | H, [none] | H, [none] | match. |
-| W-PRM-025 | (rewritten) I, [repo_meta_section] | I, [repo_meta_section] | rewrite: "What is this repo?" matches FRAME-B `repo_meta_near_miss` canonical "what is this repo". Original "What is awesome-copilot?" produced H because "awesome-copilot" is not a FRAME-B canonical - recorded as RK-060. |
-| W-PRM-026 | (rewritten) I, [repo_meta_section] | I, [repo_meta_section] | rewrite: "Explain this repo." matches FRAME-B `repo_meta_near_miss` canonical "explain this repo". Original "Explain how this repo is organized" failed positional match - recorded as RK-060. |
+| W-PRM-025 | I, [repo_meta_section] | I, [repo_meta_section] | match (original text restored): WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A added a source-safe assembled product-name canonical to FRAME-B `repo_meta_near_miss.repo_navigation`; the original planning text "What is awesome-copilot?" now matches under strict-position rule and FRAME-D surfaces I/[repo_meta_section]. RK-060 residual (e) closed via DC-078. |
+| W-PRM-026 | I, [repo_meta_section] | I, [repo_meta_section] | match (original text restored): WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A added the bounded sibling canonical "how this repo is organized" to FRAME-B `repo_meta_near_miss.repo_navigation`; the original planning text "Explain how this repo is organized." now matches under strict-position rule and FRAME-D surfaces I/[repo_meta_section]. RK-060 residual (f) closed via DC-078. |
 
-Summary: 12 of 26 rows match the prior planning intent under
+Summary: 14 of 26 rows match the prior planning intent under
 FRAME-D exactly (treating W-PRM-014's kind-order difference as
-equivalent); 2 are category-rule differences without a synthesis
-gap (W-PRM-001, W-PRM-002); 9 are planning rewrites for
-distribution fit (W-PRM-010, W-PRM-011, W-PRM-012, W-PRM-013,
-W-PRM-017, W-PRM-018, W-PRM-020, W-PRM-025, W-PRM-026); and 3
-current prompt rows remain RK-060 OPEN residuals (W-PRM-007,
-W-PRM-015, W-PRM-021). The original texts for W-PRM-020,
-W-PRM-025, and W-PRM-026 are also recorded in RK-060 as
-historical planning-intent residuals. The closure point for RK-058
-is fixture derivation, not absence of all semantic residuals.
+equivalent and counting W-PRM-025's and W-PRM-026's restored
+original text after
+DC-078); 2 are category-rule differences without a synthesis gap
+(W-PRM-001, W-PRM-002); 7 are planning rewrites for distribution
+fit (W-PRM-010, W-PRM-011, W-PRM-012, W-PRM-013, W-PRM-017,
+W-PRM-018, W-PRM-020); and 3 current prompt rows
+remain RK-060 OPEN residuals (W-PRM-007, W-PRM-015, W-PRM-021).
+The original text for W-PRM-020 is also recorded in RK-060 as a
+historical planning-intent residual (residual (c)). Residuals (e)
+and (f) are closed by DC-078. The closure point for RK-058 is
+fixture derivation, not absence of all semantic residuals.
 
 ## 5. Derived-Material Implications
 

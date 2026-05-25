@@ -363,15 +363,20 @@ byte count is 0.
 WO-L0-WORKSHOP-FRAME-B does not claim any signal, span, family,
 alias tag, count, or budget tag is sufficient, necessary,
 superior, best, complete, production-ready, recommended, or
-selected. The bounded `SIGNAL_FAMILIES` tuple (31 families after
-WO-L0-WORKSHOP-FRAME-B-COVERAGE-01 added `action.assist`; was 30
-under WO-L0-WORKSHOP-FRAME-B), the bounded `FAMILY_KINDS`
-(8 entries), the bounded `BUDGET_TAGS` (3 entries), the bounded
-`LANGUAGE_TAGS` (3 entries), the bounded eleven-field signal
-record shape, the bounded twenty-two `ALLOWED_OUTPUT_KEYS`, the
-documented U+0131 pre-fold rule, and the canonical-length-
-aware edit-budget table are bounded by WO-L0-WORKSHOP-FRAME-B
-and are NOT claimed exhaustive.
+selected. The bounded `SIGNAL_FAMILIES` tuple (still 31 families
+after WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A; the bounded sibling
+canonical addition kept the family count unchanged because the
+new canonical is a sibling word-order entry inside the existing
+`repo_meta_near_miss.repo_navigation` family rather than a new
+family; was 31 after WO-L0-WORKSHOP-FRAME-B-COVERAGE-01 added
+`action.assist`; was 30 under WO-L0-WORKSHOP-FRAME-B), the
+bounded `FAMILY_KINDS` (8 entries), the bounded `BUDGET_TAGS`
+(3 entries), the bounded `LANGUAGE_TAGS` (3 entries), the
+bounded eleven-field signal record shape, the bounded
+twenty-two `ALLOWED_OUTPUT_KEYS`, the documented U+0131
+pre-fold rule, and the canonical-length-aware edit-budget table
+are bounded by WO-L0-WORKSHOP-FRAME-B and are NOT claimed
+exhaustive.
 
 WO-L0-WORKSHOP-FRAME-B-COVERAGE-01 addendum: the bounded family
 `action.assist` (`canonical_terms=("help", "assist")`,
@@ -394,11 +399,35 @@ non-emptiness, not primary_action specifically) is the sole
 trigger downstream. No FRAME-A / FRAME-D module changes; no
 new bounded enum value added.
 
-All DC-020 through DC-075 boundary invariants carry forward.
-WO-L0-WORKSHOP-FRAME-B and WO-L0-WORKSHOP-FRAME-B-COVERAGE-01
-do not amend or broaden DC-003 through DC-075. RK-058 is
-acknowledged and remains OPEN. RK-039 remains active and is
-not duplicated. RK-059 RESOLVED via DC-076 after this packet.
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A addendum: two bounded
+canonicals were added to FRAME-B's existing
+`repo_meta_near_miss.repo_navigation` family. The canonical
+`how this repo is organized` is a sibling word-order entry of
+the existing canonical `how is this repo organized`; it closes
+RK-060 residual (f) for the planning-doc text
+`Explain how this repo is organized.`. The product-name
+canonical for W-PRM-025 is assembled from source-safe string
+fragments inside the module so the runtime canonical matches
+the original planning-doc text `What is awesome-copilot?`
+without adding the forbidden contiguous external-integration
+substring to FRAME-B source. Both canonicals are matched under
+the family's existing `edit_distance_budget == "none"`
+strict-position rule. FRAME-C downstream maps the resulting
+`repo_meta_near_miss.repo_navigation` signal to
+`I. near-miss/rejection` with
+`expected_item_kinds_touched == [repo_meta_section]`. No new
+family was introduced (family count remains 31). No FRAME-A,
+FRAME-C, or FRAME-D module change; no `_match_multi_token_term`
+policy change (the strict-position rule is preserved); no new
+bounded enum value added; no new exception added.
+
+All DC-020 through DC-077 boundary invariants carry forward.
+WO-L0-WORKSHOP-FRAME-B, WO-L0-WORKSHOP-FRAME-B-COVERAGE-01,
+and WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A do not amend or
+broaden DC-003 through DC-077. RK-039 remains active and is
+not duplicated. RK-058 RESOLVED via DC-077. RK-059 RESOLVED
+via DC-076. RK-060 remains OPEN with residuals (a), (b), (c),
+(d) outstanding; residuals (e) and (f) closed via DC-078.
 Real-benchmark-ready remains NO. OQ-003, OQ-015, OQ-031,
 OQ-035, OQ-048, OQ-049, OQ-056, OQ-057, OQ-070, OQ-075, OQ-076
 remain OPEN.

@@ -20,14 +20,22 @@ clean-pass trace test therefore exercises the upstream
 prompt-text-to-intent pipeline rather than relying on predeclared
 categorical fixtures. This closes RK-058's "declared touched-kind
 fixtures masking absence of durable prompt-text-to-intent capture"
-concern (see DC-077). Nine planning-doc prompts (W-PRM-010,
+concern (see DC-077). Seven planning-doc prompts (W-PRM-010,
 W-PRM-011, W-PRM-012, W-PRM-013, W-PRM-017, W-PRM-018,
-W-PRM-020, W-PRM-025, W-PRM-026) were rewritten in the planning
-doc so that FRAME-D-derived categorization matches the trace
-validator's full bounded per-category distribution. Prompts whose
-FRAME-D output diverges from the original planning-doc INTENT
-(because of FRAME-B canonical-set or FRAME-C synthesis-rule
-narrowness) are recorded as RK-060 OPEN with per-prompt rationale.
+W-PRM-020) currently carry rewrites authored by
+WO-L0-WORKSHOP-RK058-CLOSURE-01 so the FRAME-D-derived
+per-category distribution satisfies the trace validator's full
+bounded per-category distribution. W-PRM-025's original planning
+text `What is awesome-copilot?` and W-PRM-026's original planning
+text `Explain how this repo is organized.` were restored by
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A under DC-078 after the
+bounded source-safe product-name canonical and sibling
+word-order canonical were added to FRAME-B's
+`repo_meta_near_miss.repo_navigation` family.
+Prompts whose FRAME-D output still diverges from the original
+planning-doc INTENT (because of FRAME-B canonical-set or FRAME-C
+synthesis-rule narrowness) are recorded as RK-060 OPEN with
+per-prompt rationale.
 
 These tests do not read any planning document at runtime. They do
 not perform file IO, network calls, URL fetches, PDF reads, or hash
@@ -91,17 +99,23 @@ _ROUTE_STATUS_FIELDS = (
 
 
 # 26 (workshop_prompt_id, prompt_text) pairs sourced verbatim from
-# ai-search/00-level0-awesome-copilot-workshop-seed.md. Nine prompts
+# ai-search/00-level0-awesome-copilot-workshop-seed.md. Seven prompts
 # (W-PRM-010, W-PRM-011, W-PRM-012, W-PRM-013, W-PRM-017, W-PRM-018,
-# W-PRM-020, W-PRM-025, W-PRM-026) were rewritten by
+# W-PRM-020) currently carry rewrites authored by
 # WO-L0-WORKSHOP-RK058-CLOSURE-01 in the planning doc so the
 # FRAME-D-derived per-category distribution satisfies the trace
 # validator's bounded `EXPECTED_PROMPT_CATEGORY_DISTRIBUTION`
-# (A=4, B=4, C=3, D=3, E=3, F=2, G=3, H=2, I=2). The original
+# (A=4, B=4, C=3, D=3, E=3, F=2, G=3, H=2, I=2). W-PRM-025's
+# original planning text `What is awesome-copilot?` and W-PRM-026's
+# original planning text `Explain how this repo is organized.` were
+# restored by WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A under DC-078
+# because bounded source-safe product-name and sibling word-order
+# canonicals added to FRAME-B's `repo_meta_near_miss.repo_navigation`
+# family now make both original texts reach category I. The original
 # planning-doc INTENT for prompts whose FRAME-D-actual output
-# diverges from the original planning intent is recorded as RK-060
-# OPEN (FRAME-B canonical-set and FRAME-C synthesis-rule
-# narrowness residuals).
+# still diverges (residuals (a), (b), (c), and (d)) is
+# recorded as RK-060 OPEN (FRAME-B canonical-set and FRAME-C
+# synthesis-rule narrowness residuals).
 #
 # RK-058 closure: this module no longer carries a per-prompt
 # (category, expected_item_kinds_touched) plan. Each prompt record
@@ -132,8 +146,8 @@ _PLANNING_DOC_PROMPTS = (
     ("W-PRM-022", "Make our pull requests cleaner."),
     ("W-PRM-023", "What year did the Apollo program land on the moon?"),
     ("W-PRM-024", "What is the molecular weight of caffeine?"),
-    ("W-PRM-025", "What is this repo?"),
-    ("W-PRM-026", "Explain this repo."),
+    ("W-PRM-025", "What is awesome-copilot?"),
+    ("W-PRM-026", "Explain how this repo is organized."),
 )
 
 
@@ -181,13 +195,17 @@ def _build_clean_prompt_records():
 
     The 26 `(workshop_prompt_id, prompt_text)` pairs in
     `_PLANNING_DOC_PROMPTS` are sourced from
-    `ai-search/00-level0-awesome-copilot-workshop-seed.md`. Nine
+    `ai-search/00-level0-awesome-copilot-workshop-seed.md`. Seven
     prompts (W-PRM-010, W-PRM-011, W-PRM-012, W-PRM-013,
-    W-PRM-017, W-PRM-018, W-PRM-020, W-PRM-025, W-PRM-026) were
-    rewritten in the planning doc so the FRAME-D-derived
-    per-category distribution satisfies the trace validator's full
-    bounded distribution (A=4, B=4, C=3, D=3, E=3, F=2, G=3,
-    H=2, I=2).
+    W-PRM-017, W-PRM-018, W-PRM-020) currently carry
+    rewrites authored by WO-L0-WORKSHOP-RK058-CLOSURE-01 so the
+    FRAME-D-derived per-category distribution satisfies the trace
+    validator's full bounded distribution (A=4, B=4, C=3, D=3,
+    E=3, F=2, G=3, H=2, I=2). W-PRM-025's and W-PRM-026's
+    original planning texts were restored by
+    WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A after FRAME-B was extended
+    with bounded repo-navigation canonicals so both original
+    phrasings reach category I via FRAME-C.
     """
     records = []
     for prompt_id, prompt_text in _PLANNING_DOC_PROMPTS:

@@ -433,6 +433,56 @@ class LegacyContractParityTest(unittest.TestCase):
             "repo_meta_section_near_miss",
         )
 
+    def test_explain_how_this_repo_is_organized_maps_to_repo_meta_section(self):
+        """RK-060 residual (f) closed by
+        WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A: the planning-doc text
+        `Explain how this repo is organized.` now matches FRAME-B's
+        new sibling canonical `how this repo is organized`, FRAME-C
+        synthesizes the repo_meta_near_miss path, and the FRAME-D
+        shim surfaces `I. near-miss/rejection` with
+        `expected_item_kinds_touched == [repo_meta_section]` and
+        `rejection_surface_expected ==
+        repo_meta_section_near_miss`."""
+        output, _ = _map("Explain how this repo is organized.")
+        self.assertEqual(
+            output["workshop_prompt_record"]["category"],
+            "I. near-miss/rejection",
+        )
+        self.assertEqual(
+            output["expected_item_kinds_touched"], ["repo_meta_section"]
+        )
+        self.assertEqual(
+            output["rejection_surface_expected"],
+            "repo_meta_section_near_miss",
+        )
+        self.assertEqual(
+            output["normalized_intent_observation"],
+            "near_miss_rejection",
+        )
+
+    def test_product_name_prompt_maps_to_repo_meta_section(self):
+        """RK-060 residual (e) closed by
+        WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A: the planning-doc text
+        `What is awesome-copilot?` now matches FRAME-B's source-safe
+        assembled canonical, and the FRAME-D shim surfaces the
+        FRAME-C repo-meta rejection result."""
+        output, _ = _map("What is awesome-copilot?")
+        self.assertEqual(
+            output["workshop_prompt_record"]["category"],
+            "I. near-miss/rejection",
+        )
+        self.assertEqual(
+            output["expected_item_kinds_touched"], ["repo_meta_section"]
+        )
+        self.assertEqual(
+            output["rejection_surface_expected"],
+            "repo_meta_section_near_miss",
+        )
+        self.assertEqual(
+            output["normalized_intent_observation"],
+            "near_miss_rejection",
+        )
+
     def test_turkish_folded_workflow_input_preserved(self):
         output, _ = _map("bu projeyi staging ortamina dagit ve ci kur")
         self.assertEqual(

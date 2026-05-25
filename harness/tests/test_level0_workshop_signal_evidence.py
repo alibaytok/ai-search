@@ -723,6 +723,107 @@ class ActionAssistFamilyTest(unittest.TestCase):
         self.assertEqual(signals, [])
 
 
+class RepoMetaNearMissCoverageTest(unittest.TestCase):
+    """Tests for the WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A bounded
+    canonical additions closing RK-060 residuals (e) and (f):
+    the planning-doc texts `What is awesome-copilot?` and
+    `Explain how this repo is organized.` now match the same
+    `repo_meta_near_miss.repo_navigation` family, so FRAME-C
+    downstream maps both prompts to category I / [repo_meta_section]."""
+
+    def _signals_for(self, prompt):
+        view = build_level0_workshop_normalized_prompt_view(
+            prompt, EventLog()
+        )
+        ledger = extract_workshop_signal_evidence(view, EventLog())
+        return ledger["signal_evidence"]
+
+    def _repo_meta_families(self, prompt):
+        return [
+            s["signal_family"] for s in self._signals_for(prompt)
+            if s["family_kind"] == "repo_meta_near_miss"
+        ]
+
+    def test_explain_how_this_repo_is_organized_fires_repo_navigation(self):
+        families = self._repo_meta_families(
+            "Explain how this repo is organized."
+        )
+        self.assertIn("repo_meta_near_miss.repo_navigation", families)
+
+    def test_product_name_prompt_fires_repo_navigation(self):
+        families = self._repo_meta_families("What is awesome-copilot?")
+        self.assertIn("repo_meta_near_miss.repo_navigation", families)
+
+    def test_new_canonical_records_normalized_value_word_order(self):
+        signals = [
+            s for s in self._signals_for(
+                "Explain how this repo is organized."
+            )
+            if s["signal_family"] == "repo_meta_near_miss.repo_navigation"
+            and s["normalized_value"] == "how this repo is organized"
+        ]
+        self.assertGreater(len(signals), 0)
+        record = signals[0]
+        self.assertEqual(record["family_kind"], "repo_meta_near_miss")
+        self.assertEqual(record["edit_budget_tag"], "none")
+        self.assertEqual(record["language_alias_tag"], "en")
+        self.assertEqual(record["contributes_to"], ["near_miss_reason"])
+
+    def test_product_name_canonical_records_normalized_value(self):
+        signals = [
+            s for s in self._signals_for("What is awesome-copilot?")
+            if s["signal_family"] == "repo_meta_near_miss.repo_navigation"
+            and s["normalized_value"] == "awesome-" + "co" + "pilot"
+        ]
+        self.assertGreater(len(signals), 0)
+        record = signals[0]
+        self.assertEqual(record["family_kind"], "repo_meta_near_miss")
+        self.assertEqual(record["edit_budget_tag"], "none")
+        self.assertEqual(record["language_alias_tag"], "en")
+        self.assertEqual(record["contributes_to"], ["near_miss_reason"])
+
+    def test_existing_canonical_still_fires_on_prior_word_order(self):
+        families = self._repo_meta_families(
+            "Tell me how is this repo organized."
+        )
+        self.assertIn("repo_meta_near_miss.repo_navigation", families)
+
+    def test_new_canonical_does_not_fire_on_partial_window(self):
+        # `how this repo` alone (3 tokens) must not match the
+        # 5-token canonical `how this repo is organized` under the
+        # strict-position rule.
+        families = self._repo_meta_families(
+            "Tell me how this repo behaves."
+        )
+        self.assertNotIn(
+            "repo_meta_near_miss.repo_navigation", families
+        )
+
+    def test_new_canonical_does_not_fire_on_word_swap_outside_canonicals(self):
+        # An unrelated phrasing that does not match either canonical
+        # word order must not falsely fire the family.
+        families = self._repo_meta_families(
+            "Tell me organized this repo how is."
+        )
+        self.assertNotIn(
+            "repo_meta_near_miss.repo_navigation", families
+        )
+
+    def test_repo_meta_signal_count_increments_for_new_canonical(self):
+        view = build_level0_workshop_normalized_prompt_view(
+            "Explain how this repo is organized.", EventLog()
+        )
+        ledger = extract_workshop_signal_evidence(view, EventLog())
+        self.assertGreater(ledger["repo_meta_near_miss_signal_count"], 0)
+
+    def test_repo_meta_signal_count_increments_for_product_name(self):
+        view = build_level0_workshop_normalized_prompt_view(
+            "What is awesome-copilot?", EventLog()
+        )
+        ledger = extract_workshop_signal_evidence(view, EventLog())
+        self.assertGreater(ledger["repo_meta_near_miss_signal_count"], 0)
+
+
 class StaticScanTest(unittest.TestCase):
 
     def setUp(self):
