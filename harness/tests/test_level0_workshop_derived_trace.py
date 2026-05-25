@@ -168,7 +168,10 @@ _ROUTE_STATUS_FIELDS = (
 # intent G/[workflow_file, instruction, cookbook_entry] after
 # WO-L0-WORKSHOP-FRAME-C-HARDEN-02 added the deploy-variant
 # bare-ambiguity emission tuple (DC-081). RK-060 is fully
-# closed by DC-081.
+# closed by DC-081. W-PRM-013 uses an agent/workflow surface
+# after `define` became an action.create canonical so the
+# FRAME-D-derived category distribution remains intentionally
+# balanced at A=4, D=3.
 #
 # RK-058 closure: this module no longer carries a per-prompt
 # (category, expected_item_kinds_touched) plan. Each prompt record

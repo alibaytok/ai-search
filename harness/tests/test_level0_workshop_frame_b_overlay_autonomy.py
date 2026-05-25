@@ -47,6 +47,7 @@ def _accepted_materialization_bundle():
     bundle["decision_reasons"] = ["accepted_strict_improvement"]
     bundle["accepted_family_ids"] = ["action.create"]
     bundle["canonical_additions"]["action.create"] = ["draft"]
+    bundle["canonical_additions"]["action.set_up"] = ["bootstrap"]
     return bundle
 
 
@@ -286,6 +287,7 @@ class FrameBOverlayAutonomyTest(unittest.TestCase):
             self.assertIn('"author",', source)
             self.assertIn('"define",', source)
             self.assertIn('"draft",', source)
+            self.assertNotIn('"bootstrap",', source)
             compile(source, path, "exec")
             self.assertNotEqual(source.encode("ascii"), original)
         finally:
