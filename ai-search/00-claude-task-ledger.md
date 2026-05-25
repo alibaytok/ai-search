@@ -18663,3 +18663,334 @@ ready remains NO. RK-058 stays RESOLVED. RK-059 stays
 RESOLVED. RK-060 stays OPEN with residuals (a), (c), and
 (d) outstanding; residuals (e) and (f) closed via DC-078;
 residual (b) closed via DC-079.
+
+---
+
+## WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C
+
+### Status
+
+Implemented; pending Codex review.
+
+### Mandatory Priority-Miss Check (@pmc)
+
+1. Higher-priority prerequisite? RK-058 RESOLVED via DC-077;
+   RK-059 RESOLVED via DC-076; RK-060 OPEN with residuals
+   (a), (c), and (d) outstanding after DC-078 closed (e)/(f)
+   and DC-079 closed (b). Triage plan recommends FRAME-B
+   before FRAME-C; (a) is FRAME-B-side.
+2. Downstream surface skipping upstream cause? No - (a)'s
+   root cause is `FRAME-B canonical-set lacks
+   cron/scheduled/hook tokens`; closing at FRAME-B is
+   upstream.
+3. Safer / more direct sequencing? Yes - bounded canonical
+   additions inside two existing families (no new family)
+   under the existing budget rules.
+4. Conflicts with prior invariants / open OQs / RKs /
+   non-claims / real-benchmark-ready NO? None.
+5. Concern surfaced as a risk note: FRAME-C's bounded
+   `_select_workshop_category` returns G when
+   `candidate_count >= 2` makes ambiguity_level high; so
+   `{workflow_file, hook}` resolves to G rather than B even
+   though the planning intent is B. The closest bounded
+   surrogate that closes (a)'s FRAME-B coverage gap AND
+   preserves the trace validator's per-category distribution
+   (G=3, B=4) is G/[workflow_file, hook] - category G
+   unchanged (no rebalance needed), kinds set exactly the
+   planning intent [workflow_file, hook]. The B/G category
+   mismatch is a sibling FRAME-C-side observation reserved
+   for a future Codex-authorized FRAME-C-side packet.
+6. Priority-miss check: no higher-priority missed scope found.
+
+### Section L Scope Check
+
+- Goal: close RK-060 residual (a)'s upstream FRAME-B
+  coverage gap via bounded `scheduled` canonical addition to
+  two existing families; deliver surrogate
+  G/[workflow_file, hook] that preserves the distribution
+  and matches the planning-intent kinds.
+- Allowed files: exactly the 9 listed.
+- Forbidden: FRAME-A / C / D module change;
+  benchmark-fixtures mutation; controller-checklist change;
+  new family unless required; route / retrieval / scoring /
+  benchmark / source / corpus / LLM / provider /
+  architecture work; full closure of RK-060.
+- Halt: forbidden phrase appears; FRAME-A / C / D
+  unintentionally modified; full suite regression;
+  distribution invariant break.
+- Definition of done: W-PRM-007 reaches G/[workflow_file,
+  hook]; full suite passes; RK-060 residual (a) closed via
+  DC-080; (c) / (d) remain OPEN.
+
+### Pre-Implementation Review Note
+
+- Q1: No new authorization beyond bounded canonical
+  addition; DC-020 through DC-079 boundary envelope carries
+  forward.
+- Q2: No source-content risk; single-token canonical added
+  to two existing families under the existing budget rule.
+- Q3: No prompt-copying risk; `scheduled` is a semantic
+  alias of the existing trigger/hook canonicals.
+- Q4: RK-058 / RK-059 stay RESOLVED; RK-060 stays OPEN with
+  (c), (d) outstanding; residual (a)'s FRAME-B coverage gap
+  closed via DC-080; the B/G category mismatch is a sibling
+  FRAME-C-side observation. OQs unchanged.
+- Q5: 9 files modified exactly.
+- Q6: No FRAME-A / C / D module modification; no
+  benchmark-fixtures mutation; no controller-checklist
+  change; no forbidden output field name; no forbidden
+  external-integration substring added to FRAME-B source.
+
+No scope drift detected.
+
+### Codex Directive Recorded
+
+Verbatim directive Claude was bound to (from the user
+prompt):
+
+- Close ONLY RK-060 residual (a) at FRAME-B.
+- W-PRM-007 should reach FRAME-D as the planning-intent
+  surrogate B/[workflow_file, hook] or the closest bounded
+  surrogate that preserves the trace validator distribution.
+- Prefer bounded canonical/alias additions for
+  scheduled/cron/every-Monday/hook coverage.
+- Do not change `_match_multi_token_term` or
+  `_budget_limit_for_canonical`.
+- At most +1 SIGNAL_FAMILIES family unless a blocker is
+  found.
+- Absorb any trace-distribution drift inside this packet.
+- No FRAME-A module/test change. No FRAME-C or FRAME-D
+  module change. No benchmark-fixtures or
+  controller-checklist mutation. No
+  route/retrieval/ranking/scoring/benchmark/source/corpus/
+  LLM/provider/architecture work.
+- Keep RK-060 OPEN unless all remaining residuals are
+  closed.
+
+### Implementation Summary
+
+FRAME-B module change in
+`harness/level0_workshop_signal_evidence.py`: extended
+`object.hook.canonical_terms` with `scheduled` (a scheduled
+trigger is a hook-shaped object: cron-style automation that
+runs on an event); extended
+`constraint.event_triggered.canonical_terms` with
+`scheduled` (a scheduled trigger is an event-triggered
+constraint). Both additions preserve the families' existing
+`edit_distance_budget == "short_token_1"` and the existing
+`_match_multi_token_term` / `_budget_limit_for_canonical`
+policies; the new canonical is a single-token entry under
+the same per-family budget rule. No new family was
+introduced (`SIGNAL_FAMILIES` family count remains 31).
+Block comments above both family entries document the
+addition's RK-060 (a) closure and the unchanged matching
+policy.
+
+`harness/tests/test_level0_workshop_signal_evidence.py`:
+added `ScheduledTriggerCoverageTest` with six tests:
+`scheduled` fires constraint.event_triggered; `scheduled`
+fires object.hook; the `scheduled` records carry
+`short_token_1` budget tag with both families firing; the
+existing `trigger` canonical still fires both families; the
+existing `webhook` canonical still fires object.hook;
+`school` (edit distance 4 from `scheduled`) does not
+falsely fire either family.
+
+`harness/tests/test_level0_workshop_canonical_intent_frame.py`:
+added one FRAME-C end-to-end test
+`HardenedSynthesisTest::test_scheduled_trigger_yields_workflow_hook_surrogate`
+asserting W-PRM-007's planning-doc text yields
+`category == "G. ambiguous"`,
+`expected_item_kinds_touched == [workflow_file, hook]`,
+both `workflow_file` and `hook` appear in
+`source_shape_affinity`, and `bare_ambiguity_action_only`
+is NOT in `ambiguity_reasons`.
+
+`harness/tests/test_level0_workshop_user_intent_mapper.py`:
+added one FRAME-D mapper end-to-end test
+`test_scheduled_trigger_maps_to_workflow_hook_surrogate`
+asserting the same category, kind list,
+`ambiguity_observed == True`, and the legacy
+`normalized_intent_observation == "ambiguous_user_intent"`.
+
+`harness/tests/test_level0_workshop_derived_trace.py`:
+updated the module-scope comment block and the
+`_build_clean_prompt_records` docstring to record the
+residual (a) closure path under DC-080 and the
+closest-bounded-surrogate semantics. W-PRM-007's prompt
+text in `_PLANNING_DOC_PROMPTS` is unchanged.
+
+`ai-search/00-level0-awesome-copilot-workshop-seed.md`:
+updated W-PRM-007's prompt-table row (expected_item_kinds_touched
+column) from `skill; instruction; workflow_file` to
+`workflow_file; hook` to reflect the new FRAME-D-actual;
+updated the closure-evidence row for W-PRM-007 from
+`RK-060 (residual a)` to
+`match (closest bounded surrogate via canonical extension;
+FRAME-C category-selector returns G instead of B for
+{workflow_file, hook} under high ambiguity)` with the
+DC-080 citation; updated the summary line (16 of 26 rows
+match planning intent under FRAME-D; 3 category-rule
+differences without a synthesis gap including W-PRM-007's
+B/G category-selector observation; 7 planning rewrites
+remain; 1 current prompt row remains RK-060 OPEN residual -
+W-PRM-021).
+
+`ai-search/70-level0-workshop-signal-evidence.md`:
+added a WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C addendum to
+the Non-Claim Constraints section recording the bounded
+canonical extension, the family-count-unchanged
+consequence, the residual (a) closure, the unchanged
+matching / budget policies, the unchanged FRAME-A /
+FRAME-C / FRAME-D modules, and the B/G category-selector
+observation; updated the family-count summary; refreshed
+the RK / DC carry-forward line to DC-080.
+
+`ai-search/00-open-questions.md`:
+appended a partial-closure note to the RK-060 row recording
+residual (a)'s upstream FRAME-B coverage gap closed via
+DC-080 and removing (a) from the remaining-OPEN list;
+added DC-080 row recording the partial-closure decision
+and the per-residual scope; updated the document Status
+header to lead with WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C;
+appended the new packet to the Work Order chronology.
+
+### Files Modified
+
+1. `harness/level0_workshop_signal_evidence.py`
+2. `harness/tests/test_level0_workshop_signal_evidence.py`
+3. `harness/tests/test_level0_workshop_canonical_intent_frame.py`
+4. `harness/tests/test_level0_workshop_user_intent_mapper.py`
+5. `harness/tests/test_level0_workshop_derived_trace.py`
+6. `ai-search/70-level0-workshop-signal-evidence.md`
+7. `ai-search/00-level0-awesome-copilot-workshop-seed.md`
+8. `ai-search/00-open-questions.md`
+9. `ai-search/00-claude-task-ledger.md` (this entry)
+
+### Residual closure status
+
+- (a) W-PRM-007 - upstream FRAME-B coverage gap CLOSED via
+  DC-080. The bounded `scheduled` canonical added to
+  `object.hook` and `constraint.event_triggered`
+  suppresses bare-ambiguity and lets workflow_file + hook
+  co-fire; FRAME-D surfaces the closest bounded surrogate
+  G/[workflow_file, hook]. The B/G category-selector
+  mismatch versus planning intent B is a sibling
+  FRAME-C-side observation reserved for a future Codex
+  packet.
+- (b) W-PRM-015 - already CLOSED via DC-079.
+- (c) W-PRM-020 original - OPEN (FRAME-C-side; out of
+  scope).
+- (d) W-PRM-021 - OPEN (FRAME-C-side; out of scope).
+- (e) W-PRM-025 original - already CLOSED via DC-078.
+- (f) W-PRM-026 original - already CLOSED via DC-078.
+
+### Verification
+
+- Targeted four-module run
+  (FRAME-B + FRAME-C + mapper + derived-trace):
+  364/364 OK (was 356; +6 FRAME-B + 1 FRAME-C + 1 mapper).
+- `python -B -m unittest discover -s harness/tests`:
+  1546/1546 OK (was 1538; net +8).
+- ASCII purity of all 9 touched files verified
+  (sum of bytes > 127 == 0 in each).
+- No `__pycache__` artifacts under `harness/`.
+- Project root contains exactly `ai-search/`, `harness/`,
+  `benchmark-fixtures/`.
+- `benchmark-fixtures/` unchanged.
+- FRAME-A module / test unchanged.
+- FRAME-C module unchanged (only its test file).
+- FRAME-D shim module unchanged (only its test file).
+- `ai-search/00-controller-checklist.md` unchanged.
+- RK-039 single (text unchanged).
+- RK-058 RESOLVED (unchanged).
+- RK-059 RESOLVED (unchanged).
+- RK-060 OPEN (residuals (c) and (d) remain OPEN;
+  residual (a)'s FRAME-B coverage gap closed via DC-080;
+  residual (b) closed via DC-079; residuals (e), (f) closed
+  via DC-078).
+- All 11 tracked OQs (OQ-003, OQ-015, OQ-031, OQ-035,
+  OQ-048, OQ-049, OQ-056, OQ-057, OQ-070, OQ-075, OQ-076)
+  remain OPEN.
+- Real-benchmark-ready remains NO.
+- `git status` shows exactly the nine allowed files
+  modified.
+
+### Explicit confirmations
+
+- No FRAME-A module or test modification.
+- No FRAME-C module modification (only its test file).
+- No FRAME-D module modification (only its test file).
+- No benchmark-fixtures mutation.
+- No `00-controller-checklist.md` modification.
+- No `_match_multi_token_term` policy change.
+- No `_budget_limit_for_canonical` table change.
+- No new bounded enum value added.
+- No new exception class added.
+- No new family added (SIGNAL_FAMILIES count remains 31).
+- No forbidden output field names added.
+- No forbidden external-integration substring added to
+  FRAME-B source.
+- No real indexing, retrieval, ranking, scoring,
+  similarity, distance, embedding, vector, ANN, reranker,
+  LLM / provider call, route object creation, route
+  selection, source qualification, corpus admission, real
+  benchmark execution, architecture / vendor / library /
+  index-family / production-system selection, IDE /
+  extension / chat / collaborator integration, Source
+  Card or Route Card creation, production artifact
+  contracts, third-party dependencies, CLI introduction,
+  subprocess or shell execution.
+- No closure of RK-058 (already RESOLVED).
+- No closure of RK-059 (already RESOLVED).
+- No full closure of RK-060 (residuals (c), (d) remain
+  OPEN).
+- No duplication of RK-039.
+
+### Structural gaps noticed
+
+The residual (a) closure delivered the closest bounded
+surrogate that preserves the trace validator's per-category
+distribution: kinds set [workflow_file, hook] matches the
+planning intent exactly, but the category result G versus
+planning intent B is bounded by FRAME-C's
+`_select_workshop_category` rule that returns G when
+`candidate_count >= 2` triggers high ambiguity. Closing
+the B/G mismatch would require either (i) a FRAME-C edit
+extending `_select_workshop_category` to map
+`{workflow_file, hook}` to B even under high ambiguity, or
+(ii) a FRAME-C edit changing `_classify_ambiguity` so a
+2-candidate `{workflow_file, hook}` set does not trigger
+high ambiguity. Both options are FRAME-C-side and out of
+this packet's scope; they are reserved for a future
+Codex-authorized FRAME-C-side packet (the proposed
+WO-L0-WORKSHOP-FRAME-C-HARDEN-02 covers residuals (c) and
+(d); the W-PRM-007 B/G surrogate observation could be
+added to that packet's scope or split into a sibling
+packet).
+
+### Non-Claims
+
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C does not claim that
+the bounded canonical extension, the closure of residual
+(a)'s upstream FRAME-B coverage gap, the closest-bounded-
+surrogate semantics, the eight added tests, or the partial
+closure of RK-060 are sufficient, necessary, superior,
+best, complete, production-ready, recommended, selected,
+or benchmark-ready. The bounded single-canonical addition
+(applied to two existing families), the bounded six-test
+`ScheduledTriggerCoverageTest` surface, the bounded
+one-test FRAME-C addition, the bounded one-test FRAME-D
+mapper addition, the kinds-set-match-with-category-B/G-
+mismatch surrogate, and the per-residual closure status
+are bounded by WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C and
+are NOT claimed exhaustive.
+
+All DC-020 through DC-080 boundary invariants carry
+forward. WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C does not
+amend or broaden DC-003 through DC-080. Real-benchmark-
+ready remains NO. RK-058 stays RESOLVED. RK-059 stays
+RESOLVED. RK-060 stays OPEN with residuals (c) and (d)
+outstanding; residuals (e) and (f) closed via DC-078;
+residual (b) closed via DC-079; residual (a)'s upstream
+FRAME-B coverage gap closed via DC-080.

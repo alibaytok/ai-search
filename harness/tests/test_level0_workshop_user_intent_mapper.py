@@ -433,6 +433,35 @@ class LegacyContractParityTest(unittest.TestCase):
             "repo_meta_section_near_miss",
         )
 
+    def test_scheduled_trigger_maps_to_workflow_hook_surrogate(self):
+        """RK-060 residual (a) closed at FRAME-B by
+        WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C: the planning-doc
+        text `Set up scheduled dependency scanning every Monday.`
+        now matches FRAME-B's new `scheduled` canonical on both
+        `constraint.event_triggered` and `object.hook`; FRAME-C
+        synthesizes workflow_file + hook as the candidate set;
+        the FRAME-D shim surfaces the bounded surrogate
+        `G. ambiguous` with
+        `expected_item_kinds_touched == [workflow_file, hook]`
+        and `ambiguity_observed == True` (the B/G mismatch
+        versus the planning intent category `B. workflow intent`
+        is a sibling FRAME-C-side residual)."""
+        output, _ = _map(
+            "Set up scheduled dependency scanning every Monday."
+        )
+        self.assertEqual(
+            output["workshop_prompt_record"]["category"], "G. ambiguous"
+        )
+        self.assertEqual(
+            output["expected_item_kinds_touched"],
+            ["workflow_file", "hook"],
+        )
+        self.assertTrue(output["ambiguity_observed"])
+        self.assertEqual(
+            output["normalized_intent_observation"],
+            "ambiguous_user_intent",
+        )
+
     def test_setting_up_inflection_maps_to_instruction_confusion(self):
         """RK-060 residual (b) closed by
         WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B: the planning-doc text

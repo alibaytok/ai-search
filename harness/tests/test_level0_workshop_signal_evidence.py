@@ -723,6 +723,89 @@ class ActionAssistFamilyTest(unittest.TestCase):
         self.assertEqual(signals, [])
 
 
+class ScheduledTriggerCoverageTest(unittest.TestCase):
+    """Tests for the WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C bounded
+    canonical extension closing RK-060 residual (a): the planning-doc
+    text `Set up scheduled dependency scanning every Monday.` now
+    matches both `constraint.event_triggered` (via the new
+    `scheduled` canonical) and `object.hook` (via the parallel
+    `scheduled` canonical). FRAME-C's bare-ambiguity rule is
+    suppressed because a target_object and a constraint are
+    present; FRAME-C's `_is_workflow_intent` fires (action.set_up
+    is in workflow_actions and has_event_constraint is True) and
+    `_is_hook_intent` fires (hook is in distinct_target_objects);
+    workflow_file and hook co-fire as the candidate set; the
+    workshop category is the closest bounded surrogate
+    `G. ambiguous` with `[workflow_file, hook]` (FRAME-C's
+    bounded category selector returns G when 2+ candidates fire
+    with ambiguity high; the B/G mismatch is a sibling FRAME-C-
+    side observation and not in scope for this packet)."""
+
+    def _signals_for(self, prompt):
+        view = build_level0_workshop_normalized_prompt_view(
+            prompt, EventLog()
+        )
+        ledger = extract_workshop_signal_evidence(view, EventLog())
+        return ledger["signal_evidence"]
+
+    def _families_for(self, prompt):
+        return {s["signal_family"] for s in self._signals_for(prompt)}
+
+    def test_scheduled_token_fires_constraint_event_triggered(self):
+        families = self._families_for(
+            "Set up scheduled dependency scanning every Monday."
+        )
+        self.assertIn("constraint.event_triggered", families)
+
+    def test_scheduled_token_fires_object_hook(self):
+        families = self._families_for(
+            "Set up scheduled dependency scanning every Monday."
+        )
+        self.assertIn("object.hook", families)
+
+    def test_scheduled_canonical_records_short_token_1_budget(self):
+        signals = [
+            s for s in self._signals_for(
+                "Set up scheduled dependency scanning every Monday."
+            )
+            if s["normalized_value"] == "scheduled"
+        ]
+        # Both object.hook and constraint.event_triggered fire on
+        # the same `scheduled` token.
+        self.assertGreaterEqual(len(signals), 2)
+        families_with_scheduled = {s["signal_family"] for s in signals}
+        self.assertEqual(
+            families_with_scheduled,
+            {"object.hook", "constraint.event_triggered"},
+        )
+        for rec in signals:
+            self.assertEqual(rec["edit_budget_tag"], "short_token_1")
+            self.assertEqual(rec["language_alias_tag"], "en")
+
+    def test_existing_trigger_canonical_still_fires(self):
+        families = self._families_for("Run the job when a trigger fires.")
+        self.assertIn("constraint.event_triggered", families)
+        self.assertIn("object.hook", families)
+
+    def test_existing_hook_canonical_still_fires(self):
+        families = self._families_for("Configure a webhook for the repo.")
+        self.assertIn("object.hook", families)
+
+    def test_scheduled_canonical_does_not_fire_on_unrelated_word(self):
+        # `schedules` is one edit from `scheduled` under
+        # `short_token_1` (canonical len 9 -> limit 1). The
+        # existing budget rule accepts close-edit matches; this
+        # test confirms the broader family path stays bounded by
+        # asserting that an entirely unrelated word like `school`
+        # does NOT match `scheduled` (edit distance 4, well
+        # outside budget).
+        families = self._families_for("Tell me about the school.")
+        # neither family should fire from `school`
+        self.assertNotIn("constraint.event_triggered", families)
+        # object.hook also must not falsely fire
+        self.assertNotIn("object.hook", families)
+
+
 class ActionSetUpInflectionCoverageTest(unittest.TestCase):
     """Tests for the WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B bounded
     canonical_terms extension closing RK-060 residual (b): the

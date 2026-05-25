@@ -569,6 +569,39 @@ class HardenedSynthesisTest(unittest.TestCase):
         workflow_count = sum(1 for k in kinds if k == "workflow_file")
         self.assertEqual(workflow_count, 1)
 
+    def test_scheduled_trigger_yields_workflow_hook_surrogate(self):
+        """RK-060 residual (a) closed at the FRAME-B layer by
+        WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C: the new FRAME-B
+        `scheduled` canonical on both `constraint.event_triggered`
+        and `object.hook` suppresses bare-ambiguity (a constraint
+        and a target_object are present) and lets FRAME-C's
+        `_is_workflow_intent` (action.set_up + has_event_constraint)
+        and `_is_hook_intent` (hook in distinct_target_objects)
+        both fire on the planning-doc text `Set up scheduled
+        dependency scanning every Monday.`. The candidate set is
+        `{workflow_file, hook}` which the bounded `_select_workshop_category`
+        rule resolves to `G. ambiguous` when ambiguity_level is
+        `high` (the B/G mismatch versus the planning intent
+        category `B. workflow intent` is a sibling FRAME-C-side
+        residual; the kinds set `[workflow_file, hook]` matches
+        the planning intent and the trace validator distribution
+        is preserved because W-PRM-007 stays in G)."""
+        result = _frame_for(
+            "Set up scheduled dependency scanning every Monday."
+        )
+        record = result["workshop_prompt_record"]
+        self.assertEqual(record["category"], "G. ambiguous")
+        self.assertEqual(
+            record["expected_item_kinds_touched"],
+            ["workflow_file", "hook"],
+        )
+        kinds = [e["item_kind"] for e in result["source_shape_affinity"]]
+        self.assertIn("workflow_file", kinds)
+        self.assertIn("hook", kinds)
+        self.assertNotIn(
+            "bare_ambiguity_action_only", result["ambiguity_reasons"]
+        )
+
     def test_setting_up_inflection_yields_instruction_confusion(self):
         """RK-060 residual (b) closed by
         WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B: the new FRAME-B

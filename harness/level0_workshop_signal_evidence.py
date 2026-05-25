@@ -384,10 +384,17 @@ SIGNAL_FAMILIES = (
         exclusion_terms=(),
         contributes_to=("target_object",),
     ),
+    # WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C closes RK-060 residual (a)
+    # by extending object.hook with the bounded canonical
+    # `scheduled` (a scheduled trigger is a hook-shaped object in
+    # the planning-doc taxonomy: a cron-style automation that
+    # runs on an event). The family's existing `short_token_1`
+    # budget and the existing matching policy are preserved; no
+    # new family is introduced.
     LexicalFamily(
         family_id="object.hook",
         family_kind="object",
-        canonical_terms=("hook", "trigger", "webhook"),
+        canonical_terms=("hook", "trigger", "webhook", "scheduled"),
         tr_aliases=("kanca", "tetikleyici"),
         edit_distance_budget="short_token_1",
         exclusion_terms=(),
@@ -486,11 +493,23 @@ SIGNAL_FAMILIES = (
         contributes_to=("domain",),
     ),
     # constraint.*
+    # WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C closes RK-060 residual (a)
+    # by extending constraint.event_triggered with the bounded
+    # canonical `scheduled`. A scheduled trigger is an
+    # event-triggered constraint in the planning-doc taxonomy
+    # (a cron-style automation). Combined with the parallel
+    # `scheduled` addition to object.hook, FRAME-C's
+    # `_is_workflow_intent` fires (action.set_up + has_event_constraint)
+    # and `_is_hook_intent` fires (hook in distinct_target_objects),
+    # so workflow_file and hook co-fire as the candidate set; the
+    # bare-ambiguity rule is suppressed because both a target_object
+    # and a constraint are present.
     LexicalFamily(
         family_id="constraint.event_triggered",
         family_kind="constraint",
         canonical_terms=(
             "trigger", "triggered", "on event", "whenever", "when",
+            "scheduled",
         ),
         tr_aliases=("tetiklendiginde",),
         edit_distance_budget="short_token_1",

@@ -40,6 +40,16 @@ inflection canonicals `setting up` / `sets up` to FRAME-B's
 `An instruction file that deploys to CI.` was re-rewritten to
 `An instruction file for CI conventions.` in the same packet
 to rebalance the per-category distribution invariant.
+W-PRM-007's original planning text `Set up scheduled dependency
+scanning every Monday.` reaches the closest bounded surrogate
+G/[workflow_file, hook] after
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C added the bounded
+`scheduled` canonical to FRAME-B's
+`constraint.event_triggered` and `object.hook` families
+under DC-080; the kinds set matches the planning intent
+exactly while the B/G category mismatch is a sibling
+FRAME-C-side observation reserved for a future Codex-
+authorized FRAME-C-side packet.
 Prompts whose FRAME-D output still diverges from the original
 planning-doc INTENT (because of FRAME-B canonical-set or FRAME-C
 synthesis-rule narrowness) are recorded as RK-060 OPEN with
@@ -128,11 +138,20 @@ _ROUTE_STATUS_FIELDS = (
 # W-PRM-017's prior rewrite was re-rewritten in the same packet
 # to `An instruction file for CI conventions.` so the
 # per-category distribution invariant stays balanced (A=4, E=3)
-# after W-PRM-015 shifted from A to E. The original
-# planning-doc INTENT for prompts whose FRAME-D-actual output
-# still diverges (residuals (a), (c), and (d)) is
-# recorded as RK-060 OPEN (FRAME-B canonical-set and FRAME-C
-# synthesis-rule narrowness residuals).
+# after W-PRM-015 shifted from A to E. W-PRM-007's original
+# planning text `Set up scheduled dependency scanning every
+# Monday.` reaches the closest bounded surrogate G/[workflow_file,
+# hook] after WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C added the
+# bounded `scheduled` canonical to FRAME-B's
+# `constraint.event_triggered` and `object.hook` families
+# under DC-080; the kinds set matches the planning intent
+# exactly while the category result G versus the planning
+# intent B is the closest bounded surrogate that preserves
+# the per-category distribution (W-PRM-007 stays in G).
+# The original planning-doc INTENT for prompts whose
+# FRAME-D-actual output still diverges (residuals (c) and (d))
+# is recorded as RK-060 OPEN (FRAME-C synthesis-rule
+# narrowness residuals).
 #
 # RK-058 closure: this module no longer carries a per-prompt
 # (category, expected_item_kinds_touched) plan. Each prompt record

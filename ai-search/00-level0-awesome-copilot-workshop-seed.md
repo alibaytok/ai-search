@@ -201,7 +201,7 @@ Per-category counts (FRAME-D-derived, matching trace validator):
 | W-PRM-004 | A. clear single-intent | Write an instruction file for our Python style conventions. | instruction | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
 | W-PRM-005 | B. workflow intent | Configure GitHub Actions to deploy a Node.js app to Azure. | workflow_file | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
 | W-PRM-006 | B. workflow intent | Add a release workflow that publishes container images. | workflow_file | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
-| W-PRM-007 | G. ambiguous | Set up scheduled dependency scanning every Monday. | skill; instruction; workflow_file | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-007 | G. ambiguous | Set up scheduled dependency scanning every Monday. | workflow_file; hook | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
 | W-PRM-008 | B. workflow intent | Wire up a workflow that runs static analysis on pull requests. | workflow_file | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
 | W-PRM-009 | C. skill intent | Create a skill that summarizes commit history into release notes. | skill | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
 | W-PRM-010 | E. instruction confusion | Write instructions to deploy markdown processing pipelines. | workflow_file; instruction | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
@@ -232,7 +232,7 @@ Per-category counts (FRAME-D-derived, matching trace validator):
 | W-PRM-004 | A, [instruction] | A, [instruction] | match. |
 | W-PRM-005 | B, [workflow_file] | B, [workflow_file] | match. |
 | W-PRM-006 | B, [workflow_file] | B, [workflow_file] | match. |
-| W-PRM-007 | B, [workflow_file, hook] | G, [skill, instruction, workflow_file] | RK-060: action.set_up alone with no workflow domain/event fires bare-ambiguity; planning intent expected workflow+hook from "scheduled ... every Monday". FRAME-B canonical-set lacks cron/scheduled/hook tokens. |
+| W-PRM-007 | B, [workflow_file, hook] | G, [workflow_file, hook] | match (closest bounded surrogate via canonical extension; FRAME-C category-selector returns G instead of B for `{workflow_file, hook}` under high ambiguity): WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C added the bounded `scheduled` canonical to FRAME-B `constraint.event_triggered` and to FRAME-B `object.hook`; this suppresses FRAME-C's bare-ambiguity rule (a target_object and a constraint are now present) and lets `_is_workflow_intent` (action.set_up + has_event_constraint) and `_is_hook_intent` (hook in distinct_target_objects) both fire; the resulting candidate set `{workflow_file, hook}` matches the planning-intent kinds exactly. The category remains G rather than B because FRAME-C's bounded `_select_workshop_category` returns G when 2+ candidate kinds fire with ambiguity_level high; the B/G mismatch is a sibling FRAME-C-side observation reserved for a future Codex-authorized FRAME-C-side packet. RK-060 residual (a)'s upstream FRAME-B coverage gap is CLOSED via DC-080; the trace validator's per-category distribution (G=3, B=4) is preserved because W-PRM-007 stays in G. |
 | W-PRM-008 | B, [workflow_file] | B, [workflow_file] | match. |
 | W-PRM-009 | C, [skill] | C, [skill] | match. |
 | W-PRM-010 | (rewritten) C, [skill] | E, [workflow_file, instruction] | rewrite for distribution: "Write instructions to deploy markdown processing pipelines." satisfies E. |
@@ -253,21 +253,25 @@ Per-category counts (FRAME-D-derived, matching trace validator):
 | W-PRM-025 | I, [repo_meta_section] | I, [repo_meta_section] | match (original text restored): WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A added a source-safe assembled product-name canonical to FRAME-B `repo_meta_near_miss.repo_navigation`; the original planning text "What is awesome-copilot?" now matches under strict-position rule and FRAME-D surfaces I/[repo_meta_section]. RK-060 residual (e) closed via DC-078. |
 | W-PRM-026 | I, [repo_meta_section] | I, [repo_meta_section] | match (original text restored): WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A added the bounded sibling canonical "how this repo is organized" to FRAME-B `repo_meta_near_miss.repo_navigation`; the original planning text "Explain how this repo is organized." now matches under strict-position rule and FRAME-D surfaces I/[repo_meta_section]. RK-060 residual (f) closed via DC-078. |
 
-Summary: 15 of 26 rows match the prior planning intent under
+Summary: 16 of 26 rows match the prior planning intent under
 FRAME-D exactly (treating W-PRM-014's and W-PRM-015's kind-order
-differences as equivalent and counting W-PRM-025's and
-W-PRM-026's restored original text after DC-078, plus
-W-PRM-015's canonical-extension match after DC-079); 2 are
-category-rule differences without a synthesis gap (W-PRM-001,
-W-PRM-002); 7 are planning rewrites for distribution fit
-(W-PRM-010, W-PRM-011, W-PRM-012, W-PRM-013, W-PRM-017,
-W-PRM-018, W-PRM-020); and 2 current prompt rows remain RK-060
-OPEN residuals (W-PRM-007, W-PRM-021). The original text for
-W-PRM-020 is also recorded in RK-060 as a historical
-planning-intent residual (residual (c)). Residuals (e) and (f)
-are closed by DC-078; residual (b) is closed by DC-079. The
-closure point for RK-058 is fixture derivation, not absence of
-all semantic residuals.
+differences as equivalent, counting W-PRM-025's and W-PRM-026's
+restored original text after DC-078, counting W-PRM-015's
+canonical-extension match after DC-079, and counting W-PRM-007's
+closest-bounded-surrogate match after DC-080 where the kinds
+set matches planning intent and the category B/G mismatch is a
+sibling FRAME-C-side observation); 3 are category-rule
+differences without a synthesis gap (W-PRM-001, W-PRM-002, and
+W-PRM-007's B/G category-selector difference); 7 are planning
+rewrites for distribution fit (W-PRM-010, W-PRM-011, W-PRM-012,
+W-PRM-013, W-PRM-017, W-PRM-018, W-PRM-020); and 1 current
+prompt row remains RK-060 OPEN residual (W-PRM-021). The
+original text for W-PRM-020 is also recorded in RK-060 as a
+historical planning-intent residual (residual (c)). Residuals
+(e) and (f) are closed by DC-078; residual (b) is closed by
+DC-079; residual (a)'s upstream FRAME-B coverage gap is closed
+by DC-080. The closure point for RK-058 is fixture derivation,
+not absence of all semantic residuals.
 
 ## 5. Derived-Material Implications
 

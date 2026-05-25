@@ -363,13 +363,15 @@ byte count is 0.
 WO-L0-WORKSHOP-FRAME-B does not claim any signal, span, family,
 alias tag, count, or budget tag is sufficient, necessary,
 superior, best, complete, production-ready, recommended, or
-selected. The bounded `SIGNAL_FAMILIES` tuple (still 31 families
-after WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B; the bounded
-canonical_terms extension kept the family count unchanged
-because the new gerund-inflection canonicals are sibling
-canonical_terms entries inside the existing `action.set_up`
-family rather than a new family; was 31 after
-WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A; was 31 after
+selected. The bounded `SIGNAL_FAMILIES` tuple (still 31
+families after WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C; the
+bounded single-canonical extension applied to two existing
+families kept the family count unchanged because the new
+`scheduled` canonical is a sibling canonical_terms entry
+inside the existing `object.hook` and
+`constraint.event_triggered` families rather than a new
+family; was 31 after WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B; was
+31 after WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A; was 31 after
 WO-L0-WORKSHOP-FRAME-B-COVERAGE-01 added `action.assist`; was
 30 under WO-L0-WORKSHOP-FRAME-B), the bounded `FAMILY_KINDS`
 (8 entries), the bounded `BUDGET_TAGS` (3 entries), the
@@ -454,15 +456,59 @@ FRAME-A, FRAME-C, or FRAME-D module change; no
 `_budget_limit_for_canonical` change; no new bounded enum
 value; no new exception class.
 
-All DC-020 through DC-078 boundary invariants carry forward.
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C addendum: the bounded
+canonical `scheduled` was added to two existing families:
+(i) `object.hook.canonical_terms` (a scheduled trigger is a
+hook-shaped object in the planning-doc taxonomy: a cron-style
+automation that runs on an event); (ii)
+`constraint.event_triggered.canonical_terms` (a scheduled
+trigger is an event-triggered constraint). Both families'
+existing `edit_distance_budget == "short_token_1"` and the
+existing `_match_multi_token_term` and
+`_budget_limit_for_canonical` policies are preserved; the
+new canonical is a single-token entry under the same
+per-family budget rule. No new family was introduced (family
+count remains 31). With the new canonical, FRAME-B emits an
+`object.hook` signal and a `constraint.event_triggered`
+signal for the planning-doc text `Set up scheduled dependency
+scanning every Monday.`; FRAME-C's bare-ambiguity rule is
+suppressed (a target_object and a constraint are now
+present); `_is_workflow_intent` fires (action.set_up +
+has_event_constraint) so `workflow_file` joins the candidate
+set; `_is_hook_intent` fires (hook is in distinct_target_objects)
+so `hook` joins; the candidate set becomes `{workflow_file,
+hook}`; ambiguity_level is `high` (candidate_count == 2);
+FRAME-C's bounded `_select_workshop_category` returns
+`G. ambiguous` for the high-ambiguity 2-candidate path; the
+workshop category becomes `G. ambiguous` with the kinds
+`[workflow_file, hook]`. The kinds set matches the
+planning-intent kinds exactly; the category result G versus
+the planning-intent category B is the closest bounded
+surrogate that preserves the trace validator's per-category
+distribution invariant (W-PRM-007 remains in G; G=3, B=4
+unchanged) and is recorded as a sibling FRAME-C-side
+observation reserved for a future Codex-authorized
+FRAME-C-side packet that would extend
+`_select_workshop_category` to map `{workflow_file, hook}`
+to B even under high ambiguity. The new canonical does NOT
+add the forbidden external-integration substring to FRAME-B
+source. This closes RK-060 residual (a)'s upstream FRAME-B
+coverage gap. No FRAME-A, FRAME-C, or FRAME-D module change;
+no `_match_multi_token_term` policy change; no
+`_budget_limit_for_canonical` change; no new bounded enum
+value; no new exception class.
+
+All DC-020 through DC-079 boundary invariants carry forward.
 WO-L0-WORKSHOP-FRAME-B, WO-L0-WORKSHOP-FRAME-B-COVERAGE-01,
-WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A, and
-WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B do not amend or broaden
-DC-003 through DC-078. RK-039 remains active and is not
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A,
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B, and
+WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C do not amend or broaden
+DC-003 through DC-079. RK-039 remains active and is not
 duplicated. RK-058 RESOLVED via DC-077. RK-059 RESOLVED via
-DC-076. RK-060 remains OPEN with residuals (a), (c), and
-(d) outstanding; residuals (e) and (f) closed via DC-078;
-residual (b) closed via DC-079.
+DC-076. RK-060 remains OPEN with residuals (c) and (d)
+outstanding; residuals (e) and (f) closed via DC-078;
+residual (b) closed via DC-079; residual (a)'s upstream
+FRAME-B coverage gap closed via DC-080.
 Real-benchmark-ready remains NO. OQ-003, OQ-015, OQ-031,
 OQ-035, OQ-048, OQ-049, OQ-056, OQ-057, OQ-070, OQ-075, OQ-076
 remain OPEN.
