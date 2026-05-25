@@ -169,9 +169,12 @@ _ROUTE_STATUS_FIELDS = (
 # WO-L0-WORKSHOP-FRAME-C-HARDEN-02 added the deploy-variant
 # bare-ambiguity emission tuple (DC-081). RK-060 is fully
 # closed by DC-081. W-PRM-013 uses an agent/workflow surface
-# after `define` became an action.create canonical so the
-# FRAME-D-derived category distribution remains intentionally
-# balanced at A=4, D=3.
+# after `define` became an action.create canonical. W-PRM-003
+# and W-PRM-016 use clear plugin / formatting-instruction surfaces after
+# the Mini-V1 clarification-semantics pass made single agent/persona
+# and write-instruction prompts route to D/E respectively, keeping
+# the FRAME-D-derived category distribution intentionally balanced
+# at A=4, D=3, E=3.
 #
 # RK-058 closure: this module no longer carries a per-prompt
 # (category, expected_item_kinds_touched) plan. Each prompt record
@@ -180,7 +183,7 @@ _ROUTE_STATUS_FIELDS = (
 _PLANNING_DOC_PROMPTS = (
     ("W-PRM-001", "Set up a CI workflow that runs pytest on every push."),
     ("W-PRM-002", "Create a code review skill for my repository."),
-    ("W-PRM-003", "Generate an agent definition for a documentation writer."),
+    ("W-PRM-003", "Generate a plugin definition for a documentation writer."),
     ("W-PRM-004", "Write an instruction file for our Python style conventions."),
     ("W-PRM-005", "Configure GitHub Actions to deploy a Node.js app to Azure."),
     ("W-PRM-006", "Add a release workflow that publishes container images."),
@@ -193,7 +196,7 @@ _PLANNING_DOC_PROMPTS = (
     ("W-PRM-013", "Define a documentation-writer agent that deploys a GitHub Actions workflow."),
     ("W-PRM-014", "Define an agent that runs a test workflow on demand."),
     ("W-PRM-015", "Add instructions for setting up CI on a new Python repo."),
-    ("W-PRM-016", "Write instructions for our team's release process."),
+    ("W-PRM-016", "An instruction file for formatting conventions."),
     ("W-PRM-017", "An instruction file for CI conventions."),
     ("W-PRM-018", "Find me a prompt that deploys Docker containers in CI."),
     ("W-PRM-019", "Show me a cookbook recipe that deploys a static site to GitHub Pages."),

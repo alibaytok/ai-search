@@ -785,6 +785,10 @@ def _compute_shape_touch_plan(
         c in ("event_triggered", "on_push", "on_pull_request")
         for c in constraint_tags
     )
+    has_explain_action = any(
+        sig["signal_family"] == "action.explain"
+        for sig in by_kind.get("action", [])
+    )
     has_repo_meta = bool(by_kind.get("repo_meta_near_miss"))
     has_out_of_scope = bool(by_kind.get("out_of_scope"))
 
@@ -849,6 +853,8 @@ def _compute_shape_touch_plan(
             or has_event_constraint
         ):
             return True
+        if has_event_constraint and "persona" in distinct_target_objects:
+            return True
         if "ci" in domain_tags and "plugin" in distinct_target_objects:
             return True
         if "workflow" in distinct_target_objects:
@@ -870,6 +876,12 @@ def _compute_shape_touch_plan(
         )
 
     def _is_instruction_intent():
+        if has_explain_action and requested_output_shape == "recipe":
+            return True
+        if any(d in ("documentation", "docs") for d in domain_tags) and primary_action in (
+            "set_up", "configure", "explain"
+        ):
+            return True
         if has_event_constraint:
             return False
         if requested_output_shape == "recipe":
@@ -896,6 +908,8 @@ def _compute_shape_touch_plan(
         return "plugin" in distinct_target_objects
 
     def _is_cookbook_intent():
+        if has_explain_action and requested_output_shape == "recipe":
+            return False
         # WO-L0-WORKSHOP-FRAME-C-HARDEN-01 closes RK-059 gap 2 by
         # treating `prompt_collection_request` as a cookbook-shaped
         # request (in addition to the original `recipe` shape).
@@ -1040,6 +1054,25 @@ def _compute_shape_touch_plan(
             "affinity_grade": "ambiguous",
         })
 
+    if "negated_requested" in constraint_tags:
+        candidate_kinds = {e["item_kind"] for e in candidate_entries}
+        if (
+            {"workflow_file", "instruction"}.issubset(candidate_kinds)
+            and "instruction_set" in distinct_target_objects
+        ):
+            candidate_entries = [
+                e for e in candidate_entries
+                if e["item_kind"] != "workflow_file"
+            ]
+        candidate_kinds = {e["item_kind"] for e in candidate_entries}
+        if (
+            {"agent", "skill"}.issubset(candidate_kinds)
+            and "skill_capability" in distinct_target_objects
+        ):
+            candidate_entries = [
+                e for e in candidate_entries if e["item_kind"] != "agent"
+            ]
+
     # workflow_file co-fire rule (WO-L0-WORKSHOP-FRAME-C-HARDEN-01
     # closing RK-059 gaps 1 and 2). When `action.deploy` is present
     # (`primary_action == "deploy"`, which covers the deploy /
@@ -1152,8 +1185,14 @@ def _classify_evidence_band(by_kind, total_count):
 
 def _classify_ambiguity(distinct_target_objects, candidate_count,
                         has_repo_meta, has_out_of_scope,
-                        has_candidate_kinds, bare_ambiguity=False):
+                        has_candidate_kinds, bare_ambiguity=False,
+                        candidate_kinds=None, primary_action=None,
+                        domain_tags=None, constraint_tags=None,
+                        requested_output_shape=None):
     reasons = []
+    candidate_set = set(candidate_kinds or [])
+    domain_tag_set = set(domain_tags or [])
+    constraint_tag_set = set(constraint_tags or [])
     # bare_ambiguity (WO-L0-WORKSHOP-FRAME-C-HARDEN-01 closing
     # RK-059 gap 3) is the action-only signal pattern and is
     # surfaced as a high-ambiguity reason so the category selector
@@ -1165,6 +1204,19 @@ def _classify_ambiguity(distinct_target_objects, candidate_count,
         reasons.append("repo_meta_collides_with_candidate")
     if has_out_of_scope and has_candidate_kinds:
         reasons.append("out_of_scope_collides_with_candidate")
+    if (
+        "negated_requested" in constraint_tag_set
+        and len(candidate_set) == 1
+    ):
+        return "none", []
+    if candidate_set == {"agent"} and "persona" in distinct_target_objects:
+        reasons.append("agent_persona_surface")
+    if candidate_set == {"instruction"} and (
+        primary_action == "explain"
+        or domain_tag_set.intersection({"documentation", "docs"})
+        or requested_output_shape == "recipe"
+    ):
+        reasons.append("instruction_surface")
     if len(distinct_target_objects) >= 2:
         reasons.append("multiple_target_objects")
     if candidate_count >= 2:
@@ -1182,6 +1234,7 @@ def _classify_ambiguity(distinct_target_objects, candidate_count,
 def _select_workshop_category(
     candidate_kinds, has_repo_meta, has_out_of_scope, ambiguity_level,
     requested_output_shape, by_kind, bare_ambiguity=False,
+    constraint_tags=None,
 ):
     """Map CIF -> bounded workshop category. Returns one of the
     nine bounded workshop categories."""
@@ -1224,12 +1277,21 @@ def _select_workshop_category(
         if candidate_set == {"workflow_file", "hook"}:
             return _WORKSHOP_CATEGORY_WORKFLOW
         return _WORKSHOP_CATEGORY_AMBIGUOUS
+    if ambiguity_level == "high" and candidate_set == {"agent"}:
+        return _WORKSHOP_CATEGORY_AGENT
+    if ambiguity_level == "high" and candidate_set == {"instruction"}:
+        return _WORKSHOP_CATEGORY_INSTRUCTION
     if candidate_set == {"workflow_file"} or candidate_set == {"workflow_file", "hook"}:
         return _WORKSHOP_CATEGORY_WORKFLOW
     if candidate_set == {"skill"}:
         return _WORKSHOP_CATEGORY_SKILL
     if candidate_set == {"agent"}:
         return _WORKSHOP_CATEGORY_CLEAR_SINGLE
+    if (
+        candidate_set == {"instruction"}
+        and "negated_requested" in set(constraint_tags or [])
+    ):
+        return _WORKSHOP_CATEGORY_INSTRUCTION
     if candidate_set == {"instruction"}:
         return _WORKSHOP_CATEGORY_CLEAR_SINGLE
     if candidate_set == {"plugin"}:
@@ -1361,6 +1423,11 @@ def build_canonical_intent_frame(
         distinct_target_objects, len(set(candidate_kinds)),
         has_repo_meta, has_out_of_scope, has_candidate_kinds,
         bare_ambiguity=bare_ambiguity,
+        candidate_kinds=candidate_kinds,
+        primary_action=primary_action,
+        domain_tags=domain_tags,
+        constraint_tags=constraint_tags,
+        requested_output_shape=requested_output_shape,
     )
 
     evidence_band = _classify_evidence_band(by_kind, len(signals))
@@ -1379,6 +1446,7 @@ def build_canonical_intent_frame(
         candidate_kinds, has_repo_meta, has_out_of_scope,
         ambiguity_level, requested_output_shape, by_kind,
         bare_ambiguity=bare_ambiguity,
+        constraint_tags=constraint_tags,
     )
 
     if has_out_of_scope or (

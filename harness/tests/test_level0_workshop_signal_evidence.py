@@ -304,6 +304,22 @@ class EnglishFamilyFireTest(unittest.TestCase):
         families = _signal_families_for_view(view)
         self.assertIn("negation.not_requested", families)
 
+    def test_skip_fires_negation_not_deploy(self):
+        view = _build_view("Skip the agent; only create a skill.")
+        families = _signal_families_for_view(view)
+        self.assertIn("negation.not_requested", families)
+        self.assertNotIn("action.deploy", families)
+
+    def test_automatically_fires_event_triggered_constraint(self):
+        view = _build_view("Create an agent that automatically responds.")
+        families = _signal_families_for_view(view)
+        self.assertIn("constraint.event_triggered", families)
+
+    def test_write_fires_action_explain(self):
+        view = _build_view("Write instructions for contributors.")
+        families = _signal_families_for_view(view)
+        self.assertIn("action.explain", families)
+
     def test_on_push_fires_constraint_on_push(self):
         view = _build_view("Run the workflow on push.")
         families = _signal_families_for_view(view)

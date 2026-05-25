@@ -783,6 +783,79 @@ class MiniV1FrameCHardeningTest(unittest.TestCase):
         self.assertEqual(result["ambiguity_level"], "high")
 
 
+class MiniV1ClarificationSemanticsTest(unittest.TestCase):
+
+    def _record_for(self, prompt):
+        return _frame_for(prompt)["workshop_prompt_record"]
+
+    def test_agent_with_automatic_trigger_surfaces_workflow_ambiguity(self):
+        record = self._record_for(
+            "Create an agent that automatically responds to new issues."
+        )
+        self.assertEqual(record["category"], "D. agent/persona confusion")
+        self.assertEqual(
+            record["expected_item_kinds_touched"],
+            ["workflow_file", "agent"],
+        )
+        self.assertEqual(
+            record["expected_candidate_surface"],
+            "multiple candidate surfaces expected",
+        )
+
+    def test_agent_persona_single_candidate_still_uses_agent_confusion(self):
+        record = self._record_for("Build an agent persona for our support team.")
+        self.assertEqual(record["category"], "D. agent/persona confusion")
+        self.assertEqual(record["expected_item_kinds_touched"], ["agent"])
+        self.assertEqual(
+            record["expected_candidate_surface"],
+            "multiple candidate surfaces expected",
+        )
+
+    def test_write_instructions_uses_instruction_confusion_surface(self):
+        record = self._record_for(
+            "Write instructions for onboarding new contributors."
+        )
+        self.assertEqual(record["category"], "E. instruction confusion")
+        self.assertEqual(record["expected_item_kinds_touched"], ["instruction"])
+        self.assertEqual(
+            record["expected_candidate_surface"],
+            "multiple candidate surfaces expected",
+        )
+
+    def test_document_how_to_prefers_instruction_over_cookbook(self):
+        record = self._record_for("Document how to run the test suite locally.")
+        self.assertEqual(record["category"], "E. instruction confusion")
+        self.assertEqual(record["expected_item_kinds_touched"], ["instruction"])
+
+    def test_ci_documentation_surfaces_workflow_instruction_ambiguity(self):
+        record = self._record_for("Set up CI and write documentation for it.")
+        self.assertEqual(record["category"], "E. instruction confusion")
+        self.assertEqual(
+            record["expected_item_kinds_touched"],
+            ["workflow_file", "instruction"],
+        )
+
+    def test_negated_workflow_keeps_positive_instruction_target(self):
+        record = self._record_for(
+            "I do not want a workflow; just give me instructions."
+        )
+        self.assertEqual(record["category"], "E. instruction confusion")
+        self.assertEqual(record["expected_item_kinds_touched"], ["instruction"])
+        self.assertEqual(
+            record["expected_candidate_surface"],
+            "candidate fragment of declared shape",
+        )
+
+    def test_skip_agent_keeps_positive_skill_target(self):
+        record = self._record_for("Skip the agent; only create a skill.")
+        self.assertEqual(record["category"], "C. skill intent")
+        self.assertEqual(record["expected_item_kinds_touched"], ["skill"])
+        self.assertEqual(
+            record["expected_candidate_surface"],
+            "candidate fragment of declared shape",
+        )
+
+
 class EvidenceBandTest(unittest.TestCase):
 
     def test_evidence_band_no_signal_for_unrecognized_prompt(self):

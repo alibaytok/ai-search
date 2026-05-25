@@ -309,7 +309,9 @@ SIGNAL_FAMILIES = (
     LexicalFamily(
         family_id="action.explain",
         family_kind="action",
-        canonical_terms=("explain", "describe", "document", "summarize"),
+        canonical_terms=(
+            "explain", "describe", "document", "summarize", "write",
+        ),
         tr_aliases=("acikla", "ozetle", "anlat"),
         edit_distance_budget="long_token_2",
         exclusion_terms=(),
@@ -321,7 +323,7 @@ SIGNAL_FAMILIES = (
         canonical_terms=("deploy", "publish", "release", "ship"),
         tr_aliases=("yayinla", "dagit"),
         edit_distance_budget="short_token_1",
-        exclusion_terms=(),
+        exclusion_terms=("skip",),
         contributes_to=("primary_action",),
     ),
     # action.assist is a bounded vague-help family added by
@@ -513,7 +515,7 @@ SIGNAL_FAMILIES = (
         family_kind="constraint",
         canonical_terms=(
             "trigger", "triggered", "on event", "whenever", "when",
-            "scheduled",
+            "scheduled", "automatically",
         ),
         tr_aliases=("tetiklendiginde",),
         edit_distance_budget="short_token_1",
@@ -625,7 +627,7 @@ SIGNAL_FAMILIES = (
         family_id="negation.not_requested",
         family_kind="negation",
         canonical_terms=(
-            "do not", "without", "no need for", "avoid",
+            "do not", "without", "no need for", "avoid", "skip",
         ),
         tr_aliases=("yok",),
         edit_distance_budget="none",

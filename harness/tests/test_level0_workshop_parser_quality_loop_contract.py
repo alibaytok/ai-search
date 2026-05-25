@@ -498,12 +498,12 @@ class ParserQualityMiniV1EndToEndTest(unittest.TestCase):
         ):
             self.assertIs(self.feedback_report[key], False)
 
-    def test_mini_v1_produces_failures(self):
-        """The matrix is designed to surface gaps; assert that at least
-        some cases fail so the loop actually exercises upgrade-plan
-        generation. This is a structural assertion, not a pass-rate."""
+    def test_mini_v1_epoch_3_all_cases_match(self):
+        """Mini-V1 is now closed; new failures must re-enter through a
+        bounded feedback candidate rather than silently changing shape."""
         self._require_loaded()
-        self.assertGreater(self.matrix_result["failed_count"], 0)
+        self.assertEqual(self.matrix_result["passed_count"], 35)
+        self.assertEqual(self.matrix_result["failed_count"], 0)
 
     def test_mini_v1_frame_c_synthesis_bucket_is_closed(self):
         self._require_loaded()
@@ -647,18 +647,10 @@ class UpgradeCandidatePlannerTest(unittest.TestCase):
             "FRAME-B-COVERAGE", module.REQUIRED_TESTS_BY_NEXT_PACKET
         )
 
-    def test_mini_v1_groups_ambiguity_as_reserved_layer_candidate(self):
-        candidate = self._candidate(
-            "frame_c_ambiguity_misreport",
-            "add_ambiguity_clarification",
-        )
-        self.assertEqual(candidate["affected_count"], 7)
-        self.assertEqual(
-            candidate["candidate_intent"], "reserved_layer_design_proposal"
-        )
-        self.assertEqual(candidate["safety_tier"], "requires_reserved_layer")
-        self.assertEqual(candidate["suggested_next_packet_type"], "CLARIFICATION-DESIGN")
-        self.assertEqual(candidate["expectation_drift_risk"], "low")
+    def test_mini_v1_has_no_remaining_upgrade_candidates(self):
+        self._require_loaded()
+        self.assertEqual(self.candidates_result["candidate_count"], 0)
+        self.assertEqual(self.candidates_result["upgrade_candidates"], [])
 
     def test_mini_v1_has_no_frame_b_canonical_candidate_after_materialization(self):
         self._require_loaded()
@@ -682,26 +674,27 @@ class UpgradeCandidatePlannerTest(unittest.TestCase):
             candidate_keys,
         )
 
-    def test_epoch_2_has_no_autonomous_table_matrix_or_frame_c_candidate(self):
-        """Epoch 2 stops when only clarification-design work remains.
+    def test_epoch_3_has_no_remaining_next_packet_type(self):
+        """Epoch 3 closes Mini-V1; any future packet type must appear
+        through a new failing case and an explicit contract update.
 
         The autonomous materializers are bounded to FRAME-B canonical table
         additions, matrix expected-field updates, and their composite. The
-        authorized FRAME-C hardening pass has also closed the shape-rule
-        bucket, so any remaining Mini-V1 candidate must route to the
-        clarification surface.
+        authorized FRAME-C and clarification-semantics hardening passes have
+        closed the remaining Mini-V1 buckets.
         """
         self._require_loaded()
         closed_next_packets = {
             "FRAME-B-COVERAGE",
             "MATRIX-RECONCILE",
             "FRAME-C-HARDEN",
+            "CLARIFICATION-DESIGN",
         }
         remaining_next_packets = {
             candidate["suggested_next_packet_type"]
             for candidate in self.candidates_result["upgrade_candidates"]
         }
-        self.assertEqual(remaining_next_packets, {"CLARIFICATION-DESIGN"})
+        self.assertEqual(remaining_next_packets, set())
         self.assertTrue(remaining_next_packets.isdisjoint(closed_next_packets))
 
     def test_candidate_order_and_ids_are_deterministic(self):
@@ -709,15 +702,15 @@ class UpgradeCandidatePlannerTest(unittest.TestCase):
         candidates = self.candidates_result["upgrade_candidates"]
         self.assertEqual(
             [candidate["affected_count"] for candidate in candidates],
-            [7],
+            [],
         )
         self.assertEqual(
             [candidate["candidate_id"] for candidate in candidates],
-            ["UPG-001"],
+            [],
         )
         self.assertEqual(
             [candidate["failure_class"] for candidate in candidates],
-            ["frame_c_ambiguity_misreport"],
+            [],
         )
 
     def test_execution_log_is_ordered_by_step_and_iteration(self):
@@ -746,7 +739,7 @@ class UpgradeCandidatePlannerTest(unittest.TestCase):
         ]
         self.assertEqual(
             [entry["candidate_id"] for entry in assign_events],
-            ["UPG-001"],
+            [],
         )
         self.assertEqual(log[-1]["stage"], "scan_planner_output")
 
@@ -866,6 +859,38 @@ class CandidateCaseReviewReporterTest(unittest.TestCase):
                 return candidate
         self.fail("candidate not found: {0}".format(candidate_id))
 
+    def _synthetic_candidate(self):
+        self._require_loaded()
+        return {
+            "candidate_id": "UPG-TEST",
+            "failure_class": "frame_c_ambiguity_misreport",
+            "suggested_upgrade_type": "add_ambiguity_clarification",
+            "suggested_next_packet_type": "CLARIFICATION-DESIGN",
+            "candidate_intent": "reserved_layer_design_proposal",
+            "likely_layer": "FRAME-C",
+            "safety_tier": "requires_reserved_layer",
+            "expectation_drift_risk": "low",
+            "affected_case_ids": ["QM-001"],
+            "affected_tags": ["mini_v1"],
+            "affected_count": 1,
+            "patch_plan_skeleton": (
+                quality_loop.PATCH_PLAN_TEMPLATES[
+                    ("FRAME-C", "add_ambiguity_clarification")
+                ]
+            ),
+            "required_tests": list(
+                quality_loop.REQUIRED_TESTS_BY_NEXT_PACKET[
+                    "CLARIFICATION-DESIGN"
+                ]
+            ),
+            "risk_notes": (
+                quality_loop.RISK_NOTES_BY_LAYER_AND_TYPE[
+                    ("FRAME-C", "add_ambiguity_clarification")
+                ]
+            ),
+            "precedent_dc_reference": "DC-TEST",
+        }
+
     def _review(self, candidate_id):
         self._require_loaded()
         for review in self.summary["candidate_case_reviews"]:
@@ -882,7 +907,9 @@ class CandidateCaseReviewReporterTest(unittest.TestCase):
 
     def test_candidate_case_review_shape_and_gating_booleans(self):
         self._require_loaded()
-        review = self._review("UPG-001")
+        review = quality_loop.build_candidate_case_review(
+            self._synthetic_candidate(), self.matrix_result
+        )
         expected_keys = {
             "candidate_case_review_kind",
             "candidate_id",
@@ -911,24 +938,21 @@ class CandidateCaseReviewReporterTest(unittest.TestCase):
         ):
             self.assertIs(review[key], False)
 
-    def test_upg001_review_splits_mixed_ambiguity_bucket(self):
-        review = self._review("UPG-001")
-        self.assertEqual(review["affected_count"], 7)
+    def test_synthetic_case_review_keeps_bounded_label_counts(self):
+        review = quality_loop.build_candidate_case_review(
+            self._synthetic_candidate(), self.matrix_result
+        )
+        self.assertEqual(review["affected_count"], 1)
         self.assertEqual(review["per_review_label_counts"], {
             "likely_matrix_expectation_drift": 0,
-            "likely_negation_gap": 2,
-            "likely_synthesis_gap": 5,
-            "needs_human_review": 0,
+            "likely_negation_gap": 0,
+            "likely_synthesis_gap": 0,
+            "needs_human_review": 1,
         })
-        labels = self._label_by_case("UPG-001")
-        self.assertNotIn("QM-005", labels)
-        self.assertNotIn("QM-029", labels)
-        self.assertNotIn("QM-033", labels)
-        self.assertEqual(labels["QM-030"], "likely_negation_gap")
-        self.assertEqual(labels["QM-031"], "likely_negation_gap")
-        self.assertEqual(labels["QM-007"], "likely_synthesis_gap")
-        self.assertEqual(labels["QM-008"], "likely_synthesis_gap")
-        self.assertEqual(labels["QM-020"], "likely_synthesis_gap")
+        self.assertEqual(
+            review["case_reviews"][0]["review_label"],
+            "needs_human_review",
+        )
 
     def test_candidate_review_summary_covers_all_candidates(self):
         self._require_loaded()
@@ -937,42 +961,38 @@ class CandidateCaseReviewReporterTest(unittest.TestCase):
             summary["candidate_review_summary_kind"],
             "level0_workshop_candidate_review_summary",
         )
-        self.assertEqual(summary["candidate_count"], 1)
+        self.assertEqual(summary["candidate_count"], 0)
         self.assertEqual(
             [review["candidate_id"] for review in summary["candidate_case_reviews"]],
-            ["UPG-001"],
+            [],
         )
         self.assertEqual(summary["overall_review_label_counts"], {
             "likely_matrix_expectation_drift": 0,
-            "likely_negation_gap": 2,
-            "likely_synthesis_gap": 5,
+            "likely_negation_gap": 0,
+            "likely_synthesis_gap": 0,
             "needs_human_review": 0,
         })
 
     def test_review_rows_carry_observed_expected_fields(self):
-        labels = self._label_by_case("UPG-001")
-        self.assertEqual(labels["QM-030"], "likely_negation_gap")
-        row = next(
-            row
-            for row in self._review("UPG-001")["case_reviews"]
-            if row["case_id"] == "QM-030"
+        review = quality_loop.build_candidate_case_review(
+            self._synthetic_candidate(), self.matrix_result
         )
-        self.assertEqual(row["expected_kinds"], ["instruction"])
-        self.assertEqual(row["observed_kinds"], ["workflow_file", "instruction"])
-        self.assertIs(row["expected_ambiguity"], False)
-        self.assertIs(row["observed_ambiguity"], True)
-        self.assertIn("negation", row["tags"])
+        row = review["case_reviews"][0]
+        self.assertEqual(row["case_id"], "QM-001")
+        self.assertEqual(row["expected_kinds"], row["observed_kinds"])
+        self.assertEqual(row["expected_category"], row["observed_category"])
+        self.assertEqual(row["differing_fields"], [])
 
     def test_case_review_rejects_missing_candidate_case(self):
         module = _require_quality_loop(self)
-        candidate = dict(self._candidate("UPG-001"))
+        candidate = dict(self._synthetic_candidate())
         candidate["affected_case_ids"] = ["NO-SUCH-CASE"]
         with self.assertRaises(module.ParserQualityLoopMalformedUpgradeCandidate):
             module.build_candidate_case_review(candidate, self.matrix_result)
 
     def test_case_review_rejects_malformed_candidate(self):
         module = _require_quality_loop(self)
-        candidate = dict(self._candidate("UPG-001"))
+        candidate = dict(self._synthetic_candidate())
         del candidate["affected_case_ids"]
         with self.assertRaises(module.ParserQualityLoopMalformedUpgradeCandidate):
             module.build_candidate_case_review(candidate, self.matrix_result)
