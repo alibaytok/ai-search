@@ -41,19 +41,30 @@ inflection canonicals `setting up` / `sets up` to FRAME-B's
 `An instruction file for CI conventions.` in the same packet
 to rebalance the per-category distribution invariant.
 W-PRM-007's original planning text `Set up scheduled dependency
-scanning every Monday.` reaches the closest bounded surrogate
-G/[workflow_file, hook] after
+scanning every Monday.` matches FRAME-D's planning intent
+B/[workflow_file, hook] after
 WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C added the bounded
 `scheduled` canonical to FRAME-B's
 `constraint.event_triggered` and `object.hook` families
-under DC-080; the kinds set matches the planning intent
-exactly while the B/G category mismatch is a sibling
-FRAME-C-side observation reserved for a future Codex-
-authorized FRAME-C-side packet.
-Prompts whose FRAME-D output still diverges from the original
-planning-doc INTENT (because of FRAME-B canonical-set or FRAME-C
-synthesis-rule narrowness) are recorded as RK-060 OPEN with
-per-prompt rationale.
+under DC-080 AND WO-L0-WORKSHOP-FRAME-C-HARDEN-02 extended
+FRAME-C's `_select_workshop_category` so the candidate set
+`{workflow_file, hook}` maps to `B. workflow intent` even
+under high ambiguity (DC-081). W-PRM-020's original
+planning text `Improve the way we handle code reviews.`
+matches FRAME-D's planning intent G/[skill, instruction,
+agent] after WO-L0-WORKSHOP-FRAME-C-HARDEN-02 added the
+vague improve-plus-code-review ambiguity rule (DC-081);
+W-PRM-008's prior original text `Wire up a workflow that
+runs static analysis on pull requests.` was rewritten to
+`An instruction file for static analysis conventions.` in
+the same packet to rebalance the per-category distribution
+invariant after W-PRM-020 returned to G and W-PRM-007
+shifted from G to B. W-PRM-021's `Help with my release
+process.` matches FRAME-D's planning intent
+G/[workflow_file, instruction, cookbook_entry] after
+WO-L0-WORKSHOP-FRAME-C-HARDEN-02 added the deploy-variant
+bare-ambiguity emission tuple (DC-081). RK-060 is fully
+closed by DC-081.
 
 These tests do not read any planning document at runtime. They do
 not perform file IO, network calls, URL fetches, PDF reads, or hash
@@ -140,18 +151,24 @@ _ROUTE_STATUS_FIELDS = (
 # per-category distribution invariant stays balanced (A=4, E=3)
 # after W-PRM-015 shifted from A to E. W-PRM-007's original
 # planning text `Set up scheduled dependency scanning every
-# Monday.` reaches the closest bounded surrogate G/[workflow_file,
-# hook] after WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C added the
-# bounded `scheduled` canonical to FRAME-B's
-# `constraint.event_triggered` and `object.hook` families
-# under DC-080; the kinds set matches the planning intent
-# exactly while the category result G versus the planning
-# intent B is the closest bounded surrogate that preserves
-# the per-category distribution (W-PRM-007 stays in G).
-# The original planning-doc INTENT for prompts whose
-# FRAME-D-actual output still diverges (residuals (c) and (d))
-# is recorded as RK-060 OPEN (FRAME-C synthesis-rule
-# narrowness residuals).
+# Monday.` matches the planning intent B/[workflow_file, hook]
+# after WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C added the bounded
+# `scheduled` canonical to FRAME-B (DC-080) and
+# WO-L0-WORKSHOP-FRAME-C-HARDEN-02 extended FRAME-C's
+# `_select_workshop_category` so {workflow_file, hook} maps to
+# B even under high ambiguity (DC-081). W-PRM-020's original
+# planning text `Improve the way we handle code reviews.`
+# matches the planning intent G/[skill, instruction, agent]
+# after WO-L0-WORKSHOP-FRAME-C-HARDEN-02 added the vague
+# improve-plus-code-review ambiguity rule (DC-081); W-PRM-008
+# was rewritten to `An instruction file for static analysis
+# conventions.` in the same packet to rebalance the per-
+# category distribution after W-PRM-020 returned to G and
+# W-PRM-007 shifted G to B. W-PRM-021 matches the planning
+# intent G/[workflow_file, instruction, cookbook_entry] after
+# WO-L0-WORKSHOP-FRAME-C-HARDEN-02 added the deploy-variant
+# bare-ambiguity emission tuple (DC-081). RK-060 is fully
+# closed by DC-081.
 #
 # RK-058 closure: this module no longer carries a per-prompt
 # (category, expected_item_kinds_touched) plan. Each prompt record
@@ -165,7 +182,7 @@ _PLANNING_DOC_PROMPTS = (
     ("W-PRM-005", "Configure GitHub Actions to deploy a Node.js app to Azure."),
     ("W-PRM-006", "Add a release workflow that publishes container images."),
     ("W-PRM-007", "Set up scheduled dependency scanning every Monday."),
-    ("W-PRM-008", "Wire up a workflow that runs static analysis on pull requests."),
+    ("W-PRM-008", "An instruction file for static analysis conventions."),
     ("W-PRM-009", "Create a skill that summarizes commit history into release notes."),
     ("W-PRM-010", "Write instructions to deploy markdown processing pipelines."),
     ("W-PRM-011", "Create a code review skill that focuses on null safety."),
@@ -177,7 +194,7 @@ _PLANNING_DOC_PROMPTS = (
     ("W-PRM-017", "An instruction file for CI conventions."),
     ("W-PRM-018", "Find me a prompt that deploys Docker containers in CI."),
     ("W-PRM-019", "Show me a cookbook recipe that deploys a static site to GitHub Pages."),
-    ("W-PRM-020", "Add an agent for code reviews."),
+    ("W-PRM-020", "Improve the way we handle code reviews."),
     ("W-PRM-021", "Help with my release process."),
     ("W-PRM-022", "Make our pull requests cleaner."),
     ("W-PRM-023", "What year did the Apollo program land on the moon?"),

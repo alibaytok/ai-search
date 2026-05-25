@@ -433,24 +433,28 @@ class LegacyContractParityTest(unittest.TestCase):
             "repo_meta_section_near_miss",
         )
 
-    def test_scheduled_trigger_maps_to_workflow_hook_surrogate(self):
+    def test_scheduled_trigger_maps_to_workflow_intent(self):
         """RK-060 residual (a) closed at FRAME-B by
-        WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C: the planning-doc
-        text `Set up scheduled dependency scanning every Monday.`
-        now matches FRAME-B's new `scheduled` canonical on both
-        `constraint.event_triggered` and `object.hook`; FRAME-C
-        synthesizes workflow_file + hook as the candidate set;
-        the FRAME-D shim surfaces the bounded surrogate
-        `G. ambiguous` with
+        WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C (DC-080) and the
+        W-PRM-007 B/G sibling observation closed at FRAME-C by
+        WO-L0-WORKSHOP-FRAME-C-HARDEN-02 (DC-081). The
+        planning-doc text `Set up scheduled dependency scanning
+        every Monday.` now matches FRAME-B's `scheduled`
+        canonical on both `constraint.event_triggered` and
+        `object.hook`; FRAME-C synthesizes workflow_file + hook
+        as the candidate set; the extended
+        `_select_workshop_category` rule maps
+        `{workflow_file, hook}` to `B. workflow intent` even
+        under high ambiguity; the FRAME-D shim surfaces
+        `B. workflow intent` with
         `expected_item_kinds_touched == [workflow_file, hook]`
-        and `ambiguity_observed == True` (the B/G mismatch
-        versus the planning intent category `B. workflow intent`
-        is a sibling FRAME-C-side residual)."""
+        and `ambiguity_observed == True`."""
         output, _ = _map(
             "Set up scheduled dependency scanning every Monday."
         )
         self.assertEqual(
-            output["workshop_prompt_record"]["category"], "G. ambiguous"
+            output["workshop_prompt_record"]["category"],
+            "B. workflow intent",
         )
         self.assertEqual(
             output["expected_item_kinds_touched"],
@@ -459,8 +463,52 @@ class LegacyContractParityTest(unittest.TestCase):
         self.assertTrue(output["ambiguity_observed"])
         self.assertEqual(
             output["normalized_intent_observation"],
-            "ambiguous_user_intent",
+            "workflow_intent",
         )
+
+    def test_improve_plus_code_review_maps_to_skill_instruction_agent(self):
+        """RK-060 residual (c) closed by
+        WO-L0-WORKSHOP-FRAME-C-HARDEN-02 (DC-081). The
+        planning-doc text `Improve the way we handle code
+        reviews.` triggers FRAME-C's new vague improve-plus-
+        code-review ambiguity rule which appends `instruction`
+        and `agent` candidates alongside the already-firing
+        `skill` candidate; the FRAME-D shim surfaces
+        `G. ambiguous` with
+        `expected_item_kinds_touched == [skill, instruction,
+        agent]` and `ambiguity_observed == True`."""
+        output, _ = _map("Improve the way we handle code reviews.")
+        self.assertEqual(
+            output["workshop_prompt_record"]["category"], "G. ambiguous"
+        )
+        self.assertEqual(
+            output["expected_item_kinds_touched"],
+            ["skill", "instruction", "agent"],
+        )
+        self.assertTrue(output["ambiguity_observed"])
+
+    def test_deploy_variant_bare_ambiguity_maps_to_workflow_instruction_cookbook(self):
+        """RK-060 residual (d) closed by
+        WO-L0-WORKSHOP-FRAME-C-HARDEN-02 (DC-081). The
+        planning-doc text `Help with my release process.`
+        triggers bare-ambiguity with `primary_action ==
+        "deploy"` (from `release`); FRAME-C's new
+        `_bare_ambiguity_kinds_for_primary_action` helper
+        emits the deploy-variant kinds tuple
+        `(workflow_file, instruction, cookbook_entry)`; the
+        FRAME-D shim surfaces `G. ambiguous` with
+        `expected_item_kinds_touched == [workflow_file,
+        instruction, cookbook_entry]` and
+        `ambiguity_observed == True`."""
+        output, _ = _map("Help with my release process.")
+        self.assertEqual(
+            output["workshop_prompt_record"]["category"], "G. ambiguous"
+        )
+        self.assertEqual(
+            output["expected_item_kinds_touched"],
+            ["workflow_file", "instruction", "cookbook_entry"],
+        )
+        self.assertTrue(output["ambiguity_observed"])
 
     def test_setting_up_inflection_maps_to_instruction_confusion(self):
         """RK-060 residual (b) closed by

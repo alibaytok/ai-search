@@ -296,6 +296,33 @@ _SHAPE_TOUCH_RULES_DOC = (
 # list at the result level is deterministic.
 _BARE_AMBIGUITY_KINDS = ("skill", "instruction", "workflow_file")
 
+# Deploy-variant bare-ambiguity emission kinds. Bounded by
+# WO-L0-WORKSHOP-FRAME-C-HARDEN-02 closing RK-060 residual (d).
+# When the bare-ambiguity rule fires AND the primary action is
+# `deploy` (which covers the deploy / publish / release / ship
+# family aliases), the action verb is a workflow-shaped verb
+# rather than a generic intent verb. The deploy-variant emission
+# set surfaces (workflow_file, instruction, cookbook_entry) - a
+# workflow file (the deploy automation), an instruction (the
+# release-process conventions), and a cookbook entry (the
+# release-process narrative). Order is stable so the deduped
+# `expected_item_kinds_touched` list at the result level is
+# deterministic.
+_BARE_AMBIGUITY_KINDS_DEPLOY = (
+    "workflow_file", "instruction", "cookbook_entry",
+)
+
+
+def _bare_ambiguity_kinds_for_primary_action(primary_action):
+    """Return the bounded bare-ambiguity emission tuple for the
+    given primary_action. See `_BARE_AMBIGUITY_KINDS` and
+    `_BARE_AMBIGUITY_KINDS_DEPLOY` for the per-subfamily emission
+    sets. Bounded by WO-L0-WORKSHOP-FRAME-C-HARDEN-02 and NOT
+    claimed exhaustive."""
+    if primary_action == "deploy":
+        return _BARE_AMBIGUITY_KINDS_DEPLOY
+    return _BARE_AMBIGUITY_KINDS
+
 
 _FORBIDDEN_ROUTE_STATUS_FIELDS = (
     "official",
@@ -793,10 +820,18 @@ def _compute_shape_touch_plan(
     # signal set is action-only with no informative target / domain /
     # output_shape / constraint, emit a bounded three-entry
     # ambiguous list so the result is G with multiple plausible
-    # kinds rather than H no-route.
+    # kinds rather than H no-route. WO-L0-WORKSHOP-FRAME-C-HARDEN-02
+    # closing RK-060 residual (d): the emission set varies by
+    # primary_action so a deploy-verb bare-ambiguity prompt like
+    # `Help with my release process.` (action.deploy from "release"
+    # + action.assist from "help" + no other informative signal)
+    # surfaces the deploy-variant kinds (workflow_file,
+    # instruction, cookbook_entry) instead of the default
+    # (skill, instruction, workflow_file).
     if bare_ambiguity:
         action_basis = _ids_for("action")
-        for kind in _BARE_AMBIGUITY_KINDS:
+        bare_kinds = _bare_ambiguity_kinds_for_primary_action(primary_action)
+        for kind in bare_kinds:
             affinity.append({
                 "item_kind": kind,
                 "affinity_basis": list(action_basis),
@@ -990,6 +1025,46 @@ def _compute_shape_touch_plan(
             "affinity_grade": "ambiguous",
         })
 
+    # Vague improve-plus-code-review ambiguity rule
+    # (WO-L0-WORKSHOP-FRAME-C-HARDEN-02 closing RK-060 residual (c)).
+    # When `primary_action == "improve"` AND domain.code_review fires
+    # AND no informative target_object is present AND no
+    # event-triggered constraint AND no requested_output_shape, the
+    # existing `_is_skill_intent` rule fires the `skill` candidate
+    # (because `improve` is in `skill_actions` and `code_review` is
+    # in the action-only domain set). The vague free-text prompt
+    # `Improve the way we handle code reviews.` plausibly maps to a
+    # skill that performs review, an instruction documenting the
+    # team's review conventions, or an agent that handles reviews;
+    # this rule surfaces that ambiguity by appending the
+    # `instruction` and `agent` candidates alongside the
+    # already-firing `skill` candidate. The downstream candidate-
+    # count-2+-becomes-high-ambiguity check then surfaces
+    # G/[skill, instruction, agent].
+    if (
+        primary_action == "improve"
+        and "code_review" in domain_tags
+        and not distinct_target_objects
+        and not has_event_constraint
+        and requested_output_shape is None
+        and any(e["item_kind"] == "skill" for e in candidate_entries)
+        and not any(
+            e["item_kind"] in ("instruction", "agent")
+            for e in candidate_entries
+        )
+    ):
+        improve_review_basis = _ids_for("action", "domain")
+        candidate_entries.append({
+            "item_kind": "instruction",
+            "affinity_basis": list(improve_review_basis),
+            "affinity_grade": "ambiguous",
+        })
+        candidate_entries.append({
+            "item_kind": "agent",
+            "affinity_basis": list(improve_review_basis),
+            "affinity_grade": "ambiguous",
+        })
+
     # If multiple candidate item kinds fire, downgrade each entry's
     # grade to `ambiguous` to surface multi-shape ambiguity at the
     # entry level.
@@ -1090,6 +1165,19 @@ def _select_workshop_category(
             return _WORKSHOP_CATEGORY_AGENT
         if "instruction" in candidate_set and "workflow_file" in candidate_set:
             return _WORKSHOP_CATEGORY_INSTRUCTION
+        # WO-L0-WORKSHOP-FRAME-C-HARDEN-02 closing the W-PRM-007
+        # B/G sibling observation recorded under DC-080: when the
+        # candidate set is exactly `{workflow_file, hook}` (a
+        # scheduled / event-triggered workflow with a hook target
+        # surface and no other competing kinds), the workshop
+        # intent is workflow even under high ambiguity. The
+        # low-ambiguity branch below already covers
+        # `{workflow_file, hook}` -> B for the no-ambiguity case;
+        # this branch covers the high-ambiguity case where the
+        # 2-candidate count would otherwise route the prompt to
+        # the generic G fallback.
+        if candidate_set == {"workflow_file", "hook"}:
+            return _WORKSHOP_CATEGORY_WORKFLOW
         return _WORKSHOP_CATEGORY_AMBIGUOUS
     if candidate_set == {"workflow_file"} or candidate_set == {"workflow_file", "hook"}:
         return _WORKSHOP_CATEGORY_WORKFLOW

@@ -182,13 +182,13 @@ coverage was added to FRAME-B.
 
 Per-category counts (FRAME-D-derived, matching trace validator):
 
-- A. clear single-intent: 4 (W-PRM-003, 004, 015, 020)
-- B. workflow intent: 4 (W-PRM-001, 005, 006, 008)
+- A. clear single-intent: 4 (W-PRM-003, 004, 008, 017)
+- B. workflow intent: 4 (W-PRM-001, 005, 006, 007)
 - C. skill intent: 3 (W-PRM-002, 009, 011)
 - D. agent / persona confusion: 3 (W-PRM-012, 013, 014)
-- E. instruction confusion: 3 (W-PRM-010, 016, 017)
+- E. instruction confusion: 3 (W-PRM-010, 015, 016)
 - F. prompt-search-shaped but workflow-intent: 2 (W-PRM-018, 019)
-- G. ambiguous: 3 (W-PRM-007, 021, 022)
+- G. ambiguous: 3 (W-PRM-020, 021, 022)
 - H. no-route: 2 (W-PRM-023, 024)
 - I. near-miss / rejection: 2 (W-PRM-025, 026)
 - **Total: 26**
@@ -201,8 +201,8 @@ Per-category counts (FRAME-D-derived, matching trace validator):
 | W-PRM-004 | A. clear single-intent | Write an instruction file for our Python style conventions. | instruction | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
 | W-PRM-005 | B. workflow intent | Configure GitHub Actions to deploy a Node.js app to Azure. | workflow_file | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
 | W-PRM-006 | B. workflow intent | Add a release workflow that publishes container images. | workflow_file | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
-| W-PRM-007 | G. ambiguous | Set up scheduled dependency scanning every Monday. | workflow_file; hook | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
-| W-PRM-008 | B. workflow intent | Wire up a workflow that runs static analysis on pull requests. | workflow_file | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-007 | B. workflow intent | Set up scheduled dependency scanning every Monday. | workflow_file; hook | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-008 | A. clear single-intent | An instruction file for static analysis conventions. | instruction | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
 | W-PRM-009 | C. skill intent | Create a skill that summarizes commit history into release notes. | skill | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
 | W-PRM-010 | E. instruction confusion | Write instructions to deploy markdown processing pipelines. | workflow_file; instruction | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
 | W-PRM-011 | C. skill intent | Create a code review skill that focuses on null safety. | skill | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
@@ -214,8 +214,8 @@ Per-category counts (FRAME-D-derived, matching trace validator):
 | W-PRM-017 | A. clear single-intent | An instruction file for CI conventions. | instruction | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
 | W-PRM-018 | F. prompt-search-shaped but workflow-intent | Find me a prompt that deploys Docker containers in CI. | workflow_file; cookbook_entry | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
 | W-PRM-019 | F. prompt-search-shaped but workflow-intent | Show me a cookbook recipe that deploys a static site to GitHub Pages. | cookbook_entry; workflow_file | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
-| W-PRM-020 | A. clear single-intent | Add an agent for code reviews. | agent | candidate fragment of declared shape | no_forced_selection | not admitted; not qualified; workshop metadata only |
-| W-PRM-021 | G. ambiguous | Help with my release process. | skill; instruction; workflow_file | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-020 | G. ambiguous | Improve the way we handle code reviews. | skill; instruction; agent | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
+| W-PRM-021 | G. ambiguous | Help with my release process. | workflow_file; instruction; cookbook_entry | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
 | W-PRM-022 | G. ambiguous | Make our pull requests cleaner. | skill; instruction; workflow_file | multiple candidate surfaces expected | no_forced_selection | not admitted; not qualified; workshop metadata only |
 | W-PRM-023 | H. no-route | What year did the Apollo program land on the moon? | none | no candidate surface expected | prompt_out_of_repo_scope | not admitted; not qualified; workshop metadata only |
 | W-PRM-024 | H. no-route | What is the molecular weight of caffeine? | none | no candidate surface expected | prompt_out_of_repo_scope | not admitted; not qualified; workshop metadata only |
@@ -232,8 +232,8 @@ Per-category counts (FRAME-D-derived, matching trace validator):
 | W-PRM-004 | A, [instruction] | A, [instruction] | match. |
 | W-PRM-005 | B, [workflow_file] | B, [workflow_file] | match. |
 | W-PRM-006 | B, [workflow_file] | B, [workflow_file] | match. |
-| W-PRM-007 | B, [workflow_file, hook] | G, [workflow_file, hook] | match (closest bounded surrogate via canonical extension; FRAME-C category-selector returns G instead of B for `{workflow_file, hook}` under high ambiguity): WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C added the bounded `scheduled` canonical to FRAME-B `constraint.event_triggered` and to FRAME-B `object.hook`; this suppresses FRAME-C's bare-ambiguity rule (a target_object and a constraint are now present) and lets `_is_workflow_intent` (action.set_up + has_event_constraint) and `_is_hook_intent` (hook in distinct_target_objects) both fire; the resulting candidate set `{workflow_file, hook}` matches the planning-intent kinds exactly. The category remains G rather than B because FRAME-C's bounded `_select_workshop_category` returns G when 2+ candidate kinds fire with ambiguity_level high; the B/G mismatch is a sibling FRAME-C-side observation reserved for a future Codex-authorized FRAME-C-side packet. RK-060 residual (a)'s upstream FRAME-B coverage gap is CLOSED via DC-080; the trace validator's per-category distribution (G=3, B=4) is preserved because W-PRM-007 stays in G. |
-| W-PRM-008 | B, [workflow_file] | B, [workflow_file] | match. |
+| W-PRM-007 | B, [workflow_file, hook] | B, [workflow_file, hook] | match (canonical extension + category-selector extension): WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C added the bounded `scheduled` canonical to FRAME-B `constraint.event_triggered` and to FRAME-B `object.hook` (DC-080); WO-L0-WORKSHOP-FRAME-C-HARDEN-02 extended FRAME-C's `_select_workshop_category` so the candidate set `{workflow_file, hook}` maps to `B. workflow intent` even under high ambiguity (DC-081). Together the two changes deliver the planning-intent category B with the planning-intent kinds `[workflow_file, hook]`; ambiguity_observed remains True (2 candidate kinds). The trace validator's per-category distribution is preserved through the WO-L0-WORKSHOP-FRAME-C-HARDEN-02 W-PRM-008 rebalance (B leaves 008, B gains 007; A gains 008, A loses W-PRM-020 to G; G gains W-PRM-020, G loses 007 to B). |
+| W-PRM-008 | (rewritten) A, [instruction] | A, [instruction] | rewrite for distribution: under WO-L0-WORKSHOP-FRAME-C-HARDEN-02 the prior original text `Wire up a workflow that runs static analysis on pull requests.` was rewritten to `An instruction file for static analysis conventions.` to rebalance the per-category distribution after W-PRM-020 was restored to its original text (W-PRM-020 returns to G) and W-PRM-007 shifted from G to B via the FRAME-C category-selector extension. The rewrite drops the workflow / configure / on-pull-request signals so the prompt resolves to a clean single-instruction candidate (A). |
 | W-PRM-009 | C, [skill] | C, [skill] | match. |
 | W-PRM-010 | (rewritten) C, [skill] | E, [workflow_file, instruction] | rewrite for distribution: "Write instructions to deploy markdown processing pipelines." satisfies E. |
 | W-PRM-011 | (rewritten) C, [skill] | C, [skill] | rewrite for distribution: removed hyphen in "code review" so domain.code_review matches cleanly. |
@@ -245,33 +245,37 @@ Per-category counts (FRAME-D-derived, matching trace validator):
 | W-PRM-017 | (rewritten) A, [instruction] | A, [instruction] | rewrite for distribution: under WO-L0-WORKSHOP-FRAME-B-COVERAGE-02B the prior rewrite "An instruction file that deploys to CI." was re-rewritten to "An instruction file for CI conventions." to rebalance the per-category distribution after W-PRM-015's residual (b) closure shifted W-PRM-015 from A to E; removing "deploys" drops action.deploy so the workflow_file co-fire rule does not fire and the prompt resolves to a clean single-instruction candidate. |
 | W-PRM-018 | F, [cookbook_entry, workflow_file] | F, [workflow_file, cookbook_entry] | rewrite: replaced "sets up Docker builds" with "deploys Docker containers"; primary action deploy enables workflow_file co-fire. |
 | W-PRM-019 | F, [cookbook_entry, workflow_file] | F, [cookbook_entry, workflow_file] | match. |
-| W-PRM-020 | G, [skill, instruction, agent] | A, [agent] | rewrite: "Add an agent for code reviews." produces a single agent candidate (A). Original "Improve the way we handle code reviews" yields C (skill) under FRAME-D - recorded as RK-060 (FRAME-C single-domain-+-improve resolves to skill rather than ambiguity). The rewrite makes the row contribute to A while preserving the planning-doc's intent that an agent is one of the surfaces this kind of vague request can touch. |
-| W-PRM-021 | G, [workflow_file, instruction, cookbook_entry] | G, [skill, instruction, workflow_file] | RK-060: FRAME-C bare-ambiguity emission set is bounded to (skill, instruction, workflow_file); does not match planning's expected (workflow_file, instruction, cookbook_entry). Category G preserved. |
+| W-PRM-020 | G, [skill, instruction, agent] | G, [skill, instruction, agent] | match (original text restored after FRAME-C synthesis-rule extension): WO-L0-WORKSHOP-FRAME-C-HARDEN-02 added the bounded vague improve-plus-code-review ambiguity rule (DC-081) so FRAME-C's `_compute_shape_touch_plan` appends `instruction` and `agent` candidates alongside the existing `skill` candidate when `primary_action == "improve"` AND `domain.code_review` fires AND no informative target_object is present AND no constraint AND no output_shape; FRAME-C surfaces `G. ambiguous` with `[skill, instruction, agent]`. The original planning text `Improve the way we handle code reviews.` is restored in the seed and derived-trace fixture, replacing the prior WO-L0-WORKSHOP-RK058-CLOSURE-01 rewrite `Add an agent for code reviews.`. RK-060 residual (c) closed via DC-081. |
+| W-PRM-021 | G, [workflow_file, instruction, cookbook_entry] | G, [workflow_file, instruction, cookbook_entry] | match (FRAME-C bare-ambiguity emission per primary_action): WO-L0-WORKSHOP-FRAME-C-HARDEN-02 added the bounded deploy-variant bare-ambiguity emission tuple `_BARE_AMBIGUITY_KINDS_DEPLOY = (workflow_file, instruction, cookbook_entry)` and the helper `_bare_ambiguity_kinds_for_primary_action` (DC-081). When the bare-ambiguity rule fires AND `primary_action == "deploy"` (e.g., `Help with my release process.` where `release` matches action.deploy), the deploy-variant emission set replaces the default `(skill, instruction, workflow_file)`. Category G preserved; kinds set now matches planning intent. RK-060 residual (d) closed via DC-081. |
 | W-PRM-022 | G, [skill, instruction, workflow_file] | G, [skill, instruction, workflow_file] | match. |
 | W-PRM-023 | H, [none] | H, [none] | match. |
 | W-PRM-024 | H, [none] | H, [none] | match. |
 | W-PRM-025 | I, [repo_meta_section] | I, [repo_meta_section] | match (original text restored): WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A added a source-safe assembled product-name canonical to FRAME-B `repo_meta_near_miss.repo_navigation`; the original planning text "What is awesome-copilot?" now matches under strict-position rule and FRAME-D surfaces I/[repo_meta_section]. RK-060 residual (e) closed via DC-078. |
 | W-PRM-026 | I, [repo_meta_section] | I, [repo_meta_section] | match (original text restored): WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A added the bounded sibling canonical "how this repo is organized" to FRAME-B `repo_meta_near_miss.repo_navigation`; the original planning text "Explain how this repo is organized." now matches under strict-position rule and FRAME-D surfaces I/[repo_meta_section]. RK-060 residual (f) closed via DC-078. |
 
-Summary: 16 of 26 rows match the prior planning intent under
+Summary: 19 of 26 rows match the prior planning intent under
 FRAME-D exactly (treating W-PRM-014's and W-PRM-015's kind-order
 differences as equivalent, counting W-PRM-025's and W-PRM-026's
 restored original text after DC-078, counting W-PRM-015's
-canonical-extension match after DC-079, and counting W-PRM-007's
-closest-bounded-surrogate match after DC-080 where the kinds
-set matches planning intent and the category B/G mismatch is a
-sibling FRAME-C-side observation); 3 are category-rule
-differences without a synthesis gap (W-PRM-001, W-PRM-002, and
-W-PRM-007's B/G category-selector difference); 7 are planning
-rewrites for distribution fit (W-PRM-010, W-PRM-011, W-PRM-012,
-W-PRM-013, W-PRM-017, W-PRM-018, W-PRM-020); and 1 current
-prompt row remains RK-060 OPEN residual (W-PRM-021). The
-original text for W-PRM-020 is also recorded in RK-060 as a
-historical planning-intent residual (residual (c)). Residuals
-(e) and (f) are closed by DC-078; residual (b) is closed by
-DC-079; residual (a)'s upstream FRAME-B coverage gap is closed
-by DC-080. The closure point for RK-058 is fixture derivation,
-not absence of all semantic residuals.
+canonical-extension match after DC-079, counting W-PRM-007's
+canonical-extension-plus-category-selector-extension match after
+DC-080 and DC-081, counting W-PRM-020's restored original text
+after DC-081's improve-plus-code-review ambiguity rule, and
+counting W-PRM-021's deploy-variant bare-ambiguity emission
+match after DC-081); 2 are category-rule differences without a
+synthesis gap (W-PRM-001, W-PRM-002); 7 are planning rewrites
+for distribution fit (W-PRM-008, W-PRM-010, W-PRM-011,
+W-PRM-012, W-PRM-013, W-PRM-017, W-PRM-018); and 0 current
+prompt rows remain RK-060 OPEN residuals. Residuals (e) and (f)
+are closed by DC-078; residual (b) is closed by DC-079;
+residual (a) is closed by DC-080 plus DC-081; residuals (c)
+and (d) are closed by DC-081. RK-060 is fully closed by
+DC-081; all six residuals (a) - (f) have been resolved by
+bounded FRAME-B canonical / inflection / sibling-canonical
+additions (DC-078 / DC-079 / DC-080) plus bounded FRAME-C
+synthesis-rule extensions (DC-081). The closure point for
+RK-058 is fixture derivation, not absence of all semantic
+residuals.
 
 ## 5. Derived-Material Implications
 

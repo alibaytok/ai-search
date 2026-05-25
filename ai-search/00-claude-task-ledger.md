@@ -18994,3 +18994,367 @@ RESOLVED. RK-060 stays OPEN with residuals (c) and (d)
 outstanding; residuals (e) and (f) closed via DC-078;
 residual (b) closed via DC-079; residual (a)'s upstream
 FRAME-B coverage gap closed via DC-080.
+
+---
+
+## WO-L0-WORKSHOP-FRAME-C-HARDEN-02
+
+### Status
+
+Implemented; pending Codex review.
+
+### Mandatory Priority-Miss Check (@pmc)
+
+1. Higher-priority prerequisite? RK-058 / RK-059 RESOLVED.
+   RK-060 OPEN with residuals (c), (d), and the W-PRM-007
+   B/G category-selector sibling observation - all
+   FRAME-C-side. The triage plan's proposed Packet 2
+   (WO-L0-WORKSHOP-FRAME-C-HARDEN-02) targets exactly these
+   residuals. No higher-priority missed scope.
+2. Downstream surface skipping upstream cause? No - these
+   are FRAME-C synthesis-rule narrowness residuals; closing
+   at FRAME-C is the correct upstream layer.
+3. Safer / more direct sequencing? Yes - three bounded
+   synthesis-rule extensions inside existing functions
+   (`_compute_shape_touch_plan`,
+   `_select_workshop_category`) plus one new helper. No
+   new bounded enum value.
+4. Conflicts with prior invariants / open OQs / RKs /
+   non-claims / real-benchmark-ready NO? None.
+5. Concern surfaced as a risk note: distribution-invariant
+   rebalance is required. Restoring W-PRM-020 to its
+   original text moves the row A->G; the W-PRM-007 B/G
+   fix moves W-PRM-007 G->B. To preserve A=4, B=4, G=3 the
+   packet retargets W-PRM-008 from B to A by rewriting
+   `Wire up a workflow that runs static analysis on pull
+   requests.` to `An instruction file for static analysis
+   conventions.` (single object.instruction -> A).
+6. Priority-miss check: no higher-priority missed scope
+   found.
+
+### Section L Scope Check
+
+- Goal: close RK-060 residuals (c), (d), and the W-PRM-007
+  B/G sibling observation at FRAME-C; restore W-PRM-020
+  original text in the trace fixture; absorb distribution
+  drift via W-PRM-008 rebalance.
+- Allowed files: exactly the 8 listed.
+- Forbidden: FRAME-A / FRAME-B module/test change; FRAME-D
+  module change (mapper test only); benchmark-fixtures;
+  controller-checklist; new bounded enum value in any of
+  `WORKSHOP_PROMPT_CATEGORIES`, `WORKSHOP_ITEM_KINDS`,
+  `EVIDENCE_BANDS`, `AMBIGUITY_LEVELS`, `AFFINITY_GRADES`,
+  `REQUESTED_OUTPUT_SHAPES`.
+- Halt conditions: forbidden phrase appears; FRAME-A / B /
+  D unintentionally modified; full suite regression;
+  distribution invariant break.
+- Definition of done: all three FRAME-D outputs match
+  planning intent; trace validator distribution preserved;
+  full suite passes; RK-060 fully closed (all (a)/(b)/(c)/
+  (d)/(e)/(f) plus W-PRM-007 B/G sibling closed).
+
+### Pre-Implementation Review Note
+
+- Q1: No new authorization beyond three bounded FRAME-C
+  synthesis-rule extensions; DC-020 through DC-080
+  boundary envelope carries forward.
+- Q2: No source-content risk; three additions inside
+  existing functions plus one helper + one constant.
+- Q3: No prompt-copying risk; W-PRM-020 restoration uses
+  the original planning text; W-PRM-008 rebalance uses a
+  bounded single-instruction phrasing.
+- Q4: RK-058 / RK-059 stay RESOLVED; RK-060 fully RESOLVED
+  via DC-081. OQs unchanged.
+- Q5: 8 files modified exactly.
+- Q6: No FRAME-A / FRAME-B module/test modification; no
+  FRAME-D module modification (only its test file); no
+  benchmark-fixtures mutation; no controller-checklist
+  change; no new bounded enum value; no forbidden output
+  field name; no forbidden external-integration substring.
+
+No scope drift detected.
+
+### Codex Directive Recorded
+
+Verbatim directive Claude was bound to (from the user
+prompt):
+
+- Close the remaining RK-060 FRAME-C-side issues:
+  1. W-PRM-020 original text should reach G/[skill,
+     instruction, agent] or closest bounded surrogate.
+  2. W-PRM-021 should reach G/[workflow_file, instruction,
+     cookbook_entry] or closest bounded surrogate.
+  3. W-PRM-007 should reach B/[workflow_file, hook] by
+     adjusting FRAME-C category selection for
+     {workflow_file, hook}.
+- Prefer bounded `_select_workshop_category`,
+  `_classify_ambiguity`, and `_compute_shape_touch_plan`
+  refinements over generalized rewrite.
+- Preserve existing bounded enums.
+- Absorb trace-distribution drift inside this packet if
+  needed.
+- No FRAME-A or FRAME-B module/test change. No FRAME-D
+  module change. No benchmark-fixtures or
+  controller-checklist mutation. No
+  route/retrieval/ranking/scoring/benchmark/source/corpus/
+  LLM/provider/architecture work. No new bounded enum
+  value. Keep real-benchmark-ready NO.
+
+### Implementation Summary
+
+FRAME-C module change in
+`harness/level0_workshop_canonical_intent_frame.py`:
+
+1. Added the bounded module-level constant
+   `_BARE_AMBIGUITY_KINDS_DEPLOY = (workflow_file,
+   instruction, cookbook_entry)` and the helper
+   `_bare_ambiguity_kinds_for_primary_action(primary_action)`
+   that returns the deploy-variant emission tuple when
+   `primary_action == "deploy"` and the default
+   `_BARE_AMBIGUITY_KINDS` otherwise. The bare-ambiguity
+   emission block in `_compute_shape_touch_plan` now calls
+   the helper instead of iterating the default constant
+   directly. Closes residual (d).
+
+2. Added the vague improve-plus-code-review ambiguity rule
+   in `_compute_shape_touch_plan` (after the workflow_file
+   co-fire block, before the multi-candidate
+   ambiguous-grade downgrade). When `primary_action ==
+   "improve"` AND `domain.code_review` fires AND no
+   informative target_object is present AND no
+   event-triggered constraint AND no requested_output_shape
+   AND `skill` is already a candidate AND `instruction`
+   and `agent` are not, the rule appends `instruction` and
+   `agent` candidates alongside the existing `skill`
+   candidate with ambiguous grade and action+domain
+   affinity_basis. Closes residual (c).
+
+3. Extended `_select_workshop_category`'s high-ambiguity
+   branch with
+   `if candidate_set == {"workflow_file", "hook"}: return
+   _WORKSHOP_CATEGORY_WORKFLOW` (added before the generic
+   AMBIGUOUS fallback). Closes the W-PRM-007 B/G
+   category-selector sibling observation.
+
+`harness/tests/test_level0_workshop_canonical_intent_frame.py`:
+added 5 FRAME-C tests under `HardenedSynthesisTest`:
+`test_improve_plus_code_review_yields_skill_instruction_agent_ambiguity`,
+`test_improve_plus_code_review_with_object_target_stays_single`
+(negative regression),
+`test_bare_ambiguity_deploy_variant_emits_workflow_instruction_cookbook`,
+`test_bare_ambiguity_default_emission_preserved_for_non_deploy`
+(negative regression),
+`test_workflow_hook_candidate_set_maps_to_workflow_under_high_ambiguity`.
+The existing
+`test_scheduled_trigger_yields_workflow_hook_surrogate`
+was updated to assert `B. workflow intent` (was
+`G. ambiguous` under DC-080's surrogate) so the test
+reflects the new category-selector branch.
+
+`harness/tests/test_level0_workshop_user_intent_mapper.py`:
+renamed `test_scheduled_trigger_maps_to_workflow_hook_surrogate`
+to `test_scheduled_trigger_maps_to_workflow_intent` and
+updated it to assert `B. workflow intent` with
+`normalized_intent_observation == "workflow_intent"`;
+added 2 new FRAME-D mapper end-to-end tests:
+`test_improve_plus_code_review_maps_to_skill_instruction_agent`
+and
+`test_deploy_variant_bare_ambiguity_maps_to_workflow_instruction_cookbook`.
+
+`harness/tests/test_level0_workshop_derived_trace.py`:
+restored W-PRM-020's prompt_text from the prior
+WO-L0-WORKSHOP-RK058-CLOSURE-01 rewrite `Add an agent
+for code reviews.` to the original
+`Improve the way we handle code reviews.`; rewrote
+W-PRM-008's prompt_text from the original `Wire up a
+workflow that runs static analysis on pull requests.`
+to `An instruction file for static analysis conventions.`
+in `_PLANNING_DOC_PROMPTS`. Updated the module-scope
+comment block and the `_build_clean_prompt_records`
+docstring to record the full closure under DC-081.
+
+`ai-search/00-level0-awesome-copilot-workshop-seed.md`:
+updated the per-category counts list to reflect the
+final FRAME-D-actual assignment after all closure
+packets (A = {003, 004, 008, 017}; B = {001, 005, 006,
+007}; C = {002, 009, 011}; D = {012, 013, 014}; E =
+{010, 015, 016}; F = {018, 019}; G = {020, 021, 022};
+H = {023, 024}; I = {025, 026}). Updated prompt-table
+rows for W-PRM-007 (G -> B with kinds [workflow_file,
+hook]), W-PRM-008 (B -> A with new prompt text and
+kinds [instruction]), W-PRM-020 (A -> G with restored
+original text and kinds [skill, instruction, agent]),
+and W-PRM-021 (kinds set updated to [workflow_file,
+instruction, cookbook_entry]). Updated closure-evidence
+rows for the same four prompts to record the closure-
+via-DC-081 evidence. Updated the summary line (19 of 26
+rows match planning intent under FRAME-D; 2 category-
+rule differences without a synthesis gap; 7 planning
+rewrites for distribution fit including W-PRM-008's new
+rewrite; 0 RK-060 OPEN residuals remain).
+
+`ai-search/71-level0-workshop-canonical-intent-frame.md`:
+added a WO-L0-WORKSHOP-FRAME-C-HARDEN-02 addendum to
+the Non-Claim Constraints section enumerating the three
+bounded synthesis-rule extensions, the W-PRM-020
+restoration, the W-PRM-008 distribution-rebalance
+rewrite, the unchanged bounded enums, the unchanged
+FRAME-A / FRAME-B / FRAME-D modules, and the full
+RK-060 closure under DC-078 + DC-079 + DC-080 + DC-081.
+
+`ai-search/00-open-questions.md`:
+flipped the RK-060 row status from OPEN to RESOLVED;
+rewrote the RK-060 narrative to enumerate the closure
+chain across the four packets; added DC-081 row
+recording the FRAME-C HARDEN-02 closure decision;
+updated the document Status header to lead with
+WO-L0-WORKSHOP-FRAME-C-HARDEN-02 and to record the
+RK-060 full closure via DC-081; appended the new packet
+to the Work Order chronology.
+
+### Files Modified
+
+1. `harness/level0_workshop_canonical_intent_frame.py`
+2. `harness/tests/test_level0_workshop_canonical_intent_frame.py`
+3. `harness/tests/test_level0_workshop_user_intent_mapper.py`
+4. `harness/tests/test_level0_workshop_derived_trace.py`
+5. `ai-search/71-level0-workshop-canonical-intent-frame.md`
+6. `ai-search/00-level0-awesome-copilot-workshop-seed.md`
+7. `ai-search/00-open-questions.md`
+8. `ai-search/00-claude-task-ledger.md` (this entry)
+
+### Residual closure status
+
+- (a) W-PRM-007 - CLOSED. Upstream FRAME-B coverage gap
+  closed by DC-080 (bounded `scheduled` canonical added
+  to `constraint.event_triggered` and `object.hook`);
+  category-selector sibling observation closed by DC-081
+  ({workflow_file, hook} -> B even under high ambiguity).
+  FRAME-D now surfaces B/[workflow_file, hook] for the
+  original planning text, matching the planning intent
+  exactly.
+- (b) W-PRM-015 - already CLOSED via DC-079.
+- (c) W-PRM-020 - CLOSED via DC-081. Vague improve-plus-
+  code-review ambiguity rule added to FRAME-C's
+  `_compute_shape_touch_plan`; the original planning text
+  `Improve the way we handle code reviews.` is restored
+  in the seed and derived-trace fixture and FRAME-D
+  surfaces G/[skill, instruction, agent], matching the
+  planning intent exactly.
+- (d) W-PRM-021 - CLOSED via DC-081. Deploy-variant
+  bare-ambiguity emission tuple added to FRAME-C; FRAME-D
+  surfaces G/[workflow_file, instruction, cookbook_entry]
+  for the original text, matching the planning intent
+  exactly.
+- (e) W-PRM-025 original - already CLOSED via DC-078.
+- (f) W-PRM-026 original - already CLOSED via DC-078.
+
+RK-060 fully RESOLVED.
+
+### Verification
+
+- Targeted FRAME-C + mapper + derived-trace combined run:
+  246/246 OK.
+- `python -B -m unittest discover -s harness/tests`:
+  1553/1553 OK (was 1546; +7 net new tests: +5 FRAME-C
+  + 3 mapper - 1 mapper rename).
+- ASCII purity of all 8 touched files verified (sum of
+  bytes > 127 == 0 in each).
+- No `__pycache__` artifacts under `harness/`.
+- Project root contains exactly `ai-search/`, `harness/`,
+  `benchmark-fixtures/`.
+- `benchmark-fixtures/` unchanged.
+- FRAME-A module / test unchanged.
+- FRAME-B module / test unchanged.
+- FRAME-D shim module unchanged (only its test file).
+- `ai-search/00-controller-checklist.md` unchanged.
+- RK-039 single (text unchanged).
+- RK-058 RESOLVED (unchanged).
+- RK-059 RESOLVED (unchanged).
+- RK-060 RESOLVED (this packet flips the row from OPEN
+  to RESOLVED via DC-081).
+- All 11 tracked OQs (OQ-003, OQ-015, OQ-031, OQ-035,
+  OQ-048, OQ-049, OQ-056, OQ-057, OQ-070, OQ-075, OQ-076)
+  remain OPEN.
+- Real-benchmark-ready remains NO.
+- `git status` shows exactly the eight allowed files
+  modified.
+
+### Explicit confirmations
+
+- No FRAME-A module or test modification.
+- No FRAME-B module or test modification.
+- No FRAME-D module modification (only its test file).
+- No benchmark-fixtures mutation.
+- No `00-controller-checklist.md` modification.
+- No new bounded enum value added in
+  `WORKSHOP_PROMPT_CATEGORIES`, `WORKSHOP_ITEM_KINDS`,
+  `EVIDENCE_BANDS`, `AMBIGUITY_LEVELS`,
+  `AFFINITY_GRADES`, or `REQUESTED_OUTPUT_SHAPES`.
+- No new exception class added.
+- No forbidden output field names added.
+- No real indexing, retrieval, ranking, scoring,
+  similarity, distance, embedding, vector, ANN,
+  reranker, LLM / provider call, route object creation,
+  route selection, source qualification, corpus
+  admission, real benchmark execution, architecture /
+  vendor / library / index-family / production-system
+  selection, IDE / extension / chat / collaborator
+  integration, Source Card or Route Card creation,
+  production artifact contracts, third-party
+  dependencies, CLI introduction, subprocess or shell
+  execution.
+- No closure of RK-058 (already RESOLVED).
+- No closure of RK-059 (already RESOLVED).
+- No duplication of RK-039.
+
+### Structural gaps noticed
+
+The three bounded synthesis-rule extensions together
+close all FRAME-C-side RK-060 residuals exactly as the
+triage plan predicted: (i) the deploy-variant
+bare-ambiguity tuple matches the triage plan's
+suggestion to vary the bare-ambiguity emission by
+primary-action subfamily; (ii) the vague improve-plus-
+code-review rule matches the triage plan's
+"vague-improve-with-soft-domain" pre-check; (iii) the
+`{workflow_file, hook}` -> B branch closes a sibling
+observation that was surfaced by DC-080 rather than by
+the original triage. The W-PRM-020 original-text
+restoration and the W-PRM-008 distribution-rebalance
+rewrite mirror the DC-078 (e)/(f) and DC-079 (b)
+precedents: original texts are restored when the
+upstream synthesis-rule extension makes them match the
+planning intent, and one auxiliary prompt is retargeted
+within the same packet to absorb the per-category
+distribution drift.
+
+### Non-Claims
+
+WO-L0-WORKSHOP-FRAME-C-HARDEN-02 does not claim that the
+three bounded synthesis-rule extensions, the closure of
+residuals (c), (d), and the W-PRM-007 B/G category-
+selector sibling observation, the W-PRM-020 original-
+text restoration, the W-PRM-008 distribution-rebalance
+rewrite, the eight added tests, or the full closure of
+RK-060 are sufficient, necessary, superior, best,
+complete, production-ready, recommended, selected, or
+benchmark-ready. The bounded
+`_BARE_AMBIGUITY_KINDS_DEPLOY` constant, the bounded
+`_bare_ambiguity_kinds_for_primary_action` helper, the
+bounded vague improve-plus-code-review ambiguity rule,
+the bounded `{workflow_file, hook}` -> B branch, the
+bounded five-test FRAME-C addition, the bounded
+three-test FRAME-D mapper addition, the W-PRM-020
+original-text restoration, the W-PRM-008 distribution-
+rebalance rewrite, and the full RK-060 closure are
+bounded by WO-L0-WORKSHOP-FRAME-C-HARDEN-02 and are NOT
+claimed exhaustive.
+
+All DC-020 through DC-081 boundary invariants carry
+forward. WO-L0-WORKSHOP-FRAME-C-HARDEN-02 does not
+amend or broaden DC-003 through DC-081. Real-benchmark-
+ready remains NO. RK-058 stays RESOLVED. RK-059 stays
+RESOLVED. RK-060 RESOLVED via DC-081 (final closure
+across the four-packet chain: DC-078 + DC-079 + DC-080 +
+DC-081).

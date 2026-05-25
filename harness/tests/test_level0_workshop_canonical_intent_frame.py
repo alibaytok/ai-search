@@ -569,6 +569,110 @@ class HardenedSynthesisTest(unittest.TestCase):
         workflow_count = sum(1 for k in kinds if k == "workflow_file")
         self.assertEqual(workflow_count, 1)
 
+    def test_improve_plus_code_review_yields_skill_instruction_agent_ambiguity(self):
+        """RK-060 residual (c) closed by
+        WO-L0-WORKSHOP-FRAME-C-HARDEN-02: the new bounded vague
+        improve-plus-code-review ambiguity rule appends
+        `instruction` and `agent` candidates alongside the
+        already-firing `skill` candidate when
+        `primary_action == "improve"` AND `domain.code_review`
+        fires AND no informative target_object is present AND no
+        constraint AND no output_shape. The result for
+        `Improve the way we handle code reviews.` is
+        `G. ambiguous` with the ordered kinds
+        `[skill, instruction, agent]`."""
+        result = _frame_for("Improve the way we handle code reviews.")
+        record = result["workshop_prompt_record"]
+        self.assertEqual(record["category"], "G. ambiguous")
+        self.assertEqual(
+            record["expected_item_kinds_touched"],
+            ["skill", "instruction", "agent"],
+        )
+        kinds = [e["item_kind"] for e in result["source_shape_affinity"]]
+        self.assertIn("skill", kinds)
+        self.assertIn("instruction", kinds)
+        self.assertIn("agent", kinds)
+        self.assertEqual(result["ambiguity_level"], "high")
+
+    def test_improve_plus_code_review_with_object_target_stays_single(self):
+        """Negative regression: when an informative target_object
+        is present alongside `improve` + `code_review`, the new
+        ambiguity rule does NOT fire and the existing
+        single-skill resolution is preserved. `Improve our code
+        review skill.` has both `action.improve` + `object.skill`
+        + `domain.code_review`, so `_is_skill_intent` fires from
+        the object path and the new rule's guard
+        (`not distinct_target_objects`) suppresses the extra
+        emission."""
+        result = _frame_for("Improve our code review skill.")
+        record = result["workshop_prompt_record"]
+        self.assertEqual(record["category"], "C. skill intent")
+        self.assertEqual(record["expected_item_kinds_touched"], ["skill"])
+
+    def test_bare_ambiguity_deploy_variant_emits_workflow_instruction_cookbook(self):
+        """RK-060 residual (d) closed by
+        WO-L0-WORKSHOP-FRAME-C-HARDEN-02: when bare-ambiguity
+        fires AND `primary_action == "deploy"` (e.g.,
+        `Help with my release process.` where `release` matches
+        action.deploy), the new deploy-variant emission set
+        `(workflow_file, instruction, cookbook_entry)` replaces
+        the default `(skill, instruction, workflow_file)`. The
+        result is `G. ambiguous` with the ordered kinds
+        `[workflow_file, instruction, cookbook_entry]`."""
+        result = _frame_for("Help with my release process.")
+        record = result["workshop_prompt_record"]
+        self.assertEqual(record["category"], "G. ambiguous")
+        self.assertEqual(
+            record["expected_item_kinds_touched"],
+            ["workflow_file", "instruction", "cookbook_entry"],
+        )
+        self.assertIn(
+            "bare_ambiguity_action_only", result["ambiguity_reasons"]
+        )
+
+    def test_bare_ambiguity_default_emission_preserved_for_non_deploy(self):
+        """Negative regression: bare-ambiguity for a non-deploy
+        action verb continues to emit the default
+        `(skill, instruction, workflow_file)` tuple. `make this
+        better` has `action.create` (from `make`) and
+        `action.improve` (from `better`) but no deploy action."""
+        result = _frame_for("make this better")
+        record = result["workshop_prompt_record"]
+        self.assertEqual(record["category"], "G. ambiguous")
+        self.assertEqual(
+            record["expected_item_kinds_touched"],
+            ["skill", "instruction", "workflow_file"],
+        )
+        self.assertIn(
+            "bare_ambiguity_action_only", result["ambiguity_reasons"]
+        )
+
+    def test_workflow_hook_candidate_set_maps_to_workflow_under_high_ambiguity(self):
+        """W-PRM-007 B/G sibling observation closed by
+        WO-L0-WORKSHOP-FRAME-C-HARDEN-02: when the candidate
+        set is exactly `{workflow_file, hook}` and ambiguity is
+        high (2+ candidate kinds), FRAME-C's
+        `_select_workshop_category` returns
+        `B. workflow intent` rather than the generic
+        `G. ambiguous` fallback. For
+        `Set up scheduled dependency scanning every Monday.` the
+        FRAME-B `scheduled` canonical (added by
+        WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C) on both
+        `constraint.event_triggered` and `object.hook` causes
+        `workflow_file` and `hook` to co-fire; the new
+        category-selector branch surfaces the workshop category
+        as B with the kinds `[workflow_file, hook]`."""
+        result = _frame_for(
+            "Set up scheduled dependency scanning every Monday."
+        )
+        record = result["workshop_prompt_record"]
+        self.assertEqual(record["category"], "B. workflow intent")
+        self.assertEqual(
+            record["expected_item_kinds_touched"],
+            ["workflow_file", "hook"],
+        )
+        self.assertEqual(result["ambiguity_level"], "high")
+
     def test_scheduled_trigger_yields_workflow_hook_surrogate(self):
         """RK-060 residual (a) closed at the FRAME-B layer by
         WO-L0-WORKSHOP-FRAME-B-COVERAGE-02C: the new FRAME-B
@@ -578,19 +682,21 @@ class HardenedSynthesisTest(unittest.TestCase):
         `_is_workflow_intent` (action.set_up + has_event_constraint)
         and `_is_hook_intent` (hook in distinct_target_objects)
         both fire on the planning-doc text `Set up scheduled
-        dependency scanning every Monday.`. The candidate set is
-        `{workflow_file, hook}` which the bounded `_select_workshop_category`
-        rule resolves to `G. ambiguous` when ambiguity_level is
-        `high` (the B/G mismatch versus the planning intent
-        category `B. workflow intent` is a sibling FRAME-C-side
-        residual; the kinds set `[workflow_file, hook]` matches
-        the planning intent and the trace validator distribution
-        is preserved because W-PRM-007 stays in G)."""
+        dependency scanning every Monday.`. WO-L0-WORKSHOP-
+        FRAME-C-HARDEN-02 extended `_select_workshop_category`
+        so the candidate set `{workflow_file, hook}` maps to
+        `B. workflow intent` even under high ambiguity, closing
+        the W-PRM-007 B/G sibling observation that was
+        recorded under DC-080. The kinds set `[workflow_file,
+        hook]` matches the planning intent and the trace
+        validator distribution is preserved (W-PRM-008
+        rebalanced from B to A absorbs the W-PRM-007 G to B
+        shift)."""
         result = _frame_for(
             "Set up scheduled dependency scanning every Monday."
         )
         record = result["workshop_prompt_record"]
-        self.assertEqual(record["category"], "G. ambiguous")
+        self.assertEqual(record["category"], "B. workflow intent")
         self.assertEqual(
             record["expected_item_kinds_touched"],
             ["workflow_file", "hook"],

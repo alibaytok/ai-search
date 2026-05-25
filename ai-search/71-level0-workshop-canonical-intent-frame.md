@@ -476,9 +476,82 @@ the bounded workshop-category selection rules, and the
 twenty-six `ALLOWED_OUTPUT_KEYS` are bounded by
 WO-L0-WORKSHOP-FRAME-C and are NOT claimed exhaustive.
 
-All DC-020 through DC-072 boundary invariants carry forward.
-WO-L0-WORKSHOP-FRAME-C does not amend or broaden DC-003 through
-DC-072. RK-058 is acknowledged and remains OPEN. RK-039 remains
-active and is not duplicated. Real-benchmark-ready remains NO.
+WO-L0-WORKSHOP-FRAME-C-HARDEN-02 addendum: three bounded
+synthesis-rule extensions fully close RK-060 (residuals (c),
+(d), and the W-PRM-007 B/G category-selector sibling
+observation recorded under DC-080):
+
+1. **Deploy-variant bare-ambiguity emission**. Added the
+   module-level constant
+   `_BARE_AMBIGUITY_KINDS_DEPLOY = (workflow_file, instruction,
+   cookbook_entry)` and the helper
+   `_bare_ambiguity_kinds_for_primary_action(primary_action)`
+   that returns the deploy-variant emission tuple when
+   `primary_action == "deploy"` and the default
+   `_BARE_AMBIGUITY_KINDS = (skill, instruction, workflow_file)`
+   otherwise. The bare-ambiguity emission block in
+   `_compute_shape_touch_plan` now calls the helper instead
+   of iterating the default constant directly. This closes
+   RK-060 residual (d): `Help with my release process.`
+   (action.deploy via `release` + action.assist via `help`,
+   no other informative signal) now emits the deploy-variant
+   kinds and FRAME-D surfaces `G. ambiguous` with
+   `[workflow_file, instruction, cookbook_entry]`.
+
+2. **Vague improve-plus-code-review ambiguity rule**. Added a
+   new shape-touch rule block in `_compute_shape_touch_plan`
+   (after the workflow_file co-fire block, before the
+   multi-candidate ambiguous-grade downgrade). When
+   `primary_action == "improve"` AND `domain.code_review`
+   fires AND no informative target_object is present AND no
+   event-triggered constraint AND no requested_output_shape
+   AND `skill` is already a candidate (via the existing
+   `_is_skill_intent` action+domain path) AND `instruction`
+   and `agent` are not, the rule appends `instruction` and
+   `agent` candidates alongside the existing `skill`
+   candidate with ambiguous grade. This closes RK-060
+   residual (c): `Improve the way we handle code reviews.`
+   now surfaces `G. ambiguous` with
+   `[skill, instruction, agent]`. The
+   `not distinct_target_objects` guard preserves the existing
+   single-skill resolution for prompts with an informative
+   target (e.g., `Improve our code review skill.` with
+   object.skill firing) - covered by a negative regression
+   test.
+
+3. **`{workflow_file, hook}` -> B branch under high
+   ambiguity**. Extended `_select_workshop_category`'s
+   high-ambiguity branch with
+   `if candidate_set == {"workflow_file", "hook"}: return
+   _WORKSHOP_CATEGORY_WORKFLOW`. This closes the W-PRM-007
+   B/G category-selector sibling observation recorded under
+   DC-080: `Set up scheduled dependency scanning every
+   Monday.` (action.set_up + object.hook +
+   constraint.event_triggered via the DC-080 `scheduled`
+   canonical) yields candidate set `{workflow_file, hook}`
+   under high ambiguity (2 candidates); the new branch
+   routes this set to `B. workflow intent` even though the
+   generic 2-candidate-ambiguous fallback would otherwise
+   return G. The kinds set `[workflow_file, hook]` was
+   already matching the planning intent under DC-080; DC-081
+   closes the category mismatch.
+
+No bounded enum value was added (`WORKSHOP_PROMPT_CATEGORIES`,
+`WORKSHOP_ITEM_KINDS`, `EVIDENCE_BANDS`, `AMBIGUITY_LEVELS`,
+`AFFINITY_GRADES`, `REQUESTED_OUTPUT_SHAPES` all unchanged).
+No new exception class added. No FRAME-A / FRAME-B / FRAME-D
+module change. The bounded twenty-six `ALLOWED_OUTPUT_KEYS`
+is unchanged. The planning-doc fixture changes that accompany
+this packet (W-PRM-020 original-text restoration; W-PRM-008
+distribution-rebalance rewrite) preserve the trace
+validator's bounded per-category distribution invariant.
+
+All DC-020 through DC-080 boundary invariants carry forward.
+WO-L0-WORKSHOP-FRAME-C, WO-L0-WORKSHOP-FRAME-C-HARDEN-01, and
+WO-L0-WORKSHOP-FRAME-C-HARDEN-02 do not amend or broaden
+DC-003 through DC-080. RK-058 RESOLVED via DC-077. RK-059
+RESOLVED via DC-076. RK-060 fully RESOLVED via DC-078 + DC-079
++ DC-080 + DC-081. RK-039 remains active and is not
+duplicated. Real-benchmark-ready remains NO.
 OQ-003, OQ-015, OQ-031, OQ-035, OQ-048, OQ-049, OQ-056, OQ-057,
 OQ-070, OQ-075, OQ-076 remain OPEN.
