@@ -239,3 +239,17 @@ Added by Codex after Mini-V1 closure to prevent autonomous-loop growth from beco
 - [ ] Corpus expansion must not begin until the freeze gate is either implemented or explicitly deferred with recorded rationale.
 - [ ] Any future learned-overlay design must preserve `core + empty overlay == core` before it can evaluate non-empty overlays.
 - [ ] No benchmark, production-readiness, route-validation, source-qualification, or corpus-admission claim may be inferred from Mini-V1 passing.
+
+## O. Level 0 Workshop Corpus Admission Gate
+
+Added by Codex after raw-candidate snapshot v1 and admission-review pack v1 to prevent corpus poisoning while expanding the Level 0 intent-gate evaluation surface. These checks apply to any future Work Order that admits raw candidates into Mini-V2, holdout, or any later Level 0 workshop matrix. This section does not authorize benchmark claims, production readiness, source qualification, route validation, downstream model/action integration, overlay storage, confidence decay, crawler source expansion, or parser-core promotion.
+
+- [ ] Admission reads from a versioned raw-candidate snapshot or review pack, not from a live crawler run.
+- [ ] No autonomous admission is allowed; raw-to-admitted or raw-to-holdout transition requires a named human-authored Work Order.
+- [ ] Expected fields are human-authored gate-output semantics only; parser observations must not be copied into expected fields.
+- [ ] Each admitted or holdout case has its own rationale; batch rationale is not sufficient.
+- [ ] Admission must de-duplicate against all existing intent matrices and planning-doc prompt fixtures before selecting cases.
+- [ ] Holdout files must remain isolated from autonomous-loop modules and tests; holdout is human measurement surface only.
+- [ ] Admitted-case edits after admission require an explicit follow-up packet with rationale.
+- [ ] Admission does not imply benchmark readiness, production readiness, route validation, source qualification, corpus completeness, or downstream action authorization.
+- [ ] Source expansion, crawler heuristic expansion, overlay store, confidence decay, and FRAME-C overlay work remain separate decisions.

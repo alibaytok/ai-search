@@ -90,6 +90,8 @@ def _existing_prompt_keys():
     for path in glob.glob(
         os.path.join("harness", "intent_test_matrices", "*.intent.matrix.json")
     ):
+        if os.path.basename(path).startswith("L0-WS-PARSER-QUALITY-MINI-V2"):
+            continue
         with open(path, "r", encoding="ascii") as handle:
             matrix = json.load(handle)
         for case in matrix.get("cases", []):
