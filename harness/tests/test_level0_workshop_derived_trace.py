@@ -187,7 +187,7 @@ _PLANNING_DOC_PROMPTS = (
     ("W-PRM-010", "Write instructions to deploy markdown processing pipelines."),
     ("W-PRM-011", "Create a code review skill that focuses on null safety."),
     ("W-PRM-012", "Give me a security-reviewer agent that deploys CodeQL scans."),
-    ("W-PRM-013", "Define a documentation-writer persona that deploys to GitHub Pages."),
+    ("W-PRM-013", "Define a documentation-writer agent that deploys a GitHub Actions workflow."),
     ("W-PRM-014", "Define an agent that runs a test workflow on demand."),
     ("W-PRM-015", "Add instructions for setting up CI on a new Python repo."),
     ("W-PRM-016", "Write instructions for our team's release process."),

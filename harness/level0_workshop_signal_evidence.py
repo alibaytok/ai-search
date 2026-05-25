@@ -243,7 +243,10 @@ SIGNAL_FAMILIES = (
     LexicalFamily(
         family_id="action.create",
         family_kind="action",
-        canonical_terms=("create", "make", "build", "generate", "produce"),
+        canonical_terms=(
+            "create", "make", "build", "generate", "produce",
+            "author", "define",
+        ),
         tr_aliases=("olustur", "yap", "uret"),
         edit_distance_budget="short_token_1",
         exclusion_terms=(),

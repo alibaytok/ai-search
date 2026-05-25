@@ -45,10 +45,8 @@ def _accepted_materialization_bundle():
     bundle = copy.deepcopy(FrameBOverlayAutonomyTest.bundle)
     bundle["decision"] = "accepted"
     bundle["decision_reasons"] = ["accepted_strict_improvement"]
-    bundle["accepted_family_ids"] = [
-        "action.set_up",
-        "repo_meta_near_miss.repo_navigation",
-    ]
+    bundle["accepted_family_ids"] = ["action.create"]
+    bundle["canonical_additions"]["action.create"] = ["draft"]
     return bundle
 
 
@@ -77,8 +75,8 @@ class FrameBOverlayAutonomyTest(unittest.TestCase):
             {
                 "matrix_id": "L0-WS-PARSER-QUALITY-MINI-V1",
                 "case_count": 35,
-                "passed_count": 22,
-                "failed_count": 13,
+                "passed_count": 24,
+                "failed_count": 11,
             },
         )
         self.assertEqual(
@@ -86,8 +84,8 @@ class FrameBOverlayAutonomyTest(unittest.TestCase):
             {
                 "matrix_id": "L0-WS-PARSER-QUALITY-MINI-V1",
                 "case_count": 35,
-                "passed_count": 22,
-                "failed_count": 13,
+                "passed_count": 24,
+                "failed_count": 11,
             },
         )
 
@@ -178,8 +176,8 @@ class FrameBOverlayAutonomyTest(unittest.TestCase):
     def test_runner_optional_overlay_does_not_change_baseline_contract(self):
         result = run_intent_test_matrix(MINI_V1_PATH, EventLog())
         self.assertEqual(result["case_count"], 35)
-        self.assertEqual(result["passed_count"], 22)
-        self.assertEqual(result["failed_count"], 13)
+        self.assertEqual(result["passed_count"], 24)
+        self.assertEqual(result["failed_count"], 11)
 
     def test_frame_b_single_resolver_invariant(self):
         path = os.path.join("harness", "level0_workshop_signal_evidence.py")
@@ -279,18 +277,16 @@ class FrameBOverlayAutonomyTest(unittest.TestCase):
             )
             self.assertEqual(
                 result["materialized_family_ids"],
-                ["action.set_up", "repo_meta_near_miss.repo_navigation"],
+                ["action.create"],
             )
             self.assertRegex(result["frame_b_source_sha256"], r"^[0-9a-f]{64}$")
             self.assertIsNone(result["materialized_case_results_sha256"])
             with open(path, "r", encoding="ascii") as handle:
                 source = handle.read()
-            self.assertIn('"run",', source)
-            self.assertIn('"what is this repository about",', source)
-            self.assertIn('"how is the project structured",', source)
-            self.assertNotIn('"author",', source)
-            self.assertNotIn('"define",', source)
-            self.assertNotIn('"draft",', source)
+            self.assertIn('"author",', source)
+            self.assertIn('"define",', source)
+            self.assertIn('"draft",', source)
+            compile(source, path, "exec")
             self.assertNotEqual(source.encode("ascii"), original)
         finally:
             os.remove(path)

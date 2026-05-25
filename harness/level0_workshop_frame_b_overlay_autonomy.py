@@ -334,12 +334,13 @@ def _insert_terms_in_source(source, family_id, terms):
         raise FrameBMaterializationVerificationFailed(
             "canonical_terms tuple not found for family"
         )
-    close_pos = source.find("\n        ),", terms_pos)
-    if close_pos < 0:
+    open_pos = source.find("(", terms_pos)
+    close_pos = source.find(")", open_pos)
+    if open_pos < 0 or close_pos < 0:
         raise FrameBMaterializationVerificationFailed(
             "canonical_terms closing tuple not found for family"
         )
-    block = source[terms_pos:close_pos]
+    block = source[open_pos + 1:close_pos]
     additions = []
     for term in terms:
         literal = '"{0}"'.format(term)
@@ -347,8 +348,11 @@ def _insert_terms_in_source(source, family_id, terms):
             additions.append('            "{0}",'.format(term))
     if not additions:
         return source
+    prefix = ""
+    if block.strip() and not block.rstrip().endswith(","):
+        prefix = ","
     insertion = "\n" + "\n".join(additions)
-    return source[:close_pos] + insertion + source[close_pos:]
+    return source[:close_pos] + prefix + insertion + source[close_pos:]
 
 
 def _apply_materialized_terms(source, canonical_additions):

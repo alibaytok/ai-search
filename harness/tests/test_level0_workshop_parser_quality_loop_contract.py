@@ -651,14 +651,16 @@ class UpgradeCandidatePlannerTest(unittest.TestCase):
         self.assertEqual(candidate["suggested_next_packet_type"], "CLARIFICATION-DESIGN")
         self.assertEqual(candidate["expectation_drift_risk"], "low")
 
-    def test_mini_v1_groups_frame_b_canonical_as_parser_improvement(self):
-        candidate = self._candidate(
-            "frame_b_canonical_set_gap", "add_frame_b_canonical"
+    def test_mini_v1_has_no_frame_b_canonical_candidate_after_materialization(self):
+        self._require_loaded()
+        candidate_keys = {
+            (candidate["failure_class"], candidate["suggested_upgrade_type"])
+            for candidate in self.candidates_result["upgrade_candidates"]
+        }
+        self.assertNotIn(
+            ("frame_b_canonical_set_gap", "add_frame_b_canonical"),
+            candidate_keys,
         )
-        self.assertEqual(candidate["affected_count"], 2)
-        self.assertEqual(candidate["candidate_intent"], "parser_improvement")
-        self.assertEqual(candidate["safety_tier"], "proposal_only")
-        self.assertIn("clean_skill", candidate["affected_tags"])
 
     def test_mini_v1_has_no_matrix_drift_candidate_after_materialization(self):
         self._require_loaded()
@@ -676,18 +678,17 @@ class UpgradeCandidatePlannerTest(unittest.TestCase):
         candidates = self.candidates_result["upgrade_candidates"]
         self.assertEqual(
             [candidate["affected_count"] for candidate in candidates],
-            [7, 4, 2],
+            [7, 4],
         )
         self.assertEqual(
             [candidate["candidate_id"] for candidate in candidates],
-            ["UPG-001", "UPG-002", "UPG-003"],
+            ["UPG-001", "UPG-002"],
         )
         self.assertEqual(
             [candidate["failure_class"] for candidate in candidates],
             [
                 "frame_c_ambiguity_misreport",
                 "frame_c_synthesis_rule_gap",
-                "frame_b_canonical_set_gap",
             ],
         )
 
@@ -717,7 +718,7 @@ class UpgradeCandidatePlannerTest(unittest.TestCase):
         ]
         self.assertEqual(
             [entry["candidate_id"] for entry in assign_events],
-            ["UPG-001", "UPG-002", "UPG-003"],
+            ["UPG-001", "UPG-002"],
         )
         self.assertEqual(log[-1]["stage"], "scan_planner_output")
 
@@ -908,16 +909,16 @@ class CandidateCaseReviewReporterTest(unittest.TestCase):
             summary["candidate_review_summary_kind"],
             "level0_workshop_candidate_review_summary",
         )
-        self.assertEqual(summary["candidate_count"], 3)
+        self.assertEqual(summary["candidate_count"], 2)
         self.assertEqual(
             [review["candidate_id"] for review in summary["candidate_case_reviews"]],
-            ["UPG-001", "UPG-002", "UPG-003"],
+            ["UPG-001", "UPG-002"],
         )
         self.assertEqual(summary["overall_review_label_counts"], {
             "likely_matrix_expectation_drift": 0,
             "likely_negation_gap": 2,
             "likely_synthesis_gap": 5,
-            "needs_human_review": 6,
+            "needs_human_review": 4,
         })
 
     def test_review_rows_carry_observed_expected_fields(self):
