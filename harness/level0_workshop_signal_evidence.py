@@ -278,6 +278,7 @@ SIGNAL_FAMILIES = (
         family_kind="action",
         canonical_terms=(
             "set up", "setup", "install", "setting up", "sets up",
+            "run",
         ),
         tr_aliases=("kur", "kurulum"),
         edit_distance_budget="short_token_1",
@@ -594,6 +595,8 @@ SIGNAL_FAMILIES = (
             "how this repo is organized",
             "awesome-" + "co" + "pilot",
             "explain this repo",
+            "what is this repository about",
+            "how is the project structured",
         ),
         tr_aliases=("bu repo nedir",),
         edit_distance_budget="none",
@@ -934,7 +937,13 @@ def _extract_signals_for_terms(terms, language_tag, family, folded_tokens,
             )
 
 
-def _extract_signals(view, event_log):
+def _resolve_signal_families(signal_families):
+    if signal_families is None:
+        return SIGNAL_FAMILIES
+    return signal_families
+
+
+def _extract_signals(view, event_log, signal_families=None):
     """Run every family against the folded-token view; return the
     ordered list of signal records. Each folded token is also
     edge-punctuation-stripped for matching while the original span
@@ -948,7 +957,8 @@ def _extract_signals(view, event_log):
     trimmed_text = view["trimmed_text"]
     signals = []
     next_id_holder = [1]
-    for family in SIGNAL_FAMILIES:
+    families = _resolve_signal_families(signal_families)
+    for family in families:
         _extract_signals_for_terms(
             family.canonical_terms, "en", family, folded_tokens,
             token_spans, trimmed_text, signals, next_id_holder, event_log,
@@ -1144,7 +1154,9 @@ def _validate_normalized_view(normalized_view, event_log):
             )
 
 
-def extract_workshop_signal_evidence(normalized_view, event_log):
+def extract_workshop_signal_evidence(
+    normalized_view, event_log, signal_families=None
+):
     """Validate the FRAME-A view and emit a fixed-shape signal
     evidence ledger.
 
@@ -1159,7 +1171,7 @@ def extract_workshop_signal_evidence(normalized_view, event_log):
         location="module_authored_normalized_view_strings",
     )
 
-    signals = _extract_signals(normalized_view, event_log)
+    signals = _extract_signals(normalized_view, event_log, signal_families)
 
     by_kind = {kind: 0 for kind in FAMILY_KINDS}
     for sig in signals:

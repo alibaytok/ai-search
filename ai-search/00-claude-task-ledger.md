@@ -19358,3 +19358,32 @@ ready remains NO. RK-058 stays RESOLVED. RK-059 stays
 RESOLVED. RK-060 RESOLVED via DC-081 (final closure
 across the four-packet chain: DC-078 + DC-079 + DC-080 +
 DC-081).
+
+---
+
+## WO-L0-WORKSHOP-INTENT-TEST-MATRIX-RUNNER-01
+Status: Implemented; pending Codex review. Scope: deterministic FRAME-D-only intent matrix runner, 15-case smoke matrix, and minimal boundary doc.
+Implemented: local JSON loader, comparator, bounded failure taxonomy, reserved-class non-emission, tolerated variants, static scans, parser isolation, and gating-boolean guards.
+Verification: runner tests pass; full suite passed at Packet A baseline; smoke matrix is not the parser-quality corpus and 26 seed prompts are not the system boundary.
+Non-claims: not a benchmark, corpus, route validation, parser-quality measurement, selection, vocabulary correction, source admission, or readiness flip.
+
+---
+## WO-L0-WORKSHOP-PARSER-QUALITY-LOOP-02
+Status: Implemented; pending Codex review. Scope: harden `harness/level0_workshop_parser_quality_loop.py` and contract tests only, plus minimal tracker/doc updates.
+Implemented: malformed-result validation, bounded upgrade plans, ambiguity direction, feedback report note/scan, per-tag/per-failure-class variant deltas, and minimal doc compaction for doc 73.
+Verification: targeted quality-loop contract, Packet A runner, and full suite pass; vocabulary correction, parser modules, benchmark-fixtures, and controller-checklist are unchanged.
+Non-claims: not a benchmark, not route/source/corpus authorization, not parser mutation, not vocabulary correction; real-benchmark-ready remains NO.
+
+---
+## WO-L0-WORKSHOP-PARSER-QUALITY-MINI-V1-20MIN
+Status: Implemented; pending Codex review. Scope: one new matrix JSON (`harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V1.intent.matrix.json`) plus end-to-end test class appended to the existing contract test file; minimal tracker updates only.
+Implemented: 35 cases across 15 input families (clean workflow/skill/agent/instruction, no-route, repo-meta, bare ambiguity, multi-intent, equal-strength, paraphrase, word-order, extra-noise, negation, source-inspired, candidate-surface) authored in ASCII with correct English vocabulary and no classifier-override tags; end-to-end test class exercises runner + quality loop, asserts bounded enum shape, asserts upgrade-plan coverage of every failed case, and forbids vocabulary upgrade types.
+Verification: 35 cases load, 15 pass / 20 fail under current parser; quality loop emits 20 bounded upgrade plans (5 add_frame_b_canonical, 4 add_frame_c_shape_rule, 10 add_ambiguity_clarification, 1 update_expected_case); full suite 1678/1678 OK; +10 new contract tests.
+Non-claims: not a benchmark, not the parser-quality corpus, not a regression gate, not parser mutation, not vocabulary correction, not source/route/corpus authorization; real-benchmark-ready remains NO; 26 seed prompts are not the system boundary.
+
+---
+## WO-L0-WORKSHOP-SELF-IMPROVEMENT-PLANNER-01
+Status: Implemented; pending Codex review. Scope: extend the parser quality loop and contract tests only, plus minimal tracker updates.
+Implemented: `build_upgrade_candidates` groups feedback plans into deterministic candidates with bounded intent, safety tier, expected case ids, constant patch skeletons, required tests, and `variant_execution_authorized=False`.
+Verification: targeted quality-loop contract passes; full suite pass recorded in evidence. No parser layer, matrix, fixture, controller-checklist, source, route, corpus, or readiness change.
+

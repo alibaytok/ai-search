@@ -1,0 +1,237 @@
+{
+  "intent_test_matrix_kind": "level0_workshop_intent_test_matrix",
+  "matrix_id": "L0-WS-INTENT-MATRIX-SMOKE-001",
+  "matrix_note": "bounded smoke matrix authored by WO-L0-WORKSHOP-INTENT-TEST-MATRIX-RUNNER-01; exercises the runner over the FRAME-D shim with cases drawn from RK-060 closure precedents plus clean / no-route / bare-ambiguity / kind-order anchors; this matrix is NOT the parser-quality corpus and is NOT a benchmark; corpus design and corpus authoring are reserved for follow-up packets",
+  "cases": [
+    {
+      "case_id": "SM-001",
+      "prompt_text": "Configure GitHub Actions to deploy a Node.js app to Azure.",
+      "expected": {
+        "category": "B. workflow intent",
+        "expected_item_kinds_touched": ["workflow_file"],
+        "ambiguity_observed": false,
+        "normalized_intent_observation": "workflow_intent",
+        "candidate_surface_expected": "candidate fragment of declared shape",
+        "rejection_surface_expected": "no_forced_selection"
+      },
+      "tolerated_variants": [],
+      "tags": ["clean_workflow", "smoke", "anchor"],
+      "rationale": "Clean single-workflow anchor: object.workflow plus domain.deployment yields a clean B with no ambiguity and a single workflow_file kind."
+    },
+    {
+      "case_id": "SM-002",
+      "prompt_text": "Create a code review skill for my repository.",
+      "expected": {
+        "category": "C. skill intent",
+        "expected_item_kinds_touched": ["skill"],
+        "ambiguity_observed": true,
+        "normalized_intent_observation": "skill_intent",
+        "candidate_surface_expected": "multiple candidate surfaces expected",
+        "rejection_surface_expected": "no_forced_selection"
+      },
+      "tolerated_variants": [],
+      "tags": ["clean_skill", "smoke", "anchor"],
+      "rationale": "Skill intent anchor: action.create plus object.skill plus domain.code_review yields C with the skill kind; ambiguity is flagged because multiple distinct_target_objects fire."
+    },
+    {
+      "case_id": "SM-003",
+      "prompt_text": "What year did the Apollo program land on the moon?",
+      "expected": {
+        "category": "H. no-route",
+        "expected_item_kinds_touched": ["none"],
+        "ambiguity_observed": false,
+        "normalized_intent_observation": "no_route",
+        "candidate_surface_expected": "candidate fragment of declared shape",
+        "rejection_surface_expected": "no_forced_selection"
+      },
+      "tolerated_variants": [],
+      "tags": ["no_signal_no_route", "smoke", "anchor"],
+      "rationale": "No-signal no-route anchor: prompt fires no FRAME-B family at all; FRAME-C falls to H via the no-candidate, no-out-of-scope, no-repo-meta path; surfaces are the default no-forced-selection literals."
+    },
+    {
+      "case_id": "SM-004",
+      "prompt_text": "What is the weather today.",
+      "expected": {
+        "category": "H. no-route",
+        "expected_item_kinds_touched": ["none"],
+        "ambiguity_observed": false,
+        "normalized_intent_observation": "no_route",
+        "candidate_surface_expected": "no candidate surface expected",
+        "rejection_surface_expected": "prompt_out_of_repo_scope"
+      },
+      "tolerated_variants": [],
+      "tags": ["out_of_scope_no_route", "smoke", "anchor"],
+      "rationale": "Out-of-scope no-route anchor: out_of_scope.general_world fires on weather, triggering H with the explicit prompt_out_of_repo_scope rejection surface."
+    },
+    {
+      "case_id": "SM-005",
+      "prompt_text": "make this better",
+      "expected": {
+        "category": "G. ambiguous",
+        "expected_item_kinds_touched": ["skill", "instruction", "workflow_file"],
+        "ambiguity_observed": true,
+        "normalized_intent_observation": "ambiguous_user_intent",
+        "candidate_surface_expected": "multiple candidate surfaces expected",
+        "rejection_surface_expected": "no_forced_selection"
+      },
+      "tolerated_variants": [],
+      "tags": ["bare_ambiguity_default", "smoke", "anchor"],
+      "rationale": "Default bare-ambiguity anchor: action-only signal set with no informative target / domain / output_shape / constraint triggers the FRAME-C bare-ambiguity rule and emits the default kinds tuple (skill, instruction, workflow_file)."
+    },
+    {
+      "case_id": "SM-006",
+      "prompt_text": "help with my project",
+      "expected": {
+        "category": "G. ambiguous",
+        "expected_item_kinds_touched": ["skill", "instruction", "workflow_file"],
+        "ambiguity_observed": true,
+        "normalized_intent_observation": "ambiguous_user_intent",
+        "candidate_surface_expected": "multiple candidate surfaces expected",
+        "rejection_surface_expected": "no_forced_selection"
+      },
+      "tolerated_variants": [],
+      "tags": ["rk059_bare_ambiguity_help", "smoke", "precedent"],
+      "rationale": "RK-059 closure precedent: action.assist family added by WO-L0-WORKSHOP-FRAME-B-COVERAGE-01 (DC-076) ensures `help with my project` reaches the bare-ambiguity rule and surfaces G with the default bare-ambiguity kinds tuple."
+    },
+    {
+      "case_id": "SM-007",
+      "prompt_text": "yardim et",
+      "expected": {
+        "category": "G. ambiguous",
+        "expected_item_kinds_touched": ["skill", "instruction", "workflow_file"],
+        "ambiguity_observed": true,
+        "normalized_intent_observation": "ambiguous_user_intent",
+        "candidate_surface_expected": "multiple candidate surfaces expected",
+        "rejection_surface_expected": "no_forced_selection"
+      },
+      "tolerated_variants": [],
+      "tags": ["turkish_alias", "smoke", "precedent"],
+      "rationale": "Turkish-alias precedent: the action.assist family's tr_aliases include `yardim` and `yardim et`; FRAME-A's U+0131 pre-fold rule is exercised end-to-end via the FRAME-D shim."
+    },
+    {
+      "case_id": "SM-008",
+      "prompt_text": "Set up scheduled dependency scanning every Monday.",
+      "expected": {
+        "category": "B. workflow intent",
+        "expected_item_kinds_touched": ["workflow_file", "hook"],
+        "ambiguity_observed": true,
+        "normalized_intent_observation": "workflow_intent",
+        "candidate_surface_expected": "multiple candidate surfaces expected",
+        "rejection_surface_expected": "no_forced_selection"
+      },
+      "tolerated_variants": [],
+      "tags": ["rk060_a", "smoke", "precedent"],
+      "rationale": "RK-060 residual (a) closure precedent: the bounded `scheduled` canonical on object.hook plus constraint.event_triggered (DC-080) AND the FRAME-C category-selector branch mapping {workflow_file, hook} under high ambiguity to B (DC-081) together deliver the planning intent B/[workflow_file, hook]."
+    },
+    {
+      "case_id": "SM-009",
+      "prompt_text": "Add instructions for setting up CI on a new Python repo.",
+      "expected": {
+        "category": "E. instruction confusion",
+        "expected_item_kinds_touched": ["workflow_file", "instruction"],
+        "ambiguity_observed": true,
+        "normalized_intent_observation": "instruction_surface_workflow_intent",
+        "candidate_surface_expected": "multiple candidate surfaces expected",
+        "rejection_surface_expected": "no_forced_selection"
+      },
+      "tolerated_variants": [],
+      "tags": ["rk060_b", "smoke", "precedent"],
+      "rationale": "RK-060 residual (b) closure precedent: the bounded `setting up` / `sets up` canonicals on action.set_up (DC-079) make the gerund inflection match under the existing short_token_1 budget; FRAME-C workflow_file co-fires alongside instruction and the workshop category becomes E."
+    },
+    {
+      "case_id": "SM-010",
+      "prompt_text": "Improve the way we handle code reviews.",
+      "expected": {
+        "category": "G. ambiguous",
+        "expected_item_kinds_touched": ["skill", "instruction", "agent"],
+        "ambiguity_observed": true,
+        "normalized_intent_observation": "ambiguous_user_intent",
+        "candidate_surface_expected": "multiple candidate surfaces expected",
+        "rejection_surface_expected": "no_forced_selection"
+      },
+      "tolerated_variants": [],
+      "tags": ["rk060_c", "smoke", "precedent"],
+      "rationale": "RK-060 residual (c) closure precedent: the vague improve-plus-code-review ambiguity rule (DC-081) appends `instruction` and `agent` candidates alongside the already-firing `skill` candidate when primary_action == improve AND domain.code_review fires AND no informative target_object is present."
+    },
+    {
+      "case_id": "SM-011",
+      "prompt_text": "Help with my release process.",
+      "expected": {
+        "category": "G. ambiguous",
+        "expected_item_kinds_touched": ["workflow_file", "instruction", "cookbook_entry"],
+        "ambiguity_observed": true,
+        "normalized_intent_observation": "ambiguous_user_intent",
+        "candidate_surface_expected": "multiple candidate surfaces expected",
+        "rejection_surface_expected": "no_forced_selection"
+      },
+      "tolerated_variants": [],
+      "tags": ["rk060_d", "smoke", "precedent"],
+      "rationale": "RK-060 residual (d) closure precedent: the deploy-variant bare-ambiguity emission tuple (DC-081) replaces the default kinds tuple when primary_action == deploy (e.g., `release` matches action.deploy); the result is G/[workflow_file, instruction, cookbook_entry]."
+    },
+    {
+      "case_id": "SM-012",
+      "prompt_text": "What is awesome-copilot?",
+      "expected": {
+        "category": "I. near-miss/rejection",
+        "expected_item_kinds_touched": ["repo_meta_section"],
+        "ambiguity_observed": false,
+        "normalized_intent_observation": "near_miss_rejection",
+        "candidate_surface_expected": "no candidate surface expected",
+        "rejection_surface_expected": "repo_meta_section_near_miss"
+      },
+      "tolerated_variants": [],
+      "tags": ["rk060_e", "smoke", "precedent"],
+      "rationale": "RK-060 residual (e) closure precedent: WO-L0-WORKSHOP-FRAME-B-COVERAGE-02A added a source-safe assembled product-name canonical to FRAME-B repo_meta_near_miss.repo_navigation (DC-078) so the original W-PRM-025 text reaches I via FRAME-C without adding the forbidden contiguous external-integration substring to FRAME-B source."
+    },
+    {
+      "case_id": "SM-013",
+      "prompt_text": "Explain how this repo is organized.",
+      "expected": {
+        "category": "I. near-miss/rejection",
+        "expected_item_kinds_touched": ["repo_meta_section"],
+        "ambiguity_observed": false,
+        "normalized_intent_observation": "near_miss_rejection",
+        "candidate_surface_expected": "no candidate surface expected",
+        "rejection_surface_expected": "repo_meta_section_near_miss"
+      },
+      "tolerated_variants": [],
+      "tags": ["rk060_f", "smoke", "precedent"],
+      "rationale": "RK-060 residual (f) closure precedent: the bounded sibling word-order canonical `how this repo is organized` added to FRAME-B repo_meta_near_miss.repo_navigation (DC-078) makes the original W-PRM-026 text reach I via FRAME-C under the existing strict-position matching rule."
+    },
+    {
+      "case_id": "SM-014",
+      "prompt_text": "Define an agent that runs a test workflow on demand.",
+      "expected": {
+        "category": "D. agent/persona confusion",
+        "expected_item_kinds_touched": ["agent", "workflow_file"],
+        "ambiguity_observed": true,
+        "normalized_intent_observation": "agent_surface_workflow_intent",
+        "candidate_surface_expected": "multiple candidate surfaces expected",
+        "rejection_surface_expected": "no_forced_selection"
+      },
+      "tolerated_variants": [
+        {
+          "expected_item_kinds_touched": ["workflow_file", "agent"],
+          "rationale": "FRAME-C synthesis ordering precedent: emission order is rule-driven and may differ from planning-doc order; both [agent, workflow_file] and [workflow_file, agent] are accepted as semantically equivalent matches for this precedent case."
+        }
+      ],
+      "tags": ["kind_order_precedent", "smoke", "anchor"],
+      "rationale": "Kind-order tolerated-variant precedent (W-PRM-014 lineage): the planning intent expects [agent, workflow_file] but FRAME-C emits in shape-touch-rule order; the tolerated_variants entry accepts the reverse ordering so the comparator treats both as a match."
+    },
+    {
+      "case_id": "SM-015",
+      "prompt_text": "Make our pull requests cleaner.",
+      "expected": {
+        "category": "G. ambiguous",
+        "expected_item_kinds_touched": ["skill", "instruction", "workflow_file"],
+        "ambiguity_observed": true,
+        "normalized_intent_observation": "ambiguous_user_intent",
+        "candidate_surface_expected": "multiple candidate surfaces expected",
+        "rejection_surface_expected": "no_forced_selection"
+      },
+      "tolerated_variants": [],
+      "tags": ["ambiguity_expectation", "smoke", "anchor"],
+      "rationale": "Ambiguity-expectation anchor: action.create (from `make`) with no informative target / domain / constraint triggers bare-ambiguity; the default kinds tuple is preserved because primary_action is not `deploy`."
+    }
+  ]
+}

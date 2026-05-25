@@ -188,12 +188,14 @@ def _run_frame_a(input_prompt, event_log):
         raise EmptyUserPrompt("input_prompt must be non-empty") from exc
 
 
-def _run_frame_b(normalized_view, event_log):
+def _run_frame_b(normalized_view, event_log, signal_families=None):
     """Call FRAME-B over the validated FRAME-A view. FRAME-B
     failures here would indicate a FRAME-A contract drift; they
     are not translated to legacy exceptions and are allowed to
     propagate so the underlying drift is visible."""
-    return extract_workshop_signal_evidence(normalized_view, event_log)
+    return extract_workshop_signal_evidence(
+        normalized_view, event_log, signal_families=signal_families
+    )
 
 
 def _run_frame_c(signal_evidence_ledger, workshop_prompt_id, event_log):
@@ -279,7 +281,9 @@ def _derive_legacy_output(canonical_intent_frame):
     return output
 
 
-def map_level0_workshop_user_intent(input_prompt, workshop_prompt_id, event_log):
+def map_level0_workshop_user_intent(
+    input_prompt, workshop_prompt_id, event_log, signal_families=None
+):
     """Map one free-text prompt to a workshop prompt record.
 
     Public contract preserved from the pre-FRAME-D mapper:
@@ -323,7 +327,9 @@ def map_level0_workshop_user_intent(input_prompt, workshop_prompt_id, event_log)
             "workshop_prompt_id must be a non-empty string"
         )
 
-    signal_evidence_ledger = _run_frame_b(normalized_view, event_log)
+    signal_evidence_ledger = _run_frame_b(
+        normalized_view, event_log, signal_families=signal_families
+    )
     canonical_intent_frame = _run_frame_c(
         signal_evidence_ledger, workshop_prompt_id, event_log
     )
