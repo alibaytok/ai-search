@@ -170,9 +170,9 @@ Mini-V1 is closed:
 Mini-V2 admitted is intentionally not closed:
 
 - 12 cases
-- 6 passing
-- 6 failing
-- 3 planner candidates
+- 9 passing
+- 3 failing
+- 2 planner candidates
 
 Mini-V2 holdout exists but remains isolated:
 
@@ -182,7 +182,7 @@ Mini-V2 holdout exists but remains isolated:
 
 The Mini-V2 proposal-only run reports these failure buckets:
 
-- `out_of_scope_underdetect`: 3 cases
+- `out_of_scope_underdetect`: 0 cases
 - `frame_c_synthesis_rule_gap`: 2 cases
 - `frame_c_ambiguity_misreport`: 1 case
 - `expected_field_drift`: 0 cases
@@ -229,7 +229,7 @@ That prevented two common corpus failures:
 - treating crawler output as admitted evaluation data
 - copying parser observations into expected fields
 
-Mini-V2 then failed on 6 of 12 cases. That is useful evidence. It shows the gate
+Mini-V2 then failed on 3 of 12 cases. That is useful evidence. It shows the gate
 is not just memorizing Mini-V1. It also shows where the next product decisions
 would be if the project continued.
 
@@ -258,16 +258,16 @@ The Mini-V2 run produced four proposal groups:
 
 | Candidate | Failure class | Count | Follow-up type |
 |---|---:|---:|---|
-| UPG-001 | `out_of_scope_underdetect` | 3 | no-route hardening or refusal-surface design |
-| UPG-002 | `frame_c_synthesis_rule_gap` | 2 | parser synthesis hardening |
-| UPG-003 | `frame_c_ambiguity_misreport` | 1 | downstream clarification-surface decision |
+| UPG-001 | `frame_c_synthesis_rule_gap` | 2 | parser synthesis hardening |
+| UPG-002 | `frame_c_ambiguity_misreport` | 1 | downstream clarification-surface decision |
 
 The safest next action is not to close all four. The safest next action is to
 stop, publish the artifact, and decide later whether the downstream consumer is
 worth building.
 
 The prior matrix reconciliation item was closed by
-`82-mini-v2-matrix-reconcile.md`.
+`82-mini-v2-matrix-reconcile.md`. The prior no-route hardening bucket was
+closed by `83-mini-v2-no-route-harden.md`.
 
 ## How To Reproduce The Current Evidence
 
@@ -286,7 +286,7 @@ from harness.level0_workshop_mini_v2_autonomous_run import (
 )
 
 write_mini_v2_autonomous_run_report(
-    "harness/mini_v2_runs/L0-WS-MINI-V2-AUTONOMOUS-RUN-v2.report.json"
+    "harness/mini_v2_runs/L0-WS-MINI-V2-AUTONOMOUS-RUN-v3.report.json"
 )
 '@ | python -
 ```

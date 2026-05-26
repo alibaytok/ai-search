@@ -616,6 +616,8 @@ SIGNAL_FAMILIES = (
             "weather", "stock price", "world war",
             "moon landing", "molecular weight", "capital of",
             "cook",
+            "unit test for this",
+            "what is prompt engineering",
         ),
         tr_aliases=(),
         edit_distance_budget="none",

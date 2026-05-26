@@ -299,6 +299,42 @@ class EnglishFamilyFireTest(unittest.TestCase):
         self.assertIn("out_of_scope.general_world", families)
         self.assertNotIn("object.hook", families)
 
+    def test_unit_test_for_this_phrase_fires_out_of_scope(self):
+        view = _build_view("Write a unit test for this Python function.")
+        families = _signal_families_for_view(view)
+        self.assertIn("out_of_scope.general_world", families)
+
+    def test_prompt_engineering_question_fires_out_of_scope(self):
+        view = _build_view("What is prompt engineering?")
+        families = _signal_families_for_view(view)
+        self.assertIn("out_of_scope.general_world", families)
+
+    def test_workflow_with_unit_tests_does_not_fire_out_of_scope(self):
+        view = _build_view("Create a workflow that runs unit tests on every push.")
+        families = _signal_families_for_view(view)
+        self.assertIn("object.workflow", families)
+        self.assertNotIn("out_of_scope.general_world", families)
+
+    def test_skill_with_unit_tests_does_not_fire_out_of_scope(self):
+        view = _build_view("Make a skill that writes unit tests for me.")
+        families = _signal_families_for_view(view)
+        self.assertIn("object.skill", families)
+        self.assertNotIn("out_of_scope.general_world", families)
+
+    def test_prompt_engineering_skill_does_not_fire_out_of_scope(self):
+        view = _build_view("Create a prompt-engineering training skill.")
+        families = _signal_families_for_view(view)
+        self.assertIn("object.skill", families)
+        self.assertNotIn("out_of_scope.general_world", families)
+
+    def test_instruction_with_prompt_engineering_does_not_fire_out_of_scope(self):
+        view = _build_view(
+            "Write instructions that explain prompt engineering practices."
+        )
+        families = _signal_families_for_view(view)
+        self.assertIn("object.instruction", families)
+        self.assertNotIn("out_of_scope.general_world", families)
+
     def test_do_not_fires_negation(self):
         view = _build_view("Do not deploy to production database.")
         families = _signal_families_for_view(view)
