@@ -4,7 +4,7 @@
   "matrix_sha256": "33bffeef0f2691153b16de3c8c5ac7fb23d53cfe308591115c7ce8948a61485b",
   "parser_core_sha256": {
     "harness/level0_workshop_signal_evidence.py": "8a3c595a2ea5e16e1b96e02a2b3b512cf6b6313283c67810e4d305c57241a461",
-    "harness/level0_workshop_canonical_intent_frame.py": "41d3172e975a4c5d4527c0e3615c60377504f8c18499f3ff18c5f811dd3db100"
+    "harness/level0_workshop_canonical_intent_frame.py": "8ccfb976f04855f22b6795a89d85eef88d70f80d99ac455c639f45675d3d896c"
   },
   "parser_core_unchanged": true,
   "matrix_result_summary": {
