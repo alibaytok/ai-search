@@ -26,7 +26,7 @@ Read these first:
 - Mini-V1: 35/35 passing
 - Mini-V2 admitted: 11/12 passing, 1 failing, 1 proposal group
 - Mini-V2 holdout: 3 cases, isolated from autonomous-loop runs
-- Full local suite at latest verification: 1826 tests passing
+- Full local suite at latest verification: 1837 tests passing
 - Parser-core writes are frozen behind explicit human review
 
 Key Mini-V2 run artifact:
@@ -45,12 +45,13 @@ Key Mini-V2 run artifact:
 - admission review pack
 - Mini-V2 admitted matrix and isolated holdout
 - proposal-only Mini-V2 autonomous-run snapshot
+- CLI gate demo with clear, clarify, and refuse branches
 
 ## What Does Not Exist
 
 - downstream model/action execution
-- "Did you mean?" clarification UI
-- refusal UX
+- web UI
+- full refusal UX beyond the CLI demo
 - production route creation
 - source qualification
 - benchmark claim

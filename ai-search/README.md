@@ -7,6 +7,7 @@ current reading order.
 For the current artifact, start with:
 
 - [`80-level0-intent-gate-writeup.md`](80-level0-intent-gate-writeup.md)
+- [`85-level0-gate-demo.md`](85-level0-gate-demo.md)
 - [`84-mini-v2-frame-c-synthesis.md`](84-mini-v2-frame-c-synthesis.md)
 - [`83-mini-v2-no-route-harden.md`](83-mini-v2-no-route-harden.md)
 - [`82-mini-v2-matrix-reconcile.md`](82-mini-v2-matrix-reconcile.md)
@@ -23,6 +24,7 @@ For the current artifact, start with:
 | File | Purpose |
 |---|---|
 | `80-level0-intent-gate-writeup.md` | Human-readable summary of the deterministic intent gate artifact |
+| `85-level0-gate-demo.md` | CLI demo surface for clear, clarify, and refuse gate branches |
 | `84-mini-v2-frame-c-synthesis.md` | FRAME-C synthesis hardening for QV2-002/011 and Mini-V2 run v4 |
 | `83-mini-v2-no-route-harden.md` | FRAME-B no-route hardening for QV2-004/005/012 and Mini-V2 run v3 |
 | `82-mini-v2-matrix-reconcile.md` | QV2-009 matrix-only reconciliation and Mini-V2 run v2 |
