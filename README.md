@@ -24,14 +24,14 @@ Read these first:
 ## Current State
 
 - Mini-V1: 35/35 passing
-- Mini-V2 admitted: 9/12 passing, 3 failing, 2 proposal groups
+- Mini-V2 admitted: 11/12 passing, 1 failing, 1 proposal group
 - Mini-V2 holdout: 3 cases, isolated from autonomous-loop runs
-- Full local suite at latest verification: 1814 tests passing
+- Full local suite at latest verification: 1826 tests passing
 - Parser-core writes are frozen behind explicit human review
 
 Key Mini-V2 run artifact:
 
-- [`harness/mini_v2_runs/L0-WS-MINI-V2-AUTONOMOUS-RUN-v3.report.json`](harness/mini_v2_runs/L0-WS-MINI-V2-AUTONOMOUS-RUN-v3.report.json)
+- [`harness/mini_v2_runs/L0-WS-MINI-V2-AUTONOMOUS-RUN-v4.report.json`](harness/mini_v2_runs/L0-WS-MINI-V2-AUTONOMOUS-RUN-v4.report.json)
 
 ## What Exists
 
@@ -75,7 +75,7 @@ from harness.level0_workshop_mini_v2_autonomous_run import (
 )
 
 write_mini_v2_autonomous_run_report(
-    "harness/mini_v2_runs/L0-WS-MINI-V2-AUTONOMOUS-RUN-v3.report.json"
+    "harness/mini_v2_runs/L0-WS-MINI-V2-AUTONOMOUS-RUN-v4.report.json"
 )
 '@ | python -
 ```

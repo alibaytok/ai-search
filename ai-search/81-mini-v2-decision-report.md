@@ -8,8 +8,9 @@ before authoring any fix packet.
 Follow-up note: the `matrix_reconcile` row for QV2-009 was closed by
 `82-mini-v2-matrix-reconcile.md`. The parser FRAME-B canonical bucket for
 QV2-004, QV2-005, and QV2-012 was closed by
-`83-mini-v2-no-route-harden.md`. The remaining open rows are the parser
-FRAME-C synthesis bucket and reserved clarification-surface bucket.
+`83-mini-v2-no-route-harden.md`. The parser FRAME-C synthesis bucket for
+QV2-002 and QV2-011 was closed by `84-mini-v2-frame-c-synthesis.md`.
+The remaining open row is the reserved clarification-surface bucket.
 
 This is a review-only decision report. It does not edit parser code, edit
 matrix files, read holdout, invoke materializers, add architecture, or

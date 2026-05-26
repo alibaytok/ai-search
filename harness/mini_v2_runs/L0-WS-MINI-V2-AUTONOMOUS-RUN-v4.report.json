@@ -1,0 +1,862 @@
+{
+  "mini_v2_autonomous_run_report_kind": "level0_workshop_mini_v2_autonomous_run_report",
+  "matrix_path": "harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V2.intent.matrix.json",
+  "matrix_sha256": "33bffeef0f2691153b16de3c8c5ac7fb23d53cfe308591115c7ce8948a61485b",
+  "parser_core_sha256": {
+    "harness/level0_workshop_signal_evidence.py": "8a3c595a2ea5e16e1b96e02a2b3b512cf6b6313283c67810e4d305c57241a461",
+    "harness/level0_workshop_canonical_intent_frame.py": "41d3172e975a4c5d4527c0e3615c60377504f8c18499f3ff18c5f811dd3db100"
+  },
+  "parser_core_unchanged": true,
+  "matrix_result_summary": {
+    "matrix_id": "L0-WS-PARSER-QUALITY-MINI-V2",
+    "case_count": 12,
+    "passed_count": 11,
+    "failed_count": 1,
+    "per_failure_class_counts": {
+      "frame_a_normalization_gap": 0,
+      "frame_b_canonical_set_gap": 0,
+      "frame_b_inflection_gap": 0,
+      "frame_b_negation_gap": 0,
+      "frame_c_synthesis_rule_gap": 0,
+      "frame_c_category_selector_gap": 0,
+      "frame_c_ambiguity_misreport": 1,
+      "ambiguity_clarification_gap": 0,
+      "frame_d_translation_gap": 0,
+      "out_of_scope_underdetect": 0,
+      "vocabulary_correction_miss": 0,
+      "fixture_distribution_drift": 0,
+      "expected_field_drift": 0,
+      "unknown": 0
+    },
+    "per_tag_counts": {
+      "mini_v2": {
+        "passed": 11,
+        "failed": 1
+      },
+      "rc_00003": {
+        "passed": 1,
+        "failed": 0
+      },
+      "agent_persona_surface": {
+        "passed": 2,
+        "failed": 0
+      },
+      "docs_instruction_surface": {
+        "passed": 4,
+        "failed": 0
+      },
+      "rc_00011": {
+        "passed": 1,
+        "failed": 0
+      },
+      "deployment_surface": {
+        "passed": 2,
+        "failed": 1
+      },
+      "rc_00014": {
+        "passed": 1,
+        "failed": 0
+      },
+      "rc_00021": {
+        "passed": 1,
+        "failed": 0
+      },
+      "test_generation_surface": {
+        "passed": 2,
+        "failed": 0
+      },
+      "no_route": {
+        "passed": 5,
+        "failed": 0
+      },
+      "rc_00022": {
+        "passed": 1,
+        "failed": 0
+      },
+      "multi_intent": {
+        "passed": 3,
+        "failed": 1
+      },
+      "rc_00023": {
+        "passed": 0,
+        "failed": 1
+      },
+      "rc_00024": {
+        "passed": 1,
+        "failed": 0
+      },
+      "vague_request": {
+        "passed": 1,
+        "failed": 0
+      },
+      "rc_00026": {
+        "passed": 1,
+        "failed": 0
+      },
+      "general_world_question": {
+        "passed": 2,
+        "failed": 0
+      },
+      "rc_00027": {
+        "passed": 1,
+        "failed": 0
+      },
+      "rc_00028": {
+        "passed": 1,
+        "failed": 0
+      },
+      "translation_or_language_surface": {
+        "passed": 1,
+        "failed": 0
+      },
+      "rc_00030": {
+        "passed": 1,
+        "failed": 0
+      },
+      "long_prompt": {
+        "passed": 1,
+        "failed": 0
+      },
+      "prompt_meta_question": {
+        "passed": 2,
+        "failed": 0
+      },
+      "repo_workflow_surface": {
+        "passed": 1,
+        "failed": 0
+      },
+      "rc_00031": {
+        "passed": 1,
+        "failed": 0
+      }
+    }
+  },
+  "case_results": [
+    {
+      "case_id": "QV2-001",
+      "match": true,
+      "classified_as": "match",
+      "observed_category": "D. agent/persona confusion",
+      "expected_category": "D. agent/persona confusion",
+      "observed_kinds": [
+        "agent"
+      ],
+      "expected_kinds": [
+        "agent"
+      ],
+      "observed_ambiguity": true,
+      "expected_ambiguity": true,
+      "observed_normalized_intent": "agent_surface_workflow_intent",
+      "expected_normalized_intent": "agent_surface_workflow_intent",
+      "observed_candidate_surface": "multiple candidate surfaces expected",
+      "expected_candidate_surface": "multiple candidate surfaces expected",
+      "observed_rejection_surface": "no_forced_selection",
+      "expected_rejection_surface": "no_forced_selection",
+      "differing_fields": [],
+      "tags": [
+        "mini_v2",
+        "rc_00003",
+        "agent_persona_surface",
+        "docs_instruction_surface"
+      ],
+      "rationale": "Human-authored gate expectation: agent-definition wording should route to the agent/persona surface without selecting a downstream agent implementation. Source raw candidate: RC-00003."
+    },
+    {
+      "case_id": "QV2-002",
+      "match": true,
+      "classified_as": "match",
+      "observed_category": "D. agent/persona confusion",
+      "expected_category": "D. agent/persona confusion",
+      "observed_kinds": [
+        "agent",
+        "workflow_file"
+      ],
+      "expected_kinds": [
+        "agent",
+        "workflow_file"
+      ],
+      "observed_ambiguity": true,
+      "expected_ambiguity": true,
+      "observed_normalized_intent": "agent_surface_workflow_intent",
+      "expected_normalized_intent": "agent_surface_workflow_intent",
+      "observed_candidate_surface": "multiple candidate surfaces expected",
+      "expected_candidate_surface": "multiple candidate surfaces expected",
+      "observed_rejection_surface": "no_forced_selection",
+      "expected_rejection_surface": "no_forced_selection",
+      "differing_fields": [],
+      "tags": [
+        "mini_v2",
+        "rc_00011",
+        "agent_persona_surface",
+        "deployment_surface",
+        "docs_instruction_surface"
+      ],
+      "rationale": "Human-authored gate expectation: persona plus deploy wording should expose both agent and workflow surfaces and require no forced selection. Source raw candidate: RC-00011."
+    },
+    {
+      "case_id": "QV2-003",
+      "match": true,
+      "classified_as": "match",
+      "observed_category": "E. instruction confusion",
+      "expected_category": "E. instruction confusion",
+      "observed_kinds": [
+        "instruction"
+      ],
+      "expected_kinds": [
+        "instruction"
+      ],
+      "observed_ambiguity": true,
+      "expected_ambiguity": true,
+      "observed_normalized_intent": "instruction_surface_workflow_intent",
+      "expected_normalized_intent": "instruction_surface_workflow_intent",
+      "observed_candidate_surface": "multiple candidate surfaces expected",
+      "expected_candidate_surface": "multiple candidate surfaces expected",
+      "observed_rejection_surface": "no_forced_selection",
+      "expected_rejection_surface": "no_forced_selection",
+      "differing_fields": [],
+      "tags": [
+        "mini_v2",
+        "rc_00014",
+        "docs_instruction_surface"
+      ],
+      "rationale": "Human-authored gate expectation: explicit instructions wording should surface the instruction gate path, not downstream documentation generation. Source raw candidate: RC-00014."
+    },
+    {
+      "case_id": "QV2-004",
+      "match": true,
+      "classified_as": "match",
+      "observed_category": "H. no-route",
+      "expected_category": "H. no-route",
+      "observed_kinds": [
+        "none"
+      ],
+      "expected_kinds": [
+        "none"
+      ],
+      "observed_ambiguity": false,
+      "expected_ambiguity": false,
+      "observed_normalized_intent": "no_route",
+      "expected_normalized_intent": "no_route",
+      "observed_candidate_surface": "no candidate surface expected",
+      "expected_candidate_surface": "no candidate surface expected",
+      "observed_rejection_surface": "prompt_out_of_repo_scope",
+      "expected_rejection_surface": "prompt_out_of_repo_scope",
+      "differing_fields": [],
+      "tags": [
+        "mini_v2",
+        "rc_00021",
+        "test_generation_surface",
+        "no_route"
+      ],
+      "rationale": "Human-authored gate expectation: direct unit-test writing is downstream code generation, not a bounded workshop route object. Source raw candidate: RC-00021."
+    },
+    {
+      "case_id": "QV2-005",
+      "match": true,
+      "classified_as": "match",
+      "observed_category": "H. no-route",
+      "expected_category": "H. no-route",
+      "observed_kinds": [
+        "none"
+      ],
+      "expected_kinds": [
+        "none"
+      ],
+      "observed_ambiguity": false,
+      "expected_ambiguity": false,
+      "observed_normalized_intent": "no_route",
+      "expected_normalized_intent": "no_route",
+      "observed_candidate_surface": "no candidate surface expected",
+      "expected_candidate_surface": "no candidate surface expected",
+      "observed_rejection_surface": "prompt_out_of_repo_scope",
+      "expected_rejection_surface": "prompt_out_of_repo_scope",
+      "differing_fields": [],
+      "tags": [
+        "mini_v2",
+        "rc_00022",
+        "test_generation_surface",
+        "docs_instruction_surface",
+        "multi_intent",
+        "no_route"
+      ],
+      "rationale": "Human-authored gate expectation: direct code-writing plus explanation asks for downstream action rather than a workshop intent artifact. Source raw candidate: RC-00022."
+    },
+    {
+      "case_id": "QV2-006",
+      "match": false,
+      "classified_as": "frame_c_ambiguity_misreport",
+      "observed_category": "B. workflow intent",
+      "expected_category": "G. ambiguous",
+      "observed_kinds": [
+        "workflow_file"
+      ],
+      "expected_kinds": [
+        "skill",
+        "instruction",
+        "workflow_file"
+      ],
+      "observed_ambiguity": false,
+      "expected_ambiguity": true,
+      "observed_normalized_intent": "workflow_intent",
+      "expected_normalized_intent": "ambiguous_user_intent",
+      "observed_candidate_surface": "candidate fragment of declared shape",
+      "expected_candidate_surface": "multiple candidate surfaces expected",
+      "observed_rejection_surface": "no_forced_selection",
+      "expected_rejection_surface": "no_forced_selection",
+      "differing_fields": [
+        "ambiguity_observed",
+        "candidate_surface_expected",
+        "category",
+        "expected_item_kinds_touched",
+        "normalized_intent_observation"
+      ],
+      "tags": [
+        "mini_v2",
+        "rc_00023",
+        "deployment_surface",
+        "multi_intent"
+      ],
+      "rationale": "Human-authored gate expectation: unresolved object plus deploy and notify actions should stay ambiguous rather than selecting a workflow or agent action. Source raw candidate: RC-00023."
+    },
+    {
+      "case_id": "QV2-007",
+      "match": true,
+      "classified_as": "match",
+      "observed_category": "G. ambiguous",
+      "expected_category": "G. ambiguous",
+      "observed_kinds": [
+        "skill",
+        "instruction",
+        "workflow_file"
+      ],
+      "expected_kinds": [
+        "skill",
+        "instruction",
+        "workflow_file"
+      ],
+      "observed_ambiguity": true,
+      "expected_ambiguity": true,
+      "observed_normalized_intent": "ambiguous_user_intent",
+      "expected_normalized_intent": "ambiguous_user_intent",
+      "observed_candidate_surface": "multiple candidate surfaces expected",
+      "expected_candidate_surface": "multiple candidate surfaces expected",
+      "observed_rejection_surface": "no_forced_selection",
+      "expected_rejection_surface": "no_forced_selection",
+      "differing_fields": [],
+      "tags": [
+        "mini_v2",
+        "rc_00024",
+        "vague_request"
+      ],
+      "rationale": "Human-authored gate expectation: vague improvement request has no bounded target and should remain ambiguous. Source raw candidate: RC-00024."
+    },
+    {
+      "case_id": "QV2-008",
+      "match": true,
+      "classified_as": "match",
+      "observed_category": "H. no-route",
+      "expected_category": "H. no-route",
+      "observed_kinds": [
+        "none"
+      ],
+      "expected_kinds": [
+        "none"
+      ],
+      "observed_ambiguity": false,
+      "expected_ambiguity": false,
+      "observed_normalized_intent": "no_route",
+      "expected_normalized_intent": "no_route",
+      "observed_candidate_surface": "no candidate surface expected",
+      "expected_candidate_surface": "no candidate surface expected",
+      "observed_rejection_surface": "prompt_out_of_repo_scope",
+      "expected_rejection_surface": "prompt_out_of_repo_scope",
+      "differing_fields": [],
+      "tags": [
+        "mini_v2",
+        "rc_00026",
+        "general_world_question",
+        "no_route"
+      ],
+      "rationale": "Human-authored gate expectation: general-world history question is outside the Level 0 workshop intent gate. Source raw candidate: RC-00026."
+    },
+    {
+      "case_id": "QV2-009",
+      "match": true,
+      "classified_as": "match",
+      "observed_category": "H. no-route",
+      "expected_category": "H. no-route",
+      "observed_kinds": [
+        "none"
+      ],
+      "expected_kinds": [
+        "none"
+      ],
+      "observed_ambiguity": false,
+      "expected_ambiguity": false,
+      "observed_normalized_intent": "no_route",
+      "expected_normalized_intent": "no_route",
+      "observed_candidate_surface": "candidate fragment of declared shape",
+      "expected_candidate_surface": "candidate fragment of declared shape",
+      "observed_rejection_surface": "no_forced_selection",
+      "expected_rejection_surface": "no_forced_selection",
+      "differing_fields": [],
+      "tags": [
+        "mini_v2",
+        "rc_00027",
+        "general_world_question",
+        "no_route"
+      ],
+      "rationale": "Human-authored gate expectation: general-world science question should be rejected by the intent gate, not routed to generation. Source raw candidate: RC-00027."
+    },
+    {
+      "case_id": "QV2-010",
+      "match": true,
+      "classified_as": "match",
+      "observed_category": "G. ambiguous",
+      "expected_category": "G. ambiguous",
+      "observed_kinds": [
+        "skill",
+        "instruction",
+        "workflow_file"
+      ],
+      "expected_kinds": [
+        "skill",
+        "instruction",
+        "workflow_file"
+      ],
+      "observed_ambiguity": true,
+      "expected_ambiguity": true,
+      "observed_normalized_intent": "ambiguous_user_intent",
+      "expected_normalized_intent": "ambiguous_user_intent",
+      "observed_candidate_surface": "multiple candidate surfaces expected",
+      "expected_candidate_surface": "multiple candidate surfaces expected",
+      "observed_rejection_surface": "no_forced_selection",
+      "expected_rejection_surface": "no_forced_selection",
+      "differing_fields": [],
+      "tags": [
+        "mini_v2",
+        "rc_00028",
+        "translation_or_language_surface",
+        "deployment_surface",
+        "multi_intent"
+      ],
+      "rationale": "Human-authored gate expectation: language-learning plus reminder deployment crosses domains and should not select a single workshop artifact. Source raw candidate: RC-00028."
+    },
+    {
+      "case_id": "QV2-011",
+      "match": true,
+      "classified_as": "match",
+      "observed_category": "E. instruction confusion",
+      "expected_category": "E. instruction confusion",
+      "observed_kinds": [
+        "workflow_file",
+        "instruction"
+      ],
+      "expected_kinds": [
+        "workflow_file",
+        "instruction"
+      ],
+      "observed_ambiguity": true,
+      "expected_ambiguity": true,
+      "observed_normalized_intent": "instruction_surface_workflow_intent",
+      "expected_normalized_intent": "instruction_surface_workflow_intent",
+      "observed_candidate_surface": "multiple candidate surfaces expected",
+      "expected_candidate_surface": "multiple candidate surfaces expected",
+      "observed_rejection_surface": "no_forced_selection",
+      "expected_rejection_surface": "no_forced_selection",
+      "differing_fields": [],
+      "tags": [
+        "mini_v2",
+        "rc_00030",
+        "long_prompt",
+        "multi_intent",
+        "prompt_meta_question",
+        "repo_workflow_surface"
+      ],
+      "rationale": "Human-authored gate expectation: prompt-pattern authoring plus CI workflow modification should expose instruction and workflow surfaces without downstream action. Source raw candidate: RC-00030."
+    },
+    {
+      "case_id": "QV2-012",
+      "match": true,
+      "classified_as": "match",
+      "observed_category": "H. no-route",
+      "expected_category": "H. no-route",
+      "observed_kinds": [
+        "none"
+      ],
+      "expected_kinds": [
+        "none"
+      ],
+      "observed_ambiguity": false,
+      "expected_ambiguity": false,
+      "observed_normalized_intent": "no_route",
+      "expected_normalized_intent": "no_route",
+      "observed_candidate_surface": "no candidate surface expected",
+      "expected_candidate_surface": "no candidate surface expected",
+      "observed_rejection_surface": "prompt_out_of_repo_scope",
+      "expected_rejection_surface": "prompt_out_of_repo_scope",
+      "differing_fields": [],
+      "tags": [
+        "mini_v2",
+        "rc_00031",
+        "prompt_meta_question",
+        "no_route"
+      ],
+      "rationale": "Human-authored gate expectation: conceptual prompt-engineering question is knowledge-seeking, not a bounded workshop intent. Source raw candidate: RC-00031."
+    }
+  ],
+  "feedback_report": {
+    "parser_quality_feedback_kind": "level0_workshop_parser_quality_feedback",
+    "matrix_id": "L0-WS-PARSER-QUALITY-MINI-V2",
+    "case_count": 12,
+    "failed_count": 1,
+    "upgrade_plans": [
+      {
+        "case_id": "QV2-006",
+        "failure_class": "frame_c_ambiguity_misreport",
+        "likely_layer": "FRAME-C",
+        "observed_fields": {
+          "category": "B. workflow intent",
+          "kinds": [
+            "workflow_file"
+          ],
+          "ambiguity": false,
+          "normalized_intent": "workflow_intent",
+          "candidate_surface": "candidate fragment of declared shape",
+          "rejection_surface": "no_forced_selection"
+        },
+        "expected_fields": {
+          "category": "G. ambiguous",
+          "kinds": [
+            "skill",
+            "instruction",
+            "workflow_file"
+          ],
+          "ambiguity": true,
+          "normalized_intent": "ambiguous_user_intent",
+          "candidate_surface": "multiple candidate surfaces expected",
+          "rejection_surface": "no_forced_selection"
+        },
+        "affected_tags": [
+          "mini_v2",
+          "rc_00023",
+          "deployment_surface",
+          "multi_intent"
+        ],
+        "suggested_upgrade_type": "add_ambiguity_clarification",
+        "suggested_next_packet_type": "CLARIFICATION-DESIGN",
+        "patch_surface": "ambiguity reporting / clarification surface",
+        "safety_tier": "proposal_only",
+        "risk_note": "Do not force a single category when evidence is tied.",
+        "precedent_dc_reference": "DC-075 / DC-081",
+        "ambiguity_direction": "underreport"
+      }
+    ],
+    "per_upgrade_type_counts": {
+      "add_ambiguity_clarification": 1
+    },
+    "report_note": "bounded parser feedback only; no selection, measurement, source, route, or readiness authority",
+    "selection_made": false,
+    "measurement_authorized": false,
+    "real_benchmark_authorized": false,
+    "real_benchmark_ready": false,
+    "source_qualification_authorized": false,
+    "corpus_admission_authorized": false,
+    "route_created": false
+  },
+  "planner_result": {
+    "upgrade_candidates_kind": "level0_workshop_upgrade_candidates",
+    "matrix_id": "L0-WS-PARSER-QUALITY-MINI-V2",
+    "case_count": 12,
+    "failed_count": 1,
+    "upgrade_candidates": [
+      {
+        "candidate_id": "UPG-001",
+        "failure_class": "frame_c_ambiguity_misreport",
+        "suggested_upgrade_type": "add_ambiguity_clarification",
+        "suggested_next_packet_type": "CLARIFICATION-DESIGN",
+        "candidate_intent": "reserved_layer_design_proposal",
+        "likely_layer": "FRAME-C",
+        "safety_tier": "requires_reserved_layer",
+        "expectation_drift_risk": "low",
+        "affected_case_ids": [
+          "QV2-006"
+        ],
+        "affected_tags": [
+          "deployment_surface",
+          "mini_v2",
+          "multi_intent",
+          "rc_00023"
+        ],
+        "affected_count": 1,
+        "patch_plan_skeleton": "Design a reserved clarification surface before changing parser behavior for ambiguous cases.",
+        "required_tests": [
+          "clarification_candidate_surface_contract_test",
+          "ambiguity_direction_contract_test"
+        ],
+        "risk_notes": "Clarification is a reserved surface; do not implement product behavior from this group alone.",
+        "precedent_dc_reference": "DC-075 / DC-081"
+      }
+    ],
+    "candidate_count": 1,
+    "execution_log": [
+      {
+        "event_index": 1,
+        "step_index": 1,
+        "iteration": 1,
+        "stage": "validate_feedback_report",
+        "status": "passed",
+        "case_id": null,
+        "candidate_id": null,
+        "failure_class": null,
+        "suggested_upgrade_type": null,
+        "detail": "feedback report shape accepted"
+      },
+      {
+        "event_index": 2,
+        "step_index": 2,
+        "iteration": 1,
+        "stage": "group_upgrade_plan",
+        "status": "passed",
+        "case_id": "QV2-006",
+        "candidate_id": null,
+        "failure_class": "frame_c_ambiguity_misreport",
+        "suggested_upgrade_type": "add_ambiguity_clarification",
+        "detail": "upgrade plan assigned to group"
+      },
+      {
+        "event_index": 3,
+        "step_index": 3,
+        "iteration": 1,
+        "stage": "build_upgrade_candidate",
+        "status": "passed",
+        "case_id": null,
+        "candidate_id": null,
+        "failure_class": "frame_c_ambiguity_misreport",
+        "suggested_upgrade_type": "add_ambiguity_clarification",
+        "detail": "candidate built from grouped plans"
+      },
+      {
+        "event_index": 4,
+        "step_index": 4,
+        "iteration": 1,
+        "stage": "sort_upgrade_candidates",
+        "status": "passed",
+        "case_id": null,
+        "candidate_id": null,
+        "failure_class": null,
+        "suggested_upgrade_type": null,
+        "detail": "candidates sorted by count, safety, failure class, and key"
+      },
+      {
+        "event_index": 5,
+        "step_index": 5,
+        "iteration": 1,
+        "stage": "assign_candidate_id",
+        "status": "passed",
+        "case_id": null,
+        "candidate_id": "UPG-001",
+        "failure_class": "frame_c_ambiguity_misreport",
+        "suggested_upgrade_type": "add_ambiguity_clarification",
+        "detail": "candidate id assigned after sort"
+      },
+      {
+        "event_index": 6,
+        "step_index": 6,
+        "iteration": 1,
+        "stage": "scan_planner_output",
+        "status": "passed",
+        "case_id": null,
+        "candidate_id": null,
+        "failure_class": null,
+        "suggested_upgrade_type": null,
+        "detail": "forbidden claim phrase scan passed"
+      }
+    ],
+    "planner_note": "bounded upgrade grouping only; no selection, measurement, source, route, or readiness authority",
+    "selection_made": false,
+    "measurement_authorized": false,
+    "real_benchmark_authorized": false,
+    "real_benchmark_ready": false,
+    "source_qualification_authorized": false,
+    "corpus_admission_authorized": false,
+    "route_created": false,
+    "variant_execution_authorized": false
+  },
+  "candidate_review_summary": {
+    "candidate_review_summary_kind": "level0_workshop_candidate_review_summary",
+    "matrix_id": "L0-WS-PARSER-QUALITY-MINI-V2",
+    "candidate_count": 1,
+    "candidate_case_reviews": [
+      {
+        "candidate_case_review_kind": "level0_workshop_candidate_case_review",
+        "candidate_id": "UPG-001",
+        "failure_class": "frame_c_ambiguity_misreport",
+        "affected_count": 1,
+        "case_reviews": [
+          {
+            "case_id": "QV2-006",
+            "review_label": "likely_synthesis_gap",
+            "expected_category": "G. ambiguous",
+            "observed_category": "B. workflow intent",
+            "expected_kinds": [
+              "skill",
+              "instruction",
+              "workflow_file"
+            ],
+            "observed_kinds": [
+              "workflow_file"
+            ],
+            "expected_ambiguity": true,
+            "observed_ambiguity": false,
+            "differing_fields": [
+              "ambiguity_observed",
+              "candidate_surface_expected",
+              "category",
+              "expected_item_kinds_touched",
+              "normalized_intent_observation"
+            ],
+            "tags": [
+              "mini_v2",
+              "rc_00023",
+              "deployment_surface",
+              "multi_intent"
+            ]
+          }
+        ],
+        "per_review_label_counts": {
+          "likely_matrix_expectation_drift": 0,
+          "likely_negation_gap": 0,
+          "likely_synthesis_gap": 1,
+          "needs_human_review": 0
+        },
+        "review_note": "bounded candidate case review only; no parser mutation, matrix mutation, selection, measurement, source, route, or readiness authority",
+        "selection_made": false,
+        "measurement_authorized": false,
+        "real_benchmark_authorized": false,
+        "real_benchmark_ready": false,
+        "source_qualification_authorized": false,
+        "corpus_admission_authorized": false,
+        "route_created": false
+      }
+    ],
+    "overall_review_label_counts": {
+      "likely_matrix_expectation_drift": 0,
+      "likely_negation_gap": 0,
+      "likely_synthesis_gap": 1,
+      "needs_human_review": 0
+    },
+    "review_note": "bounded candidate case review only; no parser mutation, matrix mutation, selection, measurement, source, route, or readiness authority",
+    "selection_made": false,
+    "measurement_authorized": false,
+    "real_benchmark_authorized": false,
+    "real_benchmark_ready": false,
+    "source_qualification_authorized": false,
+    "corpus_admission_authorized": false,
+    "route_created": false
+  },
+  "proposal_bundles": [
+    {
+      "proposal_bundle_kind": "level0_workshop_mini_v2_proposal_bundle",
+      "candidate_id": "UPG-001",
+      "candidate": {
+        "candidate_id": "UPG-001",
+        "failure_class": "frame_c_ambiguity_misreport",
+        "suggested_upgrade_type": "add_ambiguity_clarification",
+        "suggested_next_packet_type": "CLARIFICATION-DESIGN",
+        "candidate_intent": "reserved_layer_design_proposal",
+        "likely_layer": "FRAME-C",
+        "safety_tier": "requires_reserved_layer",
+        "expectation_drift_risk": "low",
+        "affected_case_ids": [
+          "QV2-006"
+        ],
+        "affected_tags": [
+          "deployment_surface",
+          "mini_v2",
+          "multi_intent",
+          "rc_00023"
+        ],
+        "affected_count": 1,
+        "patch_plan_skeleton": "Design a reserved clarification surface before changing parser behavior for ambiguous cases.",
+        "required_tests": [
+          "clarification_candidate_surface_contract_test",
+          "ambiguity_direction_contract_test"
+        ],
+        "risk_notes": "Clarification is a reserved surface; do not implement product behavior from this group alone.",
+        "precedent_dc_reference": "DC-075 / DC-081"
+      },
+      "case_review": {
+        "candidate_case_review_kind": "level0_workshop_candidate_case_review",
+        "candidate_id": "UPG-001",
+        "failure_class": "frame_c_ambiguity_misreport",
+        "affected_count": 1,
+        "case_reviews": [
+          {
+            "case_id": "QV2-006",
+            "review_label": "likely_synthesis_gap",
+            "expected_category": "G. ambiguous",
+            "observed_category": "B. workflow intent",
+            "expected_kinds": [
+              "skill",
+              "instruction",
+              "workflow_file"
+            ],
+            "observed_kinds": [
+              "workflow_file"
+            ],
+            "expected_ambiguity": true,
+            "observed_ambiguity": false,
+            "differing_fields": [
+              "ambiguity_observed",
+              "candidate_surface_expected",
+              "category",
+              "expected_item_kinds_touched",
+              "normalized_intent_observation"
+            ],
+            "tags": [
+              "mini_v2",
+              "rc_00023",
+              "deployment_surface",
+              "multi_intent"
+            ]
+          }
+        ],
+        "per_review_label_counts": {
+          "likely_matrix_expectation_drift": 0,
+          "likely_negation_gap": 0,
+          "likely_synthesis_gap": 1,
+          "needs_human_review": 0
+        },
+        "review_note": "bounded candidate case review only; no parser mutation, matrix mutation, selection, measurement, source, route, or readiness authority",
+        "selection_made": false,
+        "measurement_authorized": false,
+        "real_benchmark_authorized": false,
+        "real_benchmark_ready": false,
+        "source_qualification_authorized": false,
+        "corpus_admission_authorized": false,
+        "route_created": false
+      },
+      "materialization_authorized": false,
+      "human_review_gate": false,
+      "variant_execution_authorized": false,
+      "variant_execution_performed": false
+    }
+  ],
+  "holdout_matrix_read": false,
+  "materialization_authorized": false,
+  "human_review_gate": false,
+  "variant_execution_authorized": false,
+  "variant_execution_performed": false,
+  "selection_made": false,
+  "measurement_authorized": false,
+  "real_benchmark_authorized": false,
+  "real_benchmark_ready": false,
+  "source_qualification_authorized": false,
+  "corpus_admission_authorized": false,
+  "route_created": false,
+  "expected_fields_generated": false,
+  "parser_core_write_performed": false,
+  "matrix_write_performed": false,
+  "run_note": "Mini-V2 admitted-matrix proposal report only; holdout is not read; no parser-core write, matrix write, materialization, selection, measurement, source qualification, corpus admission, route creation, or downstream action is authorized"
+}

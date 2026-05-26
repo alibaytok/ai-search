@@ -856,6 +856,62 @@ class MiniV1ClarificationSemanticsTest(unittest.TestCase):
         )
 
 
+class MiniV2FrameCSynthesisTest(unittest.TestCase):
+
+    def _record_for(self, prompt):
+        return _frame_for(prompt)["workshop_prompt_record"]
+
+    def test_persona_with_secondary_deploy_surfaces_workflow_ambiguity(self):
+        record = self._record_for(
+            "Define a documentation-writer persona that deploys to GitHub Pages."
+        )
+        self.assertEqual(record["category"], "D. agent/persona confusion")
+        self.assertEqual(
+            record["expected_item_kinds_touched"],
+            ["agent", "workflow_file"],
+        )
+        self.assertEqual(
+            record["expected_candidate_surface"],
+            "multiple candidate surfaces expected",
+        )
+
+    def test_prompt_pattern_with_ci_workflow_prefers_instruction_surface(self):
+        record = self._record_for(
+            "Create a structured prompt pattern for daily team standups "
+            "and add a summary step to our CI workflow."
+        )
+        self.assertEqual(record["category"], "E. instruction confusion")
+        self.assertEqual(
+            record["expected_item_kinds_touched"],
+            ["workflow_file", "instruction"],
+        )
+        self.assertEqual(
+            record["expected_candidate_surface"],
+            "multiple candidate surfaces expected",
+        )
+
+    def test_release_notes_skill_does_not_gain_workflow_cofire(self):
+        record = self._record_for("Author a skill that drafts release notes.")
+        self.assertEqual(record["category"], "C. skill intent")
+        self.assertEqual(record["expected_item_kinds_touched"], ["skill"])
+
+    def test_release_process_instructions_do_not_gain_workflow_cofire(self):
+        record = self._record_for(
+            "Write instructions for our team's release process."
+        )
+        self.assertEqual(record["category"], "E. instruction confusion")
+        self.assertEqual(record["expected_item_kinds_touched"], ["instruction"])
+
+    def test_prompt_collection_without_workflow_remains_cookbook(self):
+        record = self._record_for(
+            "Create a structured prompt pattern for daily team standups."
+        )
+        self.assertEqual(record["category"], "A. clear single-intent")
+        self.assertEqual(
+            record["expected_item_kinds_touched"], ["cookbook_entry"]
+        )
+
+
 class EvidenceBandTest(unittest.TestCase):
 
     def test_evidence_band_no_signal_for_unrecognized_prompt(self):

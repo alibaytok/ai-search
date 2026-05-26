@@ -28,7 +28,8 @@ intent-gate artifact plus earlier scaffold modules.
 | `intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V2-HOLDOUT.intent.matrix.json` | Mini-V2 holdout, isolated from autonomous runs |
 | `raw_candidate_pools/L0-WS-RAW-CANDIDATES-v1.raw_candidates.json` | Raw local candidate snapshot |
 | `admission_review_packs/L0-WS-RAW-CANDIDATES-v1.admission_review.json` | Dedupe/admission review pack |
-| `mini_v2_runs/L0-WS-MINI-V2-AUTONOMOUS-RUN-v3.report.json` | Current proposal-only Mini-V2 run report |
+| `mini_v2_runs/L0-WS-MINI-V2-AUTONOMOUS-RUN-v4.report.json` | Current proposal-only Mini-V2 run report |
+| `mini_v2_runs/L0-WS-MINI-V2-AUTONOMOUS-RUN-v3.report.json` | Prior proposal-only Mini-V2 run report after no-route hardening |
 | `mini_v2_runs/L0-WS-MINI-V2-AUTONOMOUS-RUN-v2.report.json` | Prior proposal-only Mini-V2 run report after QV2-009 reconciliation |
 | `mini_v2_runs/L0-WS-MINI-V2-AUTONOMOUS-RUN-v1.report.json` | Prior proposal-only Mini-V2 run report before QV2-009 reconciliation |
 

@@ -775,6 +775,7 @@ def _is_bare_ambiguity_signal_set(
 def _compute_shape_touch_plan(
     primary_action, distinct_target_objects, domain_tags,
     constraint_tags, requested_output_shape, by_kind,
+    secondary_actions=None,
     bare_ambiguity=False,
 ):
     """Apply the bounded shape-touch rules and return a list of
@@ -846,6 +847,14 @@ def _compute_shape_touch_plan(
     workflow_actions = {"set_up", "configure", "deploy"}
     skill_actions = {"create", "review", "improve", "explain"}
     workflow_domains = {"ci", "deployment"}
+    action_set = set([primary_action] + list(secondary_actions or []))
+
+    def _is_prompt_collection_workflow_instruction():
+        return (
+            requested_output_shape == "prompt_collection_request"
+            and "workflow" in distinct_target_objects
+            and any(d in workflow_domains for d in domain_tags)
+        )
 
     def _is_workflow_intent():
         if primary_action in workflow_actions and (
@@ -878,6 +887,8 @@ def _compute_shape_touch_plan(
     def _is_instruction_intent():
         if has_explain_action and requested_output_shape == "recipe":
             return True
+        if _is_prompt_collection_workflow_instruction():
+            return True
         if any(d in ("documentation", "docs") for d in domain_tags) and primary_action in (
             "set_up", "configure", "explain"
         ):
@@ -909,6 +920,8 @@ def _compute_shape_touch_plan(
 
     def _is_cookbook_intent():
         if has_explain_action and requested_output_shape == "recipe":
+            return False
+        if _is_prompt_collection_workflow_instruction():
             return False
         # WO-L0-WORKSHOP-FRAME-C-HARDEN-01 closes RK-059 gap 2 by
         # treating `prompt_collection_request` as a cookbook-shaped
@@ -973,6 +986,8 @@ def _compute_shape_touch_plan(
             contributing.append("object")
         if primary_action == "configure":
             contributing.append("action")
+        if _is_prompt_collection_workflow_instruction():
+            contributing.append("output_shape")
         candidate_entries.append({
             "item_kind": "instruction",
             "affinity_basis": _ids_for(*contributing),
@@ -1086,7 +1101,11 @@ def _compute_shape_touch_plan(
     # can return D (agent + workflow) or F (cookbook + workflow)
     # rather than collapsing to a clear single-intent.
     if (
-        primary_action == "deploy"
+        "deploy" in action_set
+        and (
+            primary_action == "deploy"
+            or "persona" in distinct_target_objects
+        )
         and not any(d in workflow_domains for d in domain_tags)
         and not has_event_constraint
         and "workflow" not in distinct_target_objects
@@ -1404,6 +1423,7 @@ def build_canonical_intent_frame(
     affinity = _compute_shape_touch_plan(
         primary_action, distinct_target_objects, domain_tags,
         constraint_tags, requested_output_shape, by_kind,
+        secondary_actions=secondary_actions,
         bare_ambiguity=bare_ambiguity,
     )
 

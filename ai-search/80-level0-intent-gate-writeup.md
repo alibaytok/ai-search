@@ -170,9 +170,9 @@ Mini-V1 is closed:
 Mini-V2 admitted is intentionally not closed:
 
 - 12 cases
-- 9 passing
-- 3 failing
-- 2 planner candidates
+- 11 passing
+- 1 failing
+- 1 planner candidate
 
 Mini-V2 holdout exists but remains isolated:
 
@@ -183,7 +183,7 @@ Mini-V2 holdout exists but remains isolated:
 The Mini-V2 proposal-only run reports these failure buckets:
 
 - `out_of_scope_underdetect`: 0 cases
-- `frame_c_synthesis_rule_gap`: 2 cases
+- `frame_c_synthesis_rule_gap`: 0 cases
 - `frame_c_ambiguity_misreport`: 1 case
 - `expected_field_drift`: 0 cases
 
@@ -229,7 +229,7 @@ That prevented two common corpus failures:
 - treating crawler output as admitted evaluation data
 - copying parser observations into expected fields
 
-Mini-V2 then failed on 3 of 12 cases. That is useful evidence. It shows the gate
+Mini-V2 then failed on 1 of 12 cases. That is useful evidence. It shows the gate
 is not just memorizing Mini-V1. It also shows where the next product decisions
 would be if the project continued.
 
@@ -254,12 +254,11 @@ not part of the current artifact. It belongs after the gate, not inside it.
 
 ## Current Follow-Up Choices
 
-The Mini-V2 run produced four proposal groups:
+The current Mini-V2 run produces one proposal group:
 
 | Candidate | Failure class | Count | Follow-up type |
 |---|---:|---:|---|
-| UPG-001 | `frame_c_synthesis_rule_gap` | 2 | parser synthesis hardening |
-| UPG-002 | `frame_c_ambiguity_misreport` | 1 | downstream clarification-surface decision |
+| UPG-001 | `frame_c_ambiguity_misreport` | 1 | downstream clarification-surface decision |
 
 The safest next action is not to close all four. The safest next action is to
 stop, publish the artifact, and decide later whether the downstream consumer is
@@ -267,7 +266,8 @@ worth building.
 
 The prior matrix reconciliation item was closed by
 `82-mini-v2-matrix-reconcile.md`. The prior no-route hardening bucket was
-closed by `83-mini-v2-no-route-harden.md`.
+closed by `83-mini-v2-no-route-harden.md`. The prior FRAME-C synthesis bucket
+was closed by `84-mini-v2-frame-c-synthesis.md`.
 
 ## How To Reproduce The Current Evidence
 
@@ -286,7 +286,7 @@ from harness.level0_workshop_mini_v2_autonomous_run import (
 )
 
 write_mini_v2_autonomous_run_report(
-    "harness/mini_v2_runs/L0-WS-MINI-V2-AUTONOMOUS-RUN-v3.report.json"
+    "harness/mini_v2_runs/L0-WS-MINI-V2-AUTONOMOUS-RUN-v4.report.json"
 )
 '@ | python -
 ```
@@ -306,7 +306,6 @@ decision:
 
 - build downstream clarification/refusal/action surfaces, or
 - expand the corpus with new local sources, or
-- reconcile the smallest Mini-V2 matrix-drift proposal, or
 - stop permanently and preserve this as the bounded intent-gate artifact.
 
 The strongest next move is: document, publish, and stop before adding more
