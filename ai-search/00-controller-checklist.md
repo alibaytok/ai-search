@@ -256,3 +256,20 @@ Added by Codex after raw-candidate snapshot v1 and admission-review pack v1 to p
 - [ ] Admitted-case edits after admission require an explicit follow-up packet with rationale.
 - [ ] Admission does not imply benchmark readiness, production readiness, route validation, source qualification, corpus completeness, or downstream action authorization.
 - [ ] Source expansion, crawler heuristic expansion, overlay store, confidence decay, and FRAME-C overlay work remain separate decisions.
+
+## P. Level 0 Gate Demo Surface
+
+Added by Codex before LEVEL-0-GATE-DEMO-01 to keep the first user-visible
+gate surface from becoming a downstream action system or a hidden learning
+loop. This section applies to demo entry points, demo audit logs, and any
+future wrapper around the Level 0 workshop intent gate. This section does not
+authorize model invocation, route creation, source qualification, benchmark
+claims, corpus admission, parser-core updates, autonomous-loop invocation, or
+production readiness.
+
+- [ ] Demo output may display gate category, item kinds, refusal text, and bounded clarification choices, but it must not execute downstream model/action work.
+- [ ] Demo audit logs are user-input records only; they are never admission sources, parser-update signals, benchmark evidence, route validation, or source qualification.
+- [ ] Clarification choices may be recorded for audit, but they must not affect future gate behavior or persist as user preferences.
+- [ ] Demo code must not read holdout matrices, raw candidate pools, admission review packs, or autonomous-loop proposal reports.
+- [ ] Demo code must not invoke autonomous-loop planners, materializers, crawlers, network clients, subprocesses, or third-party services.
+- [ ] Any demo audit artifact must have a bounded schema, append-only write behavior, and tests proving no autonomous-loop path reads it.

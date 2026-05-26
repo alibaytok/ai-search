@@ -18,13 +18,13 @@ The product idea is simple:
 raw user text
   -> deterministic intent gate
   -> clear and allowed intent: downstream action may be considered later
-  -> ambiguous or near-miss intent: ask a bounded clarification later
+  -> ambiguous intent: ask a bounded clarification at the product surface
   -> out-of-scope intent: no route / refusal later
 ```
 
-This packet documents the gate. It does not build downstream action,
-clarification UI, refusal UI, route creation, source admission, benchmark
-execution, or production integration.
+This packet documents the gate and the first CLI demo surface. It does not
+build downstream action, route creation, source admission, benchmark execution,
+or production integration.
 
 ## What Exists
 
@@ -101,7 +101,26 @@ The current Level 0 workshop stack contains five concrete layers.
    - `harness/admission_review_packs/L0-WS-RAW-CANDIDATES-v1.admission_review.json`
    - `harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V2.intent.matrix.json`
    - `harness/intent_test_matrices/L0-WS-PARSER-QUALITY-MINI-V2-HOLDOUT.intent.matrix.json`
-   - `harness/mini_v2_runs/L0-WS-MINI-V2-AUTONOMOUS-RUN-v1.report.json`
+   - `harness/mini_v2_runs/L0-WS-MINI-V2-AUTONOMOUS-RUN-v4.report.json`
+
+6. **CLI gate demo**
+
+   The demo is the first user-visible product surface around the gate. It
+   displays one of three branches and stops:
+
+   - `clear`: display category and item kinds
+   - `clarify`: display bounded choices and optionally record one user choice
+   - `refuse`: display no-route / near-miss refusal text
+
+   The demo writes local JSON-lines audit records, but those records are user
+   input records only. They do not train the parser, admit corpus data, update
+   expected matrix fields, create routes, or authorize downstream action.
+
+   Key files:
+
+   - `harness/level0_workshop_gate_demo.py`
+   - `harness/tests/test_level0_workshop_gate_demo.py`
+   - `ai-search/85-level0-gate-demo.md`
 
 ## What The Gate Emits
 
@@ -153,11 +172,14 @@ The key safeguards are:
 - holdout isolation tests
 - raw-candidate snapshot and admission review pack before Mini-V2 admission
 - explicit non-claim language in runner, planner, admission, and run artifacts
+- Section P demo-surface rules that keep CLI output display-only and audit logs
+  out of parser, admission, benchmark, and autonomous-loop paths
 
 The core freeze and corpus admission gates are recorded in:
 
 - `ai-search/00-controller-checklist.md` Section N
 - `ai-search/00-controller-checklist.md` Section O
+- `ai-search/00-controller-checklist.md` Section P
 
 ## Evidence So Far
 
@@ -233,12 +255,19 @@ Mini-V2 then failed on 1 of 12 cases. That is useful evidence. It shows the gate
 is not just memorizing Mini-V1. It also shows where the next product decisions
 would be if the project continued.
 
-## The Missing Product Surface
+## The Demo Product Surface
 
-The gate currently stops at bounded intent records and proposal reports. There
-is no downstream consumer yet.
+The gate now has a CLI-only demo surface. That surface is deliberately thin: it
+lets a user enter one prompt, see how the gate classifies it, optionally choose
+from bounded clarification options, and record a local audit line.
 
-That missing consumer would eventually decide what to do with each gate result:
+The demo is not a downstream consumer. It does not generate workflow files,
+skills, agents, instructions, or any other artifact. It does not invoke a
+model, planner, materializer, crawler, network client, subprocess, or
+third-party service.
+
+The eventual downstream consumer, if one is ever built, would still need to
+decide what to do with each gate result:
 
 - clear and allowed intent: maybe pass a structured request to a model/action
   layer
@@ -246,11 +275,15 @@ That missing consumer would eventually decide what to do with each gate result:
 - out-of-scope intent: return no-route/refusal
 - matrix drift: correct the human-authored evaluation contract
 
-That is a separate product surface. It should not be smuggled into parser
-hardening.
+That remains a separate product decision. The demo demonstrates that the gate
+can expose a bounded product surface; it does not prove that any downstream
+action is safe or ready.
 
-In particular, a "Did you mean?" surface is a good future direction, but it is
-not part of the current artifact. It belongs after the gate, not inside it.
+QV2-006 is the important example. The parser still treats the deploy/notify
+prompt as workflow intent. The demo layer handles the product ambiguity by
+offering `workflow_file`, `skill`, and `instruction` as bounded choices. That is
+intentional product-surface behavior, not parser-core hardening and not a
+matrix patch to force Mini-V2 to 12/12.
 
 ## Current Follow-Up Choices
 
@@ -258,11 +291,11 @@ The current Mini-V2 run produces one proposal group:
 
 | Candidate | Failure class | Count | Follow-up type |
 |---|---:|---:|---|
-| UPG-001 | `frame_c_ambiguity_misreport` | 1 | downstream clarification-surface decision |
+| UPG-001 | `frame_c_ambiguity_misreport` | 1 | downstream clarification-surface decision demonstrated by the CLI demo |
 
-The safest next action is not to close all four. The safest next action is to
-stop, publish the artifact, and decide later whether the downstream consumer is
-worth building.
+The safest next action is not to force Mini-V2 to 12/12. The safest next action
+is to stop, publish the artifact, and decide later whether a real downstream
+consumer is worth building.
 
 The prior matrix reconciliation item was closed by
 `82-mini-v2-matrix-reconcile.md`. The prior no-route hardening bucket was
@@ -275,6 +308,32 @@ Run the full test suite:
 
 ```powershell
 python -m unittest discover -s harness\tests
+```
+
+The gate-demo packet recorded this full-suite line against commit `0734ad6`:
+
+```text
+Ran 1837 tests in 76.437s
+
+OK
+```
+
+Run the CLI demo:
+
+```powershell
+python -m harness.level0_workshop_gate_demo "Deploy this workflow and notify me if it fails" --choice workflow
+```
+
+Expected branch shape:
+
+```text
+Level 0 gate demo
+Branch: clarify
+Category: B. workflow intent
+Item kinds: workflow_file
+Clarification: Did you mean one of these?
+Choices: workflow_file, skill, instruction
+Chosen kind: workflow_file
 ```
 
 Regenerate the Mini-V2 proposal-only report:
@@ -304,7 +363,8 @@ The current artifact is complete enough to document and pause.
 The next phase should not begin by default. It should require a new product
 decision:
 
-- build downstream clarification/refusal/action surfaces, or
+- build real downstream clarification/refusal/action surfaces beyond the CLI
+  demo, or
 - expand the corpus with new local sources, or
 - stop permanently and preserve this as the bounded intent-gate artifact.
 

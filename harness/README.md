@@ -13,6 +13,7 @@ intent-gate artifact plus earlier scaffold modules.
 | `level0_workshop_user_intent_mapper.py` | FRAME-D public mapper shim |
 | `level0_workshop_intent_test_matrix_runner.py` | JSON matrix runner |
 | `level0_workshop_parser_quality_loop.py` | Feedback report, planner, case-review reporter |
+| `level0_workshop_gate_demo.py` | CLI demo for clear, clarify, and refuse gate branches |
 | `level0_workshop_matrix_delta_autonomy.py` | Matrix expected-field candidate/materializer |
 | `level0_workshop_frame_b_overlay_autonomy.py` | FRAME-B overlay candidate/materializer |
 | `level0_workshop_composite_patch_autonomy.py` | Transactional matrix + FRAME-B composite primitive |
@@ -33,6 +34,9 @@ intent-gate artifact plus earlier scaffold modules.
 | `mini_v2_runs/L0-WS-MINI-V2-AUTONOMOUS-RUN-v2.report.json` | Prior proposal-only Mini-V2 run report after QV2-009 reconciliation |
 | `mini_v2_runs/L0-WS-MINI-V2-AUTONOMOUS-RUN-v1.report.json` | Prior proposal-only Mini-V2 run report before QV2-009 reconciliation |
 
+Demo audit logs are written under `demo_audit_logs/` when the demo is run.
+They are local user-input records and are not committed by default.
+
 ## Tests
 
 Run the full suite:
@@ -45,6 +49,12 @@ Run the current Mini-V2 proposal report tests:
 
 ```powershell
 python -m unittest harness.tests.test_level0_workshop_mini_v2_autonomous_run
+```
+
+Run the gate demo tests:
+
+```powershell
+python -m unittest harness.tests.test_level0_workshop_gate_demo
 ```
 
 ## Boundaries
