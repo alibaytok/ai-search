@@ -5,6 +5,11 @@
 Classify the 7 failing Mini-V2 admitted cases into bounded follow-up buckets
 before authoring any fix packet.
 
+Follow-up note: the `matrix_reconcile` row for QV2-009 was closed by
+`82-mini-v2-matrix-reconcile.md`. The remaining open rows are the parser
+FRAME-B canonical bucket, parser FRAME-C synthesis bucket, and reserved
+clarification-surface bucket.
+
 This is a review-only decision report. It does not edit parser code, edit
 matrix files, read holdout, invoke materializers, add architecture, or
 authorize downstream product surfaces.

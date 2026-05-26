@@ -159,6 +159,21 @@ class Level0WorkshopMiniV2AdmissionTest(unittest.TestCase):
         self.assertIs(admitted_result["corpus_admission_authorized"], False)
         self.assertIs(holdout_result["corpus_admission_authorized"], False)
 
+    def test_qv2_009_matrix_reconcile_is_documented(self):
+        case = next(
+            item for item in self.admitted["cases"]
+            if item["case_id"] == "QV2-009"
+        )
+        self.assertEqual(case["expected"]["category"], "H. no-route")
+        self.assertEqual(
+            case["expected"]["candidate_surface_expected"],
+            "candidate fragment of declared shape",
+        )
+        self.assertEqual(
+            case["expected"]["rejection_surface_expected"],
+            "no_forced_selection",
+        )
+
     def test_section_o_admission_gate_exists(self):
         with open(
             os.path.join("ai-search", "00-controller-checklist.md"),

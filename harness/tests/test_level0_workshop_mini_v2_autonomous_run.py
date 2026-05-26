@@ -12,7 +12,7 @@ from harness.review_package import FORBIDDEN_PHRASES
 REPORT_PATH = os.path.join(
     "harness",
     "mini_v2_runs",
-    "L0-WS-MINI-V2-AUTONOMOUS-RUN-v1.report.json",
+    "L0-WS-MINI-V2-AUTONOMOUS-RUN-v2.report.json",
 )
 
 HOLDOUT_NAME = "L0-WS-PARSER-QUALITY-MINI-V2-HOLDOUT.intent.matrix.json"
@@ -56,8 +56,8 @@ class Level0WorkshopMiniV2AutonomousRunTest(unittest.TestCase):
         summary = self.report["matrix_result_summary"]
         self.assertEqual(summary["matrix_id"], "L0-WS-PARSER-QUALITY-MINI-V2")
         self.assertEqual(summary["case_count"], 12)
-        self.assertEqual(summary["passed_count"], 5)
-        self.assertEqual(summary["failed_count"], 7)
+        self.assertEqual(summary["passed_count"], 6)
+        self.assertEqual(summary["failed_count"], 6)
         self.assertEqual(
             summary["per_failure_class_counts"]["out_of_scope_underdetect"],
             3,
@@ -72,7 +72,7 @@ class Level0WorkshopMiniV2AutonomousRunTest(unittest.TestCase):
         )
         self.assertEqual(
             summary["per_failure_class_counts"]["expected_field_drift"],
-            1,
+            0,
         )
 
     def test_report_is_proposal_only_and_non_authorizing(self):
@@ -99,7 +99,7 @@ class Level0WorkshopMiniV2AutonomousRunTest(unittest.TestCase):
     def test_proposal_bundles_cover_planner_candidates_without_variants(self):
         candidates = self.report["planner_result"]["upgrade_candidates"]
         bundles = self.report["proposal_bundles"]
-        self.assertEqual(self.report["planner_result"]["candidate_count"], 4)
+        self.assertEqual(self.report["planner_result"]["candidate_count"], 3)
         self.assertEqual(len(bundles), len(candidates))
         self.assertEqual(
             [bundle["candidate_id"] for bundle in bundles],

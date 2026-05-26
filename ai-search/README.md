@@ -7,6 +7,8 @@ current reading order.
 For the current artifact, start with:
 
 - [`80-level0-intent-gate-writeup.md`](80-level0-intent-gate-writeup.md)
+- [`82-mini-v2-matrix-reconcile.md`](82-mini-v2-matrix-reconcile.md)
+- [`81-mini-v2-decision-report.md`](81-mini-v2-decision-report.md)
 - [`79-level0-mini-v2-autonomous-run.md`](79-level0-mini-v2-autonomous-run.md)
 - [`78-level0-mini-v2-admission.md`](78-level0-mini-v2-admission.md)
 - [`77-level0-admission-review-pack.md`](77-level0-admission-review-pack.md)
@@ -19,7 +21,9 @@ For the current artifact, start with:
 | File | Purpose |
 |---|---|
 | `80-level0-intent-gate-writeup.md` | Human-readable summary of the deterministic intent gate artifact |
-| `79-level0-mini-v2-autonomous-run.md` | Proposal-only run snapshot over Mini-V2 admitted |
+| `82-mini-v2-matrix-reconcile.md` | QV2-009 matrix-only reconciliation and Mini-V2 run v2 |
+| `81-mini-v2-decision-report.md` | Case-by-case decision report for Mini-V2 run v1 failures |
+| `79-level0-mini-v2-autonomous-run.md` | Proposal-only run snapshot over Mini-V2 admitted v1 |
 | `78-level0-mini-v2-admission.md` | Human-authored Mini-V2 and holdout admission |
 | `77-level0-admission-review-pack.md` | Dedupe and admission review from raw snapshot v1 |
 | `76-level0-raw-candidate-snapshot.md` | Versioned raw candidate snapshot |
