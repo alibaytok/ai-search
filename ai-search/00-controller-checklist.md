@@ -239,6 +239,9 @@ Added by Codex after Mini-V1 closure to prevent autonomous-loop growth from beco
 - [ ] Corpus expansion must not begin until the freeze gate is either implemented or explicitly deferred with recorded rationale.
 - [ ] Any future learned-overlay design must preserve `core + empty overlay == core` before it can evaluate non-empty overlays.
 - [ ] No benchmark, production-readiness, route-validation, source-qualification, or corpus-admission claim may be inferred from Mini-V1 passing.
+- [ ] After any final edit to parser core or intent matrix files, regenerate all dependent snapshot artifacts under `harness/mini_v2_runs/`, `harness/raw_candidate_pools/`, and `harness/admission_review_packs/` before committing the source or matrix change.
+- [ ] Full-suite verification must run against the final committed state before claiming success; the implementation summary must quote the actual `Ran X tests in Y seconds` line, not a recalled or stale count.
+- [ ] If any snapshot equality test fails, the packet is not acceptable until the snapshot is regenerated in the same commit or in a narrowly scoped remediation commit.
 
 ## O. Level 0 Workshop Corpus Admission Gate
 
