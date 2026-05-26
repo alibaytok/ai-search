@@ -101,6 +101,11 @@ The watchdog report must be short and evidence-first:
    supporting each finding.
 4. `NEXT ACTION` - the smallest correction or review step.
 
+For every blocker or warning, the report must name the related file(s)
+explicitly. If the finding is code-doc drift, name both sides: the
+documentation file carrying the claim and the code, test, matrix, or
+snapshot file that proves the current state.
+
 If there is no material drift, the report must say:
 
 `No material code-doc drift detected.`
@@ -132,9 +137,11 @@ readiness.
 Ignore cosmetic wording and minor formatting. Report: (1) BLOCKERS that
 should stop new implementation before review, (2) WARNINGS that can
 wait, (3) exact files/lines or commands supporting each finding, and
-(4) recommended next action. If there is no material drift, say
-'No material code-doc drift detected.' Do not create commits, branches,
-automations, or modify files.
+(4) recommended next action. For every blocker or warning, name the
+related file(s) explicitly; for code-doc drift, name both the doc claim
+file and the code/test/matrix/snapshot evidence file. If there is no
+material drift, say 'No material code-doc drift detected.' Do not create
+commits, branches, automations, or modify files.
 ```
 
 ## Non-Claims
